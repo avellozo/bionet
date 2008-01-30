@@ -1,0 +1,14 @@
+1	linkedWith	2
+1	linkedWith	3
+2	linkedWith	4
+3	linkedWith	6
+3	linkedWith	5
+4	linkedWith	5
+4	linkedWith	7
+5	linkedWith	8
+6	linkedWith	9
+7	linkedWith	10
+7	linkedWith	11
+8	linkedWith	9
+8	linkedWith	12
+11	linkedWith	12
