@@ -50,6 +50,15 @@ public class MotifSearcher
 
 			if (!neighbourInTree)
 			{
+				// Clean old tree
+				if (root != null)
+				{
+					for (MotifNode node : root.children)
+					{
+						node.reaction.nodes = null;
+					}
+				}
+				// start new tree
 				root = new MotifNode(null, null);
 			}
 			root.createChild(reaction);

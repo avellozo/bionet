@@ -17,7 +17,7 @@ public class MotifNode extends Motif
 		reaction.addNode(this);
 	}
 
-	public void createMotifs(Reaction r, int targetMotifSize, MotifList motifs)
+	public void createMotifs(Reaction r, int targetMotifSize, MotifList TargetMotifs)
 	{
 		if (r != lastVisitedFor)
 		{
@@ -25,13 +25,13 @@ public class MotifNode extends Motif
 			if (size == targetMotifSize - 1)
 			{
 				Motif motif = new Motif(r, this);
-				motifs.add(motif);
+				TargetMotifs.add(motif);
 			}
 			else
 			{
 				for (MotifNode child : children)
 				{
-					child.createMotifs(r, targetMotifSize, motifs);
+					child.createMotifs(r, targetMotifSize, TargetMotifs);
 				}
 				createChild(r);
 			}
