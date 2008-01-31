@@ -2,5 +2,5 @@ package br.ufms.biocomp.metabolicNetwork;
 
 public interface MotifList {
 
-	public void add(MotifSeed seed);
+	public void add(Motif seed);
 }

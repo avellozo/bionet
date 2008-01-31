@@ -6,7 +6,7 @@ package br.ufms.biocomp.metabolicNetwork;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MotifNode extends MotifSeed
+public class MotifNode extends Motif
 {
 	List<MotifNode>	children		= null;
 	Reaction		lastVisitedFor	= null;
@@ -17,21 +17,21 @@ public class MotifNode extends MotifSeed
 		reaction.addNode(this);
 	}
 
-	public void createMotifs(Reaction r, int targetHeight, MotifList targetHeightNodes)
+	public void createMotifs(Reaction r, int targetMotifSize, MotifList motifs)
 	{
 		if (r != lastVisitedFor)
 		{
 			lastVisitedFor = r;
-			if (height == targetHeight - 1)
+			if (size == targetMotifSize - 1)
 			{
-				MotifSeed motif = new MotifSeed(r, this);
-				targetHeightNodes.add(motif);
+				Motif motif = new Motif(r, this);
+				motifs.add(motif);
 			}
 			else
 			{
 				for (MotifNode child : children)
 				{
-					child.createMotifs(r, targetHeight, targetHeightNodes);
+					child.createMotifs(r, targetMotifSize, motifs);
 				}
 				createChild(r);
 			}
