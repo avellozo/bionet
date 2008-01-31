@@ -1,24 +1,60 @@
 package br.ufms.biocomp.metabolicNetwork;
 
-public class MotifSearcher {
+public class MotifSearcher
+{
 
-	public static void main(String[] args) 
+	//HashMap<String,Reaction> reactions = new HashMap<String, Reaction>();
+
+	public static void main(String[] args)
 	{
 		ReactionNetwork network = new ReactionNetwork();
 		//network.buildFromSifFile("T:\\Trabalho em Lyon\\MotifInference\\Examples\\reaction_graph_motus_coli.sif");
 		//network.loadColorsFrom("T:\\Trabalho em Lyon\\MotifInference\\Examples\\primCpdsSmmReactionsCompounds.col", 3);
 
-		network.buildFromSifFile("T:\\Trabalho em Lyon\\MotifInference\\Examples\\exemplo1.sif");
-		network.loadColorsFrom("T:\\Trabalho em Lyon\\MotifInference\\Examples\\exemplo1.col", 3);		
+		network.buildFromSifFile(args[1]);
+		network.loadColorsFrom(args[2], Integer.parseInt(args[3]));
 		network.eraseVerticesWithoutColor();
 		// network.print();
-		
-		System.out.println("Número de cores: " + network.numberOfColors());
-		// Defines the size of the motif to search.
-		int k = 3;
-		
-		
-		
-		
-	}	
+
+		System.out.println("Number of Colors: " + network.numberOfColors());
+
+		// Build the tree of the motif seeds, searching for motifs with size k = args[4]
+		MotifList motifList = buildMotifList(network, Integer.parseInt(args[4]));
+
+	}
+
+	public static MotifList buildMotifList(ReactionNetwork network, int k)
+	{
+		MotifList motifList = null;
+		boolean neighbourInTree;
+		MotifNode root = null;
+
+		for (Reaction reaction : network.reactions.values())
+		{
+			neighbourInTree = false;
+			for (Reaction reactionLinked : reaction.linkedTo)
+			{
+				if (reactionLinked.isInTree())
+				{
+					neighbourInTree = true;
+					for (MotifNode node : reactionLinked.nodes)
+					{
+						node.createMotifs(reaction, k, motifList);
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if (!neighbourInTree)
+			{
+				root = new MotifNode(null, null);
+			}
+			root.createChild(reaction);
+		}
+		return motifList;
+	}
+
 }

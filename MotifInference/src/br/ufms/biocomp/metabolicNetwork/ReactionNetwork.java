@@ -115,8 +115,8 @@ public class ReactionNetwork {
 					 String color = information[6];
 					 if( !"NA".equals(color) )
 					 {
-						 color = color.replace(".", "-");
-						 String[] colorHierarchy = color.split("-");
+						 color = color.replace(".", ";");
+						 String[] colorHierarchy = color.split(";");
 						 if( threshold <= colorHierarchy.length )
 						 {
 							 color = colorHierarchy[0];
@@ -126,6 +126,9 @@ public class ReactionNetwork {
 						 }
 						 else
 							 color = information[6];
+						 
+						 if( color.contains("-") )
+							 color = null;
 						 
 						 if( reaction.color != null && !reaction.color.equals(color) )
 							 System.out.println("Duplicated color: Reaction "+reaction.ID + " has color "+ reaction.color + " and the file also defines color "+color);
