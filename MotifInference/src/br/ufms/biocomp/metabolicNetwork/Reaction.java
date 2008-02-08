@@ -3,13 +3,14 @@ package br.ufms.biocomp.metabolicNetwork;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Reaction
+public class Reaction implements Comparable<Reaction>
 {
 
 	String			ID;
 	String			color;
 	List<Reaction>	linkedTo	= new ArrayList<Reaction>();
-	List<MotifNode>	nodes		= new ArrayList<MotifNode>();
+	List<Node>		nodes		= new ArrayList<Node>();
+	Integer			orderInGraph;
 
 	public Reaction(String ID)
 	{
@@ -25,7 +26,7 @@ public class Reaction
 		}
 	}
 
-	public void addNode(MotifNode node)
+	public void addNode(Node node)
 	{
 		nodes.add(node);
 	}
@@ -33,6 +34,12 @@ public class Reaction
 	public boolean isInTree()
 	{
 		return nodes.size() == 0;
+	}
+
+	@Override
+	public int compareTo(Reaction o)
+	{
+		return orderInGraph.compareTo(o.orderInGraph);
 	}
 
 }

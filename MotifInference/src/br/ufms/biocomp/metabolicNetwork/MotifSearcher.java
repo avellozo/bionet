@@ -27,7 +27,7 @@ public class MotifSearcher
 	{
 		MotifList motifList = null;
 		boolean neighbourInTree;
-		MotifNode root = null;
+		Node root = null;
 
 		for (Reaction reaction : network.reactions.values())
 		{
@@ -37,7 +37,7 @@ public class MotifSearcher
 				if (reactionLinked.isInTree())
 				{
 					neighbourInTree = true;
-					for (MotifNode node : reactionLinked.nodes)
+					for (Node node : reactionLinked.nodes)
 					{
 						node.createMotifs(reaction, k, motifList);
 					}
@@ -53,13 +53,13 @@ public class MotifSearcher
 				// Clean old tree
 				if (root != null)
 				{
-					for (MotifNode node : root.children)
+					for (Node node : root.children)
 					{
 						node.reaction.nodes = null;
 					}
 				}
 				// start new tree
-				root = new MotifNode(null, null);
+				root = new Node(null, null);
 			}
 			root.createChild(reaction);
 		}
