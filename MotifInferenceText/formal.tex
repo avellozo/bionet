@@ -175,10 +175,11 @@
 \newcommand{\fmotif}[1]{\ensuremath{\fmotifSym (#1)}}
 \newcommand{\fcolorSym}{\ensuremath{color}}
 \newcommand{\fcolor}[1]{\ensuremath{\fcolorSym (#1)}}
+\newcommand{\subgraphSym}{\ensuremath{s}}
 \newcommand{\subgraphconSym}{\ensuremath{s}}
 \newcommand{\setsubgraphconSym}{\ensuremath{S}}
 \newcommand{\setsubgSym}{\ensuremath{\setsubgraphconSym}}
-\newcommand{\setsubgcSym}{\ensuremath{\setsubgraphconSym}}
+\newcommand{\setsubgcSym}{\ensuremath{\widehat{\setsubgraphconSym}}}
 \newcommand{\setsubgc}[1]{\ensuremath{\setsubgcSym(#1)}}
 \newcommand{\setsubgcsSym}{\ensuremath{\widehat{\setsubgraphconSym}}}
 \newcommand{\setsubgcs}[2]{\ensuremath{\setsubgcsSym(#1,#2)}}
@@ -196,13 +197,13 @@
 Dado um grafo $G$ encontrar e listar todos os subgrafos conexos de $G$.
 \end{problema}
 
-Identificaremos um subgrafo \subgraphconSym\ de $G$ pelo conjunto dos vértices
-de \subgraphconSym.
+Identificaremos um subgrafo \subgraphSym\ de $G$ pelo conjunto dos vértices
+de \subgraphSym.
 
 \begin{definicao}[Função \fmotifSym] Dado um grafo $G=(V,E)$ e uma função
 $\fcolorSym : V \aplica \alfcolor$, definimos a função $\fmotifSym : V^* \aplica
-{\alfcolor}^*$ tal que, $\fmotif{\subgraphconSym}=\{\fcolor{v_1}, \fcolor{v_2},
-\ldots, \fcolor{v_n}\}$ onde $\subgraphconSym=\{v_1, v_2, \ldots, v_n \}$.
+{\alfcolor}^*$ tal que, $\fmotif{\subgraphSym}=\{\fcolor{v_1}, \fcolor{v_2},
+\ldots, \fcolor{v_n}\}$ onde $\subgraphSym=\{v_1, v_2, \ldots, v_n \}$.
 \end{definicao}
 
 \begin{problema}\label{prob:infmotif}
@@ -235,9 +236,25 @@ $v$ e que cujo menor vértice é v'.
 \end{definicao}
 
 Portanto se $(v_1, v_2, \ldots,
-v_n) \in \setsubgcs{v}{v'}$ então $v_1=v'$ e para algum $i$, $1 \leq i \leq n$,
-$v_i=v$.
+v_n) \in \setsubgcs{v}{v'}$ então $v_1=v'$ e $v_i=v$ para algum $i$, $1 \leq i
+\leq n$.
 
-Sejam $v$ e $v'$ vértices de $G$ tais que $v > v'$.
+Sejam $v$ e $v'$ vértices de $G$ tais que $v' <v$. Temos
+que:
+
+$$\setsubgc{v}=\setsubgcs{v}{v} \bigcup_{v_1 < v} \setsubgcs{v}{v_1}.$$
+
+$$\setsubgc{v}=\setsubgcs{v}{v} \cup \setsubgcs{v}{v'} \bigcup_{v_1\tq v_1<v'}
+\setsubgcs{v}{v_1} \bigcup_{v_2\tq v'<v_2<v}
+ \setsubgcs{v}{v_2} \bigcup_{v_3\tq v_3>v} \setsubgcs{v}{v_3}.$$
+
+Como $$\bigcup_{v_3 \in V_3} \setsubgcs{v}{v_3}=\emptyset$$ então
+$$\setsubgc{v}=\setsubgcs{v}{v} \cup \setsubgcs{v}{v'} \bigcup_{v_1\tq v_1<v'}
+\setsubgcs{v}{v_1} \bigcup_{v_2\tq v'<v_2<v} \setsubgcs{v}{v_2}.$$
+
+Dados dois conjuntos de subgrafos $\setsubgSym_1$ e $\setsubgSym_2$, temos que
+o produto cartesiano $\setsubgSym_1 \times \setsubgSym_2$ é igual a
+$$\{\subgraphSym \tq \subgraphSym = \subgraphSym_1 \cup \subgraphSym_2 \forall\
+\subgraphSym_1 \in \setsubgSym_1\ e\ \subgraphSym_2 \in \setsubgSym_2\}. $$
 
 \end{document}
