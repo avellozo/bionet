@@ -1,0 +1,488 @@
+% Style Option `algochl.sty'.
+% Format the code of algorithms
+% By C. Hancart.
+% 01/09/1997.
+
+\NeedsTeXFormat{LaTeX2e}[]
+
+\newif\ifalg@A                  % in algo environment
+\newif\ifalg@E\alg@Etrue        % error; alg@A=FALSE => alg@E=TRUE
+
+\def\alg@error#1{\global\alg@Etrue\relax\PackageError{algo}{#1}{}}
+\def\alg@illegal{{\alg@error{Illegal \alg@Sc}}}
+\def\alg@warning#1{\PackageWarning{algo}{#1}{}\ignorespaces}
+
+\chardef\alg@OL\z@
+\newif\ifalg@OW
+
+\def\alg@options#1[#2]{%
+ \ifalg@A\alg@current{algoResetOptions}\alg@illegal\else
+  \ifx A#1
+   \global\chardef\alg@OL\z@
+   \global\alg@OWfalse
+   \relax\fi
+  \global\@tempswafalse\relax
+  \def\@tempa##1##2{%
+   \if@tempswa\else
+    \def\@tempb{##1}\ifx\@tempc\@tempb\@tempswatrue\global##2\relax\fi
+   \fi}%
+  \@for\@tempc:=#2\do{%
+   \@tempswafalse
+   \@tempa{portuguese}{\chardef\alg@OL\@ne}%
+   \@tempa{whileod}{\alg@OWtrue}%
+   \if@tempswa\else\alg@warning{Unknown option `\@tempc'}\fi}%
+  \alg@language\alg@tabulation
+ \fi
+ \ignorespaces}
+
+\def\alg@stybox#1{\relax\ifmmode\null\mbox{#1}\null\else #1\fi}
+
+\def\alg@stykey#1{\alg@stybox{\textbf{#1}}}
+\def\alg@styident#1{\alg@stybox{\textsc{#1}}}
+
+\def\alg@stycall#1#2{\alg@styident{#1}\relax\ifmmode(#2)\else$(#2)$\fi}
+
+\def\alg@language{%
+ \ifcase\alg@OL
+  \gdef\alg@WIf         {\alg@stykey{if}}%
+  \gdef\alg@WThen       {\alg@stykey{then}}%
+  \gdef\alg@WElse       {\alg@stykey{else}}%
+  \gdef\alg@WElseif     {\alg@stykey{elseif}}%
+  \gdef\alg@WWhile      {\alg@stykey{while}}%
+  \gdef\alg@WFor        {\alg@stykey{for}}%
+  \gdef\alg@WDo         {\alg@stykey{do}}%
+  \gdef\alg@WRepeat     {\alg@stykey{repeat}}%
+  \gdef\alg@WUntil      {\alg@stykey{until}}%
+  \gdef\alg@WFrom       {\alg@stykey{from}}%
+  \gdef\alg@WTo         {\alg@stykey{to}}%
+  \gdef\alg@WDownto     {\alg@stykey{downto}}%
+  \gdef\alg@WStep       {\alg@stykey{step}}%
+  \gdef\alg@WReturn     {\alg@stykey{return}}%
+  \gdef\alg@WError      {\alg@stykey{error}}%
+  \gdef\alg@WBreak      {\alg@stykey{break}}%
+  \gdef\alg@WFalse      {\alg@styident{false}}%
+  \gdef\alg@WTrue       {\alg@styident{true}}%
+  \gdef\alg@WNil        {\alg@styident{nil}}%
+  \gdef\alg@WAnd        {\mathrel{\alg@stykey{and}}}%
+  \gdef\alg@WOr         {\mathrel{\alg@stykey{or}}}%
+  \gdef\alg@WNot        {\mathrel{\alg@stykey{not }}}%
+ \or
+  \gdef\alg@WIf         {\alg@stykey{se}}%
+  \gdef\alg@WThen       {\alg@stykey{ent\~ao}}%
+  \gdef\alg@WElse       {\alg@stykey{sen\~ao}}%
+  \gdef\alg@WElseif     {\alg@stykey{sen\~ao-se}}%
+  \gdef\alg@WWhile      {\alg@stykey{enquanto}}%
+  \gdef\alg@WFor        {\alg@stykey{para}}%
+  \gdef\alg@WDo         {\alg@stykey{fa\c{c}a}}%
+  \gdef\alg@WRepeat     {\alg@stykey{repita}}%
+  \gdef\alg@WUntil      {\alg@stykey{at\'e~que}}%
+  \gdef\alg@WFrom       {\alg@stykey{de}}%
+  \gdef\alg@WTo         {\alg@stykey{at\'e}}%
+  \gdef\alg@WDownto     {\alg@stykey{descendo~at\'e}}%
+  \gdef\alg@WStep       {\alg@stykey{passo}}%
+  \gdef\alg@WReturn     {\alg@stykey{devolva}}%
+  \gdef\alg@WError      {\alg@stykey{erro}}%
+  \gdef\alg@WBreak      {\alg@stykey{caia~fora}}%
+  \gdef\alg@WFalse      {\alg@styident{falso}}%
+  \gdef\alg@WTrue       {\alg@styident{verdadeiro}}%
+  \gdef\alg@WNil        {\alg@styident{nil}}%
+  \gdef\alg@WAnd        {\mathrel{\alg@stykey{e}}}%
+  \gdef\alg@WOr         {\mathrel{\alg@stykey{ou}}}%
+  \gdef\alg@WNot        {\mathord{\alg@stykey{n\~ao }}}%
+ \fi}
+\alg@language
+
+\def\alg@WCom           {\triangleright}
+\def\alg@WGet           {\leftarrow}
+\def\alg@WExch          {\leftrightarrow}
+\def\alg@WRng           {\mathinner{\ldotp\ldotp}}
+
+\let\Key\alg@stykey
+\let\Const\alg@styident
+\let\Algo\alg@styident
+\let\Call\alg@stycall
+
+\def\If         {\alg@WIf}
+\def\Then       {\alg@WThen}
+\def\Else       {\alg@WElse}
+\def\Elseif     {\alg@WElseif}
+\def\While      {\alg@WWhile}
+\def\For        {\alg@WFor}
+\def\Do         {\alg@WDo}
+\def\Repeat     {\alg@WRepeat}
+\def\Until      {\alg@WUntil}
+\def\To         {\alg@WTo}
+\def\Downto     {\alg@WDownto}
+\def\Step       {\alg@WStep}
+\def\Return     {\alg@WReturn}
+\def\Error      {\alg@WError}
+\def\Break      {\alg@WBreak}
+\def\False      {\alg@WFalse}
+\def\True       {\alg@WTrue}
+\def\Nil        {\alg@WNil}
+
+\let\Com        \alg@WCom
+\let\Get        \alg@WGet
+\let\Exch       \alg@WExch
+\let\Rng        \alg@WRng
+\def\And        {\alg@WAnd}
+\def\Or         {\alg@WOr}
+\def\Not        {\alg@WNot}
+
+\newdimen\alg@T                 % Tabulation size
+
+\def\alg@tabulation{%
+ \def\@tempa##1{%
+  \sbox\@tempboxa{##1}%
+  \ifdim\wd\@tempboxa>\alg@T\global\alg@T\wd\@tempboxa\fi}%
+ \global\alg@T\z@
+ \@tempa\alg@WElse
+ \@tempa{\ifalg@OW\alg@WDo\else\alg@WRepeat\fi}%
+ \sbox\@tempboxa\ \global\advance\alg@T\wd\@tempboxa
+ \relax}
+\alg@tabulation
+
+\newcount\alg@Sn
+\def\alg@Sd{}
+\def\alg@Sc{}
+
+\def\alg@emptystack{%
+ \global\alg@Sn\z@
+ \xdef\alg@Sd{}%
+ \relax}
+
+\def\alg@current#1{%
+ \xdef\alg@Sc{#1}}
+
+\def\alg@push{%
+ \ifalg@E\else
+  \global\advance\alg@Sn\@ne
+  \xdef\alg@Sd{\alg@Sc,\alg@Sd}%
+  \relax
+ \fi}
+
+\def\alg@pop#1{%
+ \ifalg@E\else
+  \ifnum\alg@Sn=\z@\else\expandafter\alg@pop@\alg@Sd\@@#1\@@\fi\fi}
+
+\def\alg@pop@#1,#2\@@#3\@@{%
+ \global\advance\alg@Sn\m@ne\relax
+ \xdef\alg@Sd{#2}%
+ \@tempswafalse\def\@tempa{#1}%
+ \@for\@tempc:=#3\do{\ifx\@tempc\@tempa\@tempswatrue\fi}%
+ \if@tempswa\else\alg@error{Unexpected \alg@Sc}\fi}
+
+\def\alg@Z{&}
+\newif\ifalg@X          % Follow (extend)
+\newif\ifalg@Y          % is extensible
+\newif\ifalg@U          % Com
+\newif\ifalg@I          % In an internal command
+\newif\ifalg@M          % Math mode
+
+\newif\ifalg@Ga
+
+\newif\ifalg@Mp
+\newif\ifalg@Me
+\def\alg@Mr{}
+\newbox\alg@Md
+\newdimen\alg@Mt
+\newif\ifalg@Mx
+\newif\ifalg@Mu
+\newif\ifalg@Mm
+\newcount\alg@Mn
+
+\newcount\alg@Ln
+\newif\ifalg@La
+
+\newdimen\alg@Rx
+\newif\ifalg@Ra
+\def\alg@Rd{}
+
+\def\alg@write@#1#2#3#4{%
+ \ifalg@E\else
+  \ifalg@Mp
+   \@tempswatrue
+   \ifnum\alg@Ln=\@ne\ifalg@Ga\else\@tempswafalse\fi\fi
+   \if@tempswa\\\fi
+%   \ifalg@Mx\else\number\alg@Ln\fi
+   \ifalg@Mx\else\hphantom{99}\makebox[0pt][r]{\number\alg@Ln}\fi
+   \ifalg@X\else\global\advance\alg@Ln\@ne\fi
+   \alg@Z
+   \ifalg@X\else\ifx\alg@Mr\@empty\else
+    \global\sbox\alg@Md{\usebox\alg@Md\ \alg@Mr}\gdef\alg@Mr{}%
+   \fi\fi
+   \global\sbox\alg@Md{%
+    \hskip\alg@Mt\ifalg@Mu$\alg@WCom$\ \fi\usebox\alg@Md}%
+   \ifalg@Ra
+    \hbox to\z@{\usebox\alg@Md\hss}%
+    \sbox\@tempboxa{\hskip\alg@Rx$\alg@WCom$\ \ignorespaces\alg@Rd}%
+    \ifdim\wd\@tempboxa>\wd\alg@Md
+     \hbox to\wd\@tempboxa{\usebox\@tempboxa\hss}%
+    \else
+     \usebox\@tempboxa
+    \fi
+    \ifdim\wd\alg@Md>\alg@Rx
+     \@tempdima\alg@Rx\advance\@tempdima-\wd\alg@Md\@tempcnta-\@tempdima
+     \advance\@tempcnta\alg@T\advance\@tempcnta\m@ne\divide\@tempcnta\alg@T
+     \alg@warning{A right-comment should be shifted \number\@tempcnta\space
+      tabulations to the right}%
+    \fi
+    \global\alg@Rafalse
+   \else\usebox\alg@Md\fi
+   \alg@Z
+   \global\alg@Metrue
+  \fi
+  \relax
+  \ifalg@X\global\alg@Mxtrue\else
+   \global\alg@Mxfalse
+   \@tempcnta\alg@Sn\advance\@tempcnta\m@ne\global\alg@Mn\@tempcnta
+  \fi
+  \ifalg@M\global\alg@Mmtrue\else\global\alg@Mmfalse\fi
+  \ifalg@Me
+   \@tempdima\alg@T\multiply\@tempdima\alg@Mn\global\alg@Mt\@tempdima
+  \fi
+  \ifalg@U\global\alg@Mutrue\else\global\alg@Mufalse\fi
+  \ifx A#1\alg@Mptrue\else\alg@Mpfalse\fi
+  \global\sbox\alg@Md{%
+   \ifalg@Me\else\usebox\alg@Md\fi
+   #2\ifx#2\@empty\else\ifx#3\@empty\else\ \fi\fi\ignorespaces #3}%
+  \global\alg@Mefalse
+  \ifx#4\@empty\else\gdef\alg@Mr{#4}\fi
+  \relax
+ \fi}
+
+\def\alg@writeln{\alg@write@ A}
+\def\alg@write{\alg@write@ B}
+
+\def\alg@emptyln#1{%
+% \ifalg@Mp\else\alg@writeln{}{#1}{}\fi}
+ \ifalg@Mp\else\alg@writeln{}{}{}\fi}
+
+\def\alg@inon{%
+ \ifalg@A
+  \ifalg@E\else
+   \ifnum\alg@Ln=\z@\global\alg@Ln\@ne\else\global\alg@Latrue\fi
+   \ifalg@I\alg@illegal\else\global\alg@Itrue\fi
+   \relax
+  \fi
+ \else\alg@illegal\fi}
+
+\def\alg@inoff{%
+ \global\alg@Ifalse\relax\ignorespaces}
+
+\def\alg@mathpar#1{%
+ \@ifnextchar"{%
+  \global\alg@Mfalse\relax\def\@tempa"{#1}\@tempa}{%
+  \global\alg@Mtrue\relax#1}}
+
+\def\alg@parstyle#1{%
+ \ifalg@Mm{$#1$}\else{\ignorespaces #1}\fi}
+
+\def\algo#1#2{%
+ \ifalg@A
+  \ifalg@E\else\alg@illegal\fi
+ \else
+  \global\alg@Efalse\global\alg@Atrue\global\alg@Itrue
+  \global\alg@Xfalse\global\alg@Yfalse\global\alg@Ufalse
+  \def\@tempa{#1}%
+  \ifx\@tempa\@empty\global\alg@Gafalse\else\global\alg@Gatrue\fi
+  \global\alg@Lafalse\global\alg@Ln\z@
+  \global\alg@Metrue
+  \global\alg@Mpfalse
+  \gdef\alg@Mr{}%
+  \global\alg@Mn\z@
+  \global\alg@Rafalse
+  \def\@currentlabel{\number\alg@Ln}%
+  \let\alg@@label\label
+  \def\label##1{\alg@@label{##1}\ignorespaces}%
+  \relax
+  \alg@emptystack\alg@current{\#}\alg@push
+  \tabcolsep\z@\tabular{@{ }r@{\hskip\@ne em}ll}%
+  \ifalg@Ga
+   \multicolumn{2}{l}{\alg@stycall{#1}{#2}\vspace{0.16667em}}\alg@Z\fi
+  \alg@inoff
+ \fi}
+
+\def\endalgo{%
+ \alg@current{endalgo}\alg@inon
+ \alg@pop{\#}%
+ \global\alg@Xfalse\global\alg@Yfalse\global\alg@Ufalse\relax
+ \alg@emptyln{END}%
+ \ifalg@La\alg@writeln{}{}{}\fi
+ \ifalg@A\endtabular\fi
+ \alg@inoff
+ \global\alg@Afalse\global\alg@Etrue\relax
+}
+\def\IF{\alg@mathpar\alg@xif}
+\def\alg@xif#1{%
+ \alg@current{IF}\alg@inon
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Ufalse\relax
+ \alg@writeln{\alg@WIf}{\alg@parstyle{#1}}{\alg@WThen}%
+ \alg@push
+ \alg@inoff
+}
+\def\ELSEIF{\alg@mathpar\alg@xelseif}
+\def\alg@xelseif#1{%
+ \alg@current{ELSEIF}\alg@inon
+ \alg@pop{IF,ELSEIF}%
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Ufalse\relax
+ \alg@writeln{\alg@WElseif}{\alg@parstyle{#1}}{\alg@WThen}%
+ \alg@push
+ \alg@inoff
+}
+\def\ELSE{%
+ \alg@current{ELSE}\alg@inon
+ \alg@pop{IF,ELSEIF}%
+ \global\alg@Xfalse\global\alg@Yfalse\global\alg@Ufalse\relax
+ \alg@write{\hbox to\alg@T{\alg@WElse\hss}}{}{}%
+ \alg@push
+ \alg@inoff
+}
+\def\FI{%
+ \alg@current{FI}\alg@inon
+ \alg@pop{IF,ELSEIF,ELSE}%
+ \alg@emptyln{ENDIF}%
+ \global\alg@Xfalse\global\alg@Yfalse\global\alg@Ufalse\relax
+ \alg@inoff
+}
+\def\DOWHILE{\alg@mathpar\alg@xdowhile}
+\def\alg@xdowhile#1{%
+ \alg@current{DOWHILE}\alg@inon
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Ufalse\relax
+ \alg@writeln{\alg@WWhile}{\alg@parstyle{#1}}{\alg@WDo}%
+ \alg@push
+ \alg@inoff
+}
+\def\DOFOR{\alg@mathpar\alg@xdofor}
+\def\alg@xdofor#1{%
+ \alg@current{DOFOR}\alg@inon
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Ufalse\relax
+ \alg@writeln{\alg@WFor}{\alg@parstyle{#1}}{\alg@WDo}%
+ \alg@push
+ \alg@inoff
+}
+\def\OD{%
+ \alg@current{OD}\alg@inon
+ \alg@pop{DOWHILE,DOFOR}%
+ \alg@emptyln{ENDDO}%
+ \global\alg@Xfalse\global\alg@Yfalse\global\alg@Ufalse\relax
+ \alg@inoff
+}
+\def\REPEAT{%
+ \alg@current{REPEAT}\alg@inon
+ \ifalg@E\else\ifalg@OW\alg@illegal\fi\fi
+ \global\alg@Xfalse\global\alg@Yfalse\global\alg@Ufalse\relax
+ \alg@write{\hbox to\alg@T{\alg@WRepeat\hss}}{}{}%
+ \alg@push
+ \alg@inoff
+}
+\def\UNTIL{\alg@mathpar\alg@xuntil}
+\def\alg@xuntil#1{%
+ \alg@current{UNTIL}\alg@inon
+ \alg@pop{REPEAT}%
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Ufalse\relax
+ \alg@writeln{\alg@WUntil}{\alg@parstyle{#1}}{}%
+ \alg@inoff
+}
+\def\DO{%
+ \alg@current{DO}\alg@inon
+ \ifalg@E\else\ifalg@OW\else\alg@illegal\fi\fi
+ \global\alg@Xfalse\global\alg@Yfalse\global\alg@Ufalse\relax
+ \alg@write{\hbox to\alg@T{\alg@WDo\hss}}{}{}%
+ \alg@push
+ \alg@inoff
+}
+\def\WHILEOD{\alg@mathpar\alg@xwhileod}
+\def\alg@xwhileod#1{%
+ \alg@current{WHILEOD}\alg@inon
+ \alg@pop{DO}%
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Ufalse\relax
+ \alg@writeln{\alg@WWhile}{\alg@parstyle{#1}}{}%
+ \alg@inoff
+}
+\def\ACT{\alg@mathpar\alg@xaction}
+\def\alg@xaction#1{%
+ \alg@current{ACT}\alg@inon
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Ufalse\relax
+ \alg@writeln{}{\alg@parstyle{#1}}{}%
+ \alg@inoff
+}
+\def\COM{\global\alg@Mfalse\relax\alg@xcom}
+\def\alg@xcom#1{%
+ \alg@current{COM}\alg@inon
+ \global\alg@Xfalse\global\alg@Ytrue\global\alg@Utrue\relax
+ \alg@writeln{}{#1}{}%
+ \alg@inoff
+}
+\def\EXT{\alg@xextend}
+\def\alg@xextend#1{%
+ \alg@current{EXT}\alg@inon
+ \ifalg@Y
+  \global\alg@Xtrue\global\alg@Ytrue\relax
+  \alg@writeln{}{\hskip\@ne em\alg@parstyle{#1}}{}%
+ \else
+  \alg@warning{Ignored extension}%
+ \fi
+ \alg@inoff
+}
+\def\RCOM#1#2{%
+ \alg@current{RCOM}\alg@inon
+ \ifalg@Y
+  \ifalg@Ra
+   \alg@warning{Duplicate right-comment}%
+  \else
+   \global\alg@Ratrue
+   \def\@tempa{#1}\ifx\@tempa\@empty\else
+    \@tempdima\alg@T\multiply\@tempdima#1\global\alg@Rx\@tempdima\fi
+   \def\@tempa{#2}\ifx\@tempa\@empty\else
+    \gdef\alg@Rd{#2}\fi
+   \relax
+  \fi
+ \else
+  \alg@warning{Ignored right-comment}%
+ \fi
+ \alg@inoff
+}
+
+\def\alg@@math#1#2{\@ifnextchar"{\def\@tempa"{#1}\@tempa}{#2}}
+
+\def\DOFORI#1#2#3{\DOFOR"{$#1$ \alg@WFrom\ $#2$ \alg@WTo\ $#3$}}
+\def\DOFORD#1#2#3{\DOFOR"{$#1$ \alg@WFrom\ $#2$ \alg@WDownto\ $#3$}%
+}
+\def\DOFORS#1#2#3#4{%
+ \DOFOR"{$#1$ \alg@WFrom\ $#2$ \alg@WTo\ $#3$ \alg@WStep\ $#4$}}
+
+\def\RETURN{\alg@@math{\alg@@ret@t}{\alg@@ret@m}}
+\def\alg@@ret@m#1{\ACT"{\alg@WReturn\ $#1$}}
+\def\alg@@ret@t#1{\ACT"{\alg@WReturn\ \ignorespaces #1}}
+
+\def\ERROR#1{\ACT"{\alg@WError\ \ignorespaces #1}}
+
+\def\BREAK{\ACT"{\alg@WBreak}}
+
+\def\SET{\alg@@math{\alg@@set@t}{\alg@@set@m}}
+\def\alg@@set@m#1#2{\ACT{#1\alg@WGet#2}}
+\def\alg@@set@t#1#2{\ACT"{$#1\alg@WGet\null$\ignorespaces#2}}
+
+\def\INCR{\@ifnextchar[{\alg@@incr}{\alg@@incr[1]}}
+\def\alg@@incr[#1]#2{\ACT{#2\alg@WGet#2+#1}}
+
+\def\DECR{\@ifnextchar[{\alg@@decr}{\alg@@decr[1]}}
+\def\alg@@decr[#1]#2{\ACT{#2\alg@WGet#2-#1}}
+
+\def\CALL#1#2{\ACT{\alg@stycall{#1}{#2}}}
+
+\def\algoResetOptions{\@ifnextchar[{\alg@options A}{\alg@options A[]}}
+
+\DeclareOption{portuguese}{\alg@options B[portuguese]}
+\DeclareOption{whileod}{\alg@options B[whileod]}
+\ProcessOptions
+
+
+\def\SETT#1#2{\SET"{#1}{#2}}
+\def\IFT#1{\IF"{#1}}
+\def\ACTT#1{\ACT"{#1}}
+\def\DOWHILET#1{\DOWHILE"{#1}}
+\def\DOFORT#1{\DOFOR"{#1}}
+\def\UNTILT#1{\UNTIL"{#1}}
+\def\WHILEODT#1{\WHILEOD"{#1}}

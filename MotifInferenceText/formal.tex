@@ -1,0 +1,243 @@
+%%This is a very basic article template.
+%%There is just one section and two subsections.
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[brazil]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[normalem]{ulem}
+\usepackage[portuguese]{alg}
+\usepackage[dvips]{graphicx}
+
+\usepackage{alg}
+\usepackage{float}
+\floatstyle{ruled}
+\newfloat{algorithm}{htbp}{loa}%[chapter]
+\newcommand{\listofalgorithms}{\listof{algorithm}{Lista de Algoritmos}}
+\floatname{algorithm}{Algoritmo}
+
+%Teoremas, Lemas, etc.
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{proposicao}[teorema]{Proposição}
+\newtheorem{observacao}[teorema]{Observação}
+\newtheorem{corolario}[teorema]{Corolário}
+\newtheorem{definicao}[teorema]{Definição}
+\newtheorem{exemplo}[teorema]{Exemplo}
+\newtheorem{problema}[teorema]{Problema}
+\newenvironment{prova}[1][Prova.]{\begin{trivlist}
+\item[\hskip \labelsep {\itshape #1}]}{\end{trivlist}}
+\newenvironment{comentario}[1][Comentário]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+
+\newcommand{\tq}{\mathrel{|}}
+\newcommand{\weightsym}{\phi}
+\newcommand{\weight}[1]{\function{\weightsym}{#1}}
+\newcommand{\invert}[1]{\mathord{\overline{{#1}}}}
+\newcommand{\invertsym}{\mathord{\overline{\ \ {\vspace{3 mm}}}}}
+\newcommand{\aplica}{\longrightarrow}
+\newcommand{\implica}{\Longrightarrow}
+\newcommand{\sse}{\Longleftrightarrow}
+\newcommand{\natset}{\ensuremath{\mathbb{N}}}
+\newcommand{\intset}{\ensuremath{\mathbb{Z}}}
+\newcommand{\realset}{\ensuremath{\mathbb{R}}}
+\newcommand{\tabenum}{\hspace{20 pt}}
+
+\newcommand{\seq}{seqüência}
+\newcommand{\seqs}{seqüências}
+\newcommand{\alignScore}[2]{\ensuremath{\omega(#1,#2)}}
+\newcommand{\alignScorest}[6]{\ensuremath{\alignScore{#1[#3..#4]}{#2[#5..#6]}}}
+\newcommand{\alignScoreSimples}[2]{\ensuremath{\omega'(#1,#2)}}
+\newcommand{\alignScoreSimplesst}[6]{\ensuremath{\alignScoreSimples{#1[#3..#4]}{#2[#5..#6]}}}
+\newcommand{\vomega}[2]{\ensuremath{\omega_v(#1[#2])}}
+\newcommand{\homega}[2]{\ensuremath{\omega_h(#1[#2])}}
+\newcommand{\domega}[4]{\ensuremath{\omega_d(#1[#3],#2[#4])}}
+\newcommand{\romega}{\ensuremath{\omega_r}}
+\newcommand{\dup}[3]{\ensuremath{\omega_{#1}(#2,#3)}}
+\newcommand{\dupoper}[4]{\ensuremath{\delta(#1,#2,#3,#4)}}
+\newcommand{\seqbaseLetter}{\ensuremath{x}}
+\newcommand{\seqbase}[3]{\ensuremath{\seqbaseLetter}(#1[#2..#3])}
+\newcommand{\seqbasei}[5]{\ensuremath{\seqbaseLetter_{#1[#3]}}(#2[#4..#5])}
+\newcommand{\dupi}[5]{\ensuremath{\omega_{#2|#1}(#3,#4,#5)}}
+\newcommand{\wts}[2]{\ensuremath{W_{#2|#1}}}
+\newcommand{\wdupi}[5]{\ensuremath{\wts{#1}{#2}[#3,#4,#5]}}
+\newcommand{\bestScoreA}[3]{\ensuremath{\omega_{#1}^{A}(#2,#3)}}
+\newcommand{\bestScoreB}[3]{\ensuremath{\omega_{#1}^{B}(#2,#3)}}
+\newcommand{\bestScoreC}[3]{\ensuremath{\omega_{#1}^{C}(#2,#3)}}
+\newcommand{\bestScoreD}[4]{\ensuremath{\omega_{#1|#2}^{D}(#3,#4)}}
+\newcommand{\setA}[3]{\ensuremath{A_{#1}(#2,#3)}}
+\newcommand{\setB}[3]{\ensuremath{B_{#1}(#2,#3)}}
+\newcommand{\setC}[3]{\ensuremath{C_{#1}(#2,#3)}}
+\newcommand{\setD}[4]{\ensuremath{D_{#1|#2}(#3,#4)}}
+\newcommand{\setE}[3]{\ensuremath{E_{#1}(#2,#3)}}
+
+\newcommand{\wbestScore}[1]{\ensuremath{W_{#1}}}
+\newcommand{\wbestScoreAjm}[1]{\ensuremath{\wbestScore{#1}^{A}}}
+\newcommand{\wbestScoreAj}[4]{\ensuremath{\wbestScoreAjm{#1}[#2,#3,#4]}}
+\newcommand{\wbestScoreBjm}[1]{\ensuremath{\wbestScore{#1}^{B}}}
+\newcommand{\wbestScoreBj}[4]{\ensuremath{\wbestScoreBjm{#1}[#2,#3,#4]}}
+\newcommand{\wbestScoreCjm}[1]{\ensuremath{\wbestScore{#1}^{C1}}}
+\newcommand{\wbestScoreCj}[3]{\ensuremath{\wbestScoreCjm{#1}[#2,#3]}}
+\newcommand{\wbestScoreCjjm}[1]{\ensuremath{\wbestScore{#1}^{C2}}}
+\newcommand{\wbestScoreCjj}[3]{\ensuremath{\wbestScoreCjjm{#1}[#2,#3]}}
+\newcommand{\wbestScoreDjm}[2]{\ensuremath{\wbestScore{#1|#2}^{D}}}
+\newcommand{\wbestScoreDj}[5]{\ensuremath{\wbestScoreDjm{#1}{#2}[#3,#4,#5]}}
+
+\newcommand{\wbestScorem}[1]{\ensuremath{\widehat{#1}}}
+\newcommand{\wbestScoreAm}[1]{\ensuremath{\wbestScorem{\wbestScoreAjm{#1}}}}
+\newcommand{\wbestScoreA}[3]{\ensuremath{\wbestScoreAm{#1}[#2,#3]}}
+\newcommand{\wbestScoreBm}[1]{\ensuremath{\wbestScorem{\wbestScoreBjm{#1}}}}
+\newcommand{\wbestScoreB}[3]{\ensuremath{\wbestScoreBm{#1}[#2,#3]}}
+\newcommand{\wbestScoreCm}[1]{\ensuremath{\wbestScorem{\wbestScore{#1}^{C}}}}
+\newcommand{\wbestScoreC}[3]{\ensuremath{\wbestScoreCm{#1}[#2,#3]}}
+\newcommand{\wbestScoreDm}[2]{\ensuremath{\wbestScorem{\wbestScoreDjm{#1}{#2}}}}
+\newcommand{\wbestScoreD}[4]{\ensuremath{\wbestScoreDm{#1}{#2}[#3,#4]}}
+
+% \newcommand{\fmia}[7]{\ensuremath{\delta_{m1}(#1,#2,#3,#4,#5,#6,#7)}}
+% \newcommand{\fmiia}[4]{\ensuremath{\omega_{#1}^{#4}(#2,#3)}}
+% \newcommand{\fmii}[3]{\ensuremath{\omega_{#1}(#2,#3)}}
+% \newcommand{\fmiiia}[4]{\ensuremath{\omega_{#1}^{#4}(#2,#3)}}
+% \newcommand{\fmiii}[3]{\ensuremath{\omega_{#1}(#2,#3)}}
+% \newcommand{\fmiv}[6]{\ensuremath{\omega_{#2|#1}^{#3}(#4,#5,#6)}}
+% \newcommand{\fmiva}[6]{\ensuremath{\underline{\omega_{#2|#1}^{#3}}(#4,#5,#6)}}
+% \newcommand{\fmivb}[6]{\ensuremath{\overline{\omega_{#2|#1}^{#3}}(#4,#5,#6)}}
+% \newcommand{\maxnew}[3]{\ensuremath{\max\left\{#3\textrm{; }\forall #1 \tq #2\right\}}}
+\newcommand{\maxnew}[3]{\ensuremath{\max_{\forall #1 \tq #2}\left(#3\right)}}
+%#1 variables, #2 restrictions and #3 expression
+\newcommand{\mtm}{\ensuremath{M_t}}
+\newcommand{\msm}{\ensuremath{M_s}}
+\newcommand{\mt}[2]{\ensuremath{\mtm[#1,#2]}}
+\newcommand{\ms}[2]{\ensuremath{\msm[#1,#2]}}
+
+
+\newcommand{\Wt}{\ensuremath{W_t}}
+\newcommand{\Wtold}{\ensuremath{W_t^{old}}}
+\newcommand{\Ws}{\ensuremath{W_s}}
+\newcommand{\Wsold}{\ensuremath{W_s^{old}}}
+\newcommand{\wt}[2]{\ensuremath{\Wt[#1,#2]}}
+\newcommand{\wtold}[2]{\ensuremath{\Wtold[#1,#2]}}
+\newcommand{\ws}[2]{\ensuremath{\Ws[#1,#2]}}
+\newcommand{\wsold}[2]{\ensuremath{\Wsold[#1,#2]}}
+
+\newcommand{\WA}{\wbestScoreAm{t}}
+\newcommand{\WAj}{\wbestScoreAjm{t}}
+\newcommand{\wA}[2]{\ensuremath{\WA[#1,#2]}}
+\newcommand{\wAj}[2]{\ensuremath{\WAj[#1,#2]}}
+
+\newcommand{\WB}{\wbestScoreBm{t}}
+\newcommand{\WBj}{\wbestScoreBjm{t}}
+\newcommand{\wB}[2]{\ensuremath{\WB[#1,#2]}}
+\newcommand{\wBj}[2]{\ensuremath{\WBj[#1,#2]}}
+
+\newcommand{\WC}{\wbestScoreCm{t}}
+\newcommand{\WCj}{\wbestScoreCjm{t}}
+\newcommand{\WCjj}{\wbestScoreCjjm{t}}
+\newcommand{\wC}[2]{\ensuremath{\WC[#1,#2]}}
+\newcommand{\wCj}[2]{\ensuremath{\WCj[#1,#2]}}
+\newcommand{\wCjj}[2]{\ensuremath{\WCjj[#1,#2]}}
+
+\newcommand{\WD}{\wbestScoreDm{t}{s}}
+\newcommand{\WDj}{\wbestScoreDjm{t}{s}}
+\newcommand{\wD}[2]{\ensuremath{\WD[#1,#2]}}
+\newcommand{\wDj}[2]{\ensuremath{\WDj[#1,#2]}}
+
+
+\newcount\hour
+\newcount\minute
+\hour=\time \divide \hour by 60 \minute=\time \loop \ifnum \minute
+> 59 \advance \minute by -60 \repeat
+\def\now{%
+\ifnum \hour<13 \ifnum \hour<1 12:\else\number\hour:\fi \ifnum
+\minute<10 0\fi
+\number\minute%
+%\ifnum \hour<12 \ AM \else \ PM \fi
+\else \advance \hour by -12 \number\hour:%
+\ifnum \minute<10 0\fi
+\number\minute%
+%\ PM%
+\fi%
+}
+\let\oldthepage=\thepage
+\renewcommand{\thepage}{\today{} \now \qquad (\oldthepage)}
+
+\newcommand{\cqd}{\nobreak \ifvmode \relax \else
+      \ifdim\lastskip<1.5em \hskip-\lastskip
+      \hskip1.5em plus0em minus0.5em \fi \nobreak
+      \vrule height0.75em width0.5em depth0.25em\fi}
+
+
+\newcommand{\alfcolor}{\ensuremath{\Sigma}}
+\newcommand{\colorSym}{\ensuremath{c}}
+\newcommand{\motifSym}{\ensuremath{M}}
+\newcommand{\fmotifSym}{\ensuremath{motif}}
+\newcommand{\fmotif}[1]{\ensuremath{\fmotifSym (#1)}}
+\newcommand{\fcolorSym}{\ensuremath{color}}
+\newcommand{\fcolor}[1]{\ensuremath{\fcolorSym (#1)}}
+\newcommand{\subgraphconSym}{\ensuremath{s}}
+\newcommand{\setsubgraphconSym}{\ensuremath{S}}
+\newcommand{\setsubgSym}{\ensuremath{\setsubgraphconSym}}
+\newcommand{\setsubgcSym}{\ensuremath{\setsubgraphconSym}}
+\newcommand{\setsubgc}[1]{\ensuremath{\setsubgcSym(#1)}}
+\newcommand{\setsubgcsSym}{\ensuremath{\widehat{\setsubgraphconSym}}}
+\newcommand{\setsubgcs}[2]{\ensuremath{\setsubgcsSym(#1,#2)}}
+
+\begin{document}
+
+\title{Procura de motifs}
+\author{Augusto Fernandes Vellozo}
+
+\maketitle
+
+\section{Definições}
+
+\begin{problema}\label{prob:listsubconexo}
+Dado um grafo $G$ encontrar e listar todos os subgrafos conexos de $G$.
+\end{problema}
+
+Identificaremos um subgrafo \subgraphconSym\ de $G$ pelo conjunto dos vértices
+de \subgraphconSym.
+
+\begin{definicao}[Função \fmotifSym] Dado um grafo $G=(V,E)$ e uma função
+$\fcolorSym : V \aplica \alfcolor$, definimos a função $\fmotifSym : V^* \aplica
+{\alfcolor}^*$ tal que, $\fmotif{\subgraphconSym}=\{\fcolor{v_1}, \fcolor{v_2},
+\ldots, \fcolor{v_n}\}$ onde $\subgraphconSym=\{v_1, v_2, \ldots, v_n \}$.
+\end{definicao}
+
+\begin{problema}\label{prob:infmotif}
+Dado um grafo $G=(V,E)$ e uma função $\fmotifSym : V^* \aplica {\alfcolor}^*$
+encontrar e listar todo par $(\motifSym, \setsubgraphconSym)$,  onde
+$\motifSym=\fmotif{\subgraphconSym}$ $\forall\ \subgraphconSym \in
+\setsubgraphconSym$  e \subgraphconSym\ é um subgrafo conexo de $G$. \motifSym
+poderá ser limitado a um tamanho mínimo e/ou máximo.
+
+%  $\motifSym$ é um
+% \emph{multi-set} $\{\colorSym_1, \colorSym_2, \ldots \colorSym_n\}$, $\colorSym_i \in \Sigma^{\fcolorSym}$, $1 \leq i \leq n$ e $\setsubgraphconSym$ é um conjunto não vazio de subgrafos
+% conexos de $G$, ou seja, $\setsubgraphconSym=\{\subgraphconSym_1,
+% \subgraphconSym_2, \ldots, \subgraphconSym_n$, $\setsubgraphconSym \neq \emptyset$ e $\motifSym=\{\colorSym_1, \colorSym_2, \ldots \colorSym_n\}$, tal que $\colorSym_i \in \Sigma^{\fcolorSym}$, $1 \leq i \leq n$
+\end{problema}
+
+Diremos que o subgrafo conexo \subgraphconSym\ de $G$ é uma ocorrência de
+\motifSym\ se $\fmotif{\subgraphconSym}=\motifSym$.
+
+Assumiremos que existe uma ordem para os vértices de $G$. Desta forma, podemos
+assumir que todo subgrafo de $G$ será identificado pela \seq\ $(v_1, v_2, \ldots,
+v_n)$ crescente de seus vértices.
+
+\begin{definicao}[\setsubgc{v}]
+\setsubgc{v} é o conjunto de todos os subgrafos conexos de $G$ que contém $v$.
+\end{definicao}
+
+\begin{definicao}[\setsubgcs{v}{v'}]
+\setsubgcs{v}{v'} é o conjunto de todos os subgrafos conexos de $G$ que contém
+$v$ e que cujo menor vértice é v'.
+\end{definicao}
+
+Portanto se $(v_1, v_2, \ldots,
+v_n) \in \setsubgcs{v}{v'}$ então $v_1=v'$ e para algum $i$, $1 \leq i \leq n$,
+$v_i=v$.
+
+Sejam $v$ e $v'$ vértices de $G$ tais que $v > v'$.
+
+\end{document}
