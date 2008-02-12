@@ -183,6 +183,12 @@
 \newcommand{\setsubgc}[1]{\ensuremath{\setsubgcSym(#1)}}
 \newcommand{\setsubgcsSym}{\ensuremath{\widehat{\setsubgraphconSym}}}
 \newcommand{\setsubgcs}[2]{\ensuremath{\setsubgcsSym(#1,#2)}}
+\newcommand{\setsubgcsemSym}{\ensuremath{\bar{\setsubgraphconSym}}}
+\newcommand{\setsubgcsem}[2]{\ensuremath{\setsubgcsemSym(#1,#2)}}
+
+\newcommand{\adj}[1]{\ensuremath{adj (#1)}}
+\newcommand{\adjmaior}[1]{\ensuremath{adj^>(#1)}}
+\newcommand{\subgempty}{\ensuremath{\subgraphSym_{\emptyset}}}
 
 \begin{document}
 
@@ -235,6 +241,11 @@ v_n)$ crescente de seus vértices.
 $v$ e que cujo menor vértice é v'.
 \end{definicao}
 
+\begin{definicao}[\setsubgcsem{v}{v'}]
+\setsubgcsem{v}{v'} é o conjunto de todos os subgrafos conexos de $G$ que contém
+$v$ e que não contém v'.
+\end{definicao}
+
 Portanto se $(v_1, v_2, \ldots,
 v_n) \in \setsubgcs{v}{v'}$ então $v_1=v'$ e $v_i=v$ para algum $i$, $1 \leq i
 \leq n$.
@@ -242,19 +253,50 @@ v_n) \in \setsubgcs{v}{v'}$ então $v_1=v'$ e $v_i=v$ para algum $i$, $1 \leq i
 Sejam $v$ e $v'$ vértices de $G$ tais que $v' <v$. Temos
 que:
 
-$$\setsubgc{v}=\setsubgcs{v}{v} \bigcup_{v_1 < v} \setsubgcs{v}{v_1}.$$
+$$\setsubgc{v}=\setsubgcs{v}{v} \bigcup_{v_1 < v} \setsubgcs{v}{v_1}\ e$$
 
 $$\setsubgc{v}=\setsubgcs{v}{v} \cup \setsubgcs{v}{v'} \bigcup_{v_1\tq v_1<v'}
 \setsubgcs{v}{v_1} \bigcup_{v_2\tq v'<v_2<v}
  \setsubgcs{v}{v_2} \bigcup_{v_3\tq v_3>v} \setsubgcs{v}{v_3}.$$
 
-Como $$\bigcup_{v_3 \in V_3} \setsubgcs{v}{v_3}=\emptyset$$ então
+Como $\bigcup_{v_3 \in V_3} \setsubgcs{v}{v_3}=\emptyset$ então
 $$\setsubgc{v}=\setsubgcs{v}{v} \cup \setsubgcs{v}{v'} \bigcup_{v_1\tq v_1<v'}
 \setsubgcs{v}{v_1} \bigcup_{v_2\tq v'<v_2<v} \setsubgcs{v}{v_2}.$$
 
-Dados dois conjuntos de subgrafos $\setsubgSym_1$ e $\setsubgSym_2$, temos que
-o produto cartesiano $\setsubgSym_1 \times \setsubgSym_2$ é igual a
-$$\{\subgraphSym \tq \subgraphSym = \subgraphSym_1 \cup \subgraphSym_2 \forall\
-\subgraphSym_1 \in \setsubgSym_1\ e\ \subgraphSym_2 \in \setsubgSym_2\}. $$
+Se $v'$ é o menor vértice em $G$, então $$\setsubgc{v}=\setsubgcs{v}{v} \cup
+\setsubgcs{v}{v'}  \bigcup_{v_2\tq v'<v_2<v} \setsubgcs{v}{v_2}\mbox{, ou
+seja}$$
+$$\setsubgc{v}=\bigcup_{v_1\tq v'\leq v_1\leq v}\setsubgcs{v}{v_1}.$$
+
+Logo, se $v$ é o menor vértice em $G$, então
+$$\setsubgc{v}=\setsubgcs{v}{v}.$$
+
+O produto cartesiano de dois conjuntos de subgrafos $\setsubgSym_1$ e
+$\setsubgSym_2$ é dado por: $$\setsubgSym_1 \times
+\setsubgSym_2=\{\subgraphSym_1 \cup
+\subgraphSym_2,\ \forall\ \subgraphSym_1 \in \setsubgSym_1\ e\
+\forall\ \subgraphSym_2 \in \setsubgSym_2\}. $$
+
+O produto cartesiano de um vértice de $G$ e um conjunto de subgrafos de $G$ é
+dado por $$v \times \setsubgSym = \{v \cup \subgraphSym,\ \forall\ \subgraphSym
+\in \setsubgSym\}.$$
+
+Denotaremos \adj{v}\ como o conjunto de vértices de $G$ que são vizinhos de $v$
+e \adjmaior{v}\ como o conjunto de vértices de $G$ que são vizinhos de $v$ e
+maiores que $v$.
+
+Denotaremos o subgrafo vazio, ou seja o subgrafo sem vértices nem arestas, como
+\subgempty.
+
+Podemos dizer que
+$$\setsubgc{v}=\{v \times \prod_{\forall v_i \in \adjmaior{v}}
+(\setsubgcsem{v_i}{v}\cup \subgempty)\}.$$
+
+Se $v$ é o menor vértice de $G$, podemos dizer que
+$$\setsubgcs{v}{v}=\{v \times \prod_{\forall v_i \in \adjmaior{v}}
+(\setsubgcsem{v_i}{v}\cup \subgempty)\}=\{v \times \prod_{\forall v_i \in
+\adjmaior{v}} (\bigcup_{\forall v_j\tq v< v_j\leq v_i}\setsubgcs{v_i}{v_j}\cup
+\subgempty)\}.$$
+
 
 \end{document}
