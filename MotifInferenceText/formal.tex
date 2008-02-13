@@ -170,25 +170,26 @@
 
 \newcommand{\alfcolor}{\ensuremath{\Sigma}}
 \newcommand{\colorSym}{\ensuremath{c}}
-\newcommand{\motifSym}{\ensuremath{M}}
+\newcommand{\motifSym}{\ensuremath{m}}
 \newcommand{\fmotifSym}{\ensuremath{motif}}
 \newcommand{\fmotif}[1]{\ensuremath{\fmotifSym (#1)}}
 \newcommand{\fcolorSym}{\ensuremath{color}}
 \newcommand{\fcolor}[1]{\ensuremath{\fcolorSym (#1)}}
-\newcommand{\subgraphSym}{\ensuremath{s}}
+\newcommand{\subgraphSym}{\ensuremath{\widehat{s}}}
 \newcommand{\subgraphconSym}{\ensuremath{s}}
 \newcommand{\setsubgraphconSym}{\ensuremath{S}}
-\newcommand{\setsubgSym}{\ensuremath{\setsubgraphconSym}}
-\newcommand{\setsubgcSym}{\ensuremath{\widehat{\setsubgraphconSym}}}
+\newcommand{\setsubgSym}{\ensuremath{\widehat{\setsubgraphconSym}}}
+\newcommand{\setsubgcSym}{\ensuremath{S}}
 \newcommand{\setsubgc}[1]{\ensuremath{\setsubgcSym(#1)}}
-\newcommand{\setsubgcsSym}{\ensuremath{\widehat{\setsubgraphconSym}}}
+\newcommand{\setsubgcsSym}{\ensuremath{I}}
 \newcommand{\setsubgcs}[2]{\ensuremath{\setsubgcsSym(#1,#2)}}
-\newcommand{\setsubgcsemSym}{\ensuremath{\bar{\setsubgraphconSym}}}
+\newcommand{\setsubgcsemSym}{\ensuremath{N}}
 \newcommand{\setsubgcsem}[2]{\ensuremath{\setsubgcsemSym(#1,#2)}}
 
 \newcommand{\adj}[1]{\ensuremath{adj (#1)}}
 \newcommand{\adjmaior}[1]{\ensuremath{adj^>(#1)}}
 \newcommand{\subgempty}{\ensuremath{\subgraphSym_{\emptyset}}}
+\newcommand{\distintos}[1]{\ensuremath{d(#1)}}
 
 \begin{document}
 
@@ -204,13 +205,34 @@ Dado um grafo $G$ encontrar e listar todos os subgrafos conexos de $G$.
 \end{problema}
 
 Identificaremos um subgrafo \subgraphSym\ de $G$ pelo conjunto dos vértices
-de \subgraphSym.
+de \subgraphSym. Portanto, dados os subgrafos $\subgraphSym_1$ e
+$\subgraphSym_2$, diremos que $\subgraphSym_1=\subgraphSym_2$ se e somente se
+os vértices de $\subgraphSym_1$ são os mesmos vértices de $\subgraphSym_2$.
+
+Assumiremos que existe uma ordem para os vértices de $G$. Desta forma, podemos
+assumir que todo subgrafo de $G$ será representado pela \seq\ $(v_1, v_2,
+\ldots, v_n)$ crescente de seus vértices.
+
+Por exemplo, se 1, 2, 3 e 4 são vértices de $G$ e adotamos a ordem natural
+dos vértices, então $(1,2,3)$ representa um subgrafo de $G$, assim como
+$(1,2,4)$. Já $(2,1,4)$ e $(1,1,2,3)$ não representam um subgrafo de $G$.
 
 \begin{definicao}[Função \fmotifSym] Dado um grafo $G=(V,E)$ e uma função
 $\fcolorSym : V \aplica \alfcolor$, definimos a função $\fmotifSym : V^* \aplica
 {\alfcolor}^*$ tal que, $\fmotif{\subgraphSym}=\{\fcolor{v_1}, \fcolor{v_2},
 \ldots, \fcolor{v_n}\}$ onde $\subgraphSym=\{v_1, v_2, \ldots, v_n \}$.
 \end{definicao}
+
+Chamaremos a função $\fcolor{v}$ de cor de $v$. Assumiremos que existe uma
+ordem para as cores dos vértices de $G$. Desta forma, podemos assumir que, para
+um subgrafo \subgraphSym\ qualquer de $G$, o $\fmotif{\subgraphSym}$ será
+representado pela \seq\ crescente das cores dos vértices de \subgraphSym.
+
+Repare que qualquer cor pode ocorrer mais de uma vez em
+$\fmotif{\subgraphSym}$. Por exemplo, se $V=\{1, 2, 3 , 4\}$ são os vértices de
+$G$, $\fcolor{1}=A$, $\fcolor{2}=B$, $\fcolor{3}=A$, $\fcolor{4}=C$ e
+assumimos as ordens natural  dos vértices e alfabética das cores, então
+$\fmotif{(1,2,3)}$ é representado por $(A, A, B)$.
 
 \begin{problema}\label{prob:infmotif}
 Dado um grafo $G=(V,E)$ e uma função $\fmotifSym : V^* \aplica {\alfcolor}^*$
@@ -228,22 +250,19 @@ poderá ser limitado a um tamanho mínimo e/ou máximo.
 Diremos que o subgrafo conexo \subgraphconSym\ de $G$ é uma ocorrência de
 \motifSym\ se $\fmotif{\subgraphconSym}=\motifSym$.
 
-Assumiremos que existe uma ordem para os vértices de $G$. Desta forma, podemos
-assumir que todo subgrafo de $G$ será identificado pela \seq\ $(v_1, v_2, \ldots,
-v_n)$ crescente de seus vértices.
-
 \begin{definicao}[\setsubgc{v}]
-\setsubgc{v} é o conjunto de todos os subgrafos conexos de $G$ que contém $v$.
+\setsubgc{v} é o conjunto de todos os subgrafos conexos e distintos de $G$ que
+contém $v$.
 \end{definicao}
 
 \begin{definicao}[\setsubgcs{v}{v'}]
-\setsubgcs{v}{v'} é o conjunto de todos os subgrafos conexos de $G$ que contém
-$v$ e que cujo menor vértice é v'.
+\setsubgcs{v}{v'} é o conjunto de todos os subgrafos conexos e distintos de $G$
+que contém $v$ e que cujo menor vértice é v'.
 \end{definicao}
 
 \begin{definicao}[\setsubgcsem{v}{v'}]
-\setsubgcsem{v}{v'} é o conjunto de todos os subgrafos conexos de $G$ que contém
-$v$ e que não contém v'.
+\setsubgcsem{v}{v'} é o conjunto de todos os subgrafos conexos e distintos de
+$G$ que contém $v$ e que não contém v'.
 \end{definicao}
 
 Portanto se $(v_1, v_2, \ldots,
@@ -255,21 +274,32 @@ que:
 
 $$\setsubgc{v}=\setsubgcs{v}{v} \bigcup_{v_1 < v} \setsubgcs{v}{v_1}\ e$$
 
-$$\setsubgc{v}=\setsubgcs{v}{v} \cup \setsubgcs{v}{v'} \bigcup_{v_1\tq v_1<v'}
-\setsubgcs{v}{v_1} \bigcup_{v_2\tq v'<v_2<v}
- \setsubgcs{v}{v_2} \bigcup_{v_3\tq v_3>v} \setsubgcs{v}{v_3}.$$
-
-Como $\bigcup_{v_3 \in V_3} \setsubgcs{v}{v_3}=\emptyset$ então
-$$\setsubgc{v}=\setsubgcs{v}{v} \cup \setsubgcs{v}{v'} \bigcup_{v_1\tq v_1<v'}
-\setsubgcs{v}{v_1} \bigcup_{v_2\tq v'<v_2<v} \setsubgcs{v}{v_2}.$$
+$$\setsubgc{v}=\setsubgcs{v}{v} \cup \setsubgcs{v}{v'} \bigcup_{v_1\tq v'<v_1<v}
+ \setsubgcs{v}{v_1} \bigcup_{v_2\tq v_2<v'}
+\setsubgcs{v}{v_2} .$$
 
 Se $v'$ é o menor vértice em $G$, então $$\setsubgc{v}=\setsubgcs{v}{v} \cup
-\setsubgcs{v}{v'}  \bigcup_{v_2\tq v'<v_2<v} \setsubgcs{v}{v_2}\mbox{, ou
+\setsubgcs{v}{v'}  \bigcup_{v_1\tq v'<v_1<v} \setsubgcs{v}{v_1}\mbox{, ou
 seja}$$
 $$\setsubgc{v}=\bigcup_{v_1\tq v'\leq v_1\leq v}\setsubgcs{v}{v_1}.$$
 
 Logo, se $v$ é o menor vértice em $G$, então
 $$\setsubgc{v}=\setsubgcs{v}{v}.$$
+
+Dados dois subgrafos $\subgraphSym_1$ e $\subgraphSym_2$ de $G$ temos que
+$$\subgraphSym_1 \cup \subgraphSym_2 = (v_1, v_2, \ldots, v_n) \tq v_i \in
+\subgraphSym_1 \mbox{ e/ou } v_i \in
+\subgraphSym_2, 1 \leq i \leq n \mbox{ e } v_{i'} < v_{i'+1}, 1 \leq i' < n.$$
+
+Portanto $|\subgraphSym_1|+|\subgraphSym_1| \geq |\subgraphSym_1\cup
+\subgraphSym_2|$.
+
+\begin{observacao}\label{obs:uniaosubgrafos}
+Sejam $\subgraphconSym_1$ e $\subgraphconSym_2$ dois subgrafos conexos de
+$G$ tais que existe pelo menos um vértice $v$ que está em $\subgraphconSym_1$ e
+$\subgraphconSym_2$. Temos que $\subgraphconSym_1 \cup \subgraphconSym_2$ é um
+subgrafo conexo de $G$.
+\end{observacao}
 
 O produto cartesiano de dois conjuntos de subgrafos $\setsubgSym_1$ e
 $\setsubgSym_2$ é dado por: $$\setsubgSym_1 \times
@@ -281,22 +311,52 @@ O produto cartesiano de um vértice de $G$ e um conjunto de subgrafos de $G$ é
 dado por $$v \times \setsubgSym = \{v \cup \subgraphSym,\ \forall\ \subgraphSym
 \in \setsubgSym\}.$$
 
+\begin{observacao}\label{obs:selfcartesian}
+Baseado na Observação \ref{obs:uniaosubgrafos} podemos fazer as seguintes
+afirmações:
+\begin{itemize}
+  \item $\forall \setsubgcSym \tq \setsubgcSym \subseteq
+  \setsubgc{v}$ temos que $\distintos{\setsubgc{v}\times
+  \setsubgcSym}=\setsubgc{v}$
+  \item $\forall\setsubgcSym \tq \setsubgcSym \subseteq
+  \setsubgcs{v}{v'}$ temos que $\distintos{\setsubgcs{v}{v'}\times
+  \setsubgcSym}=\setsubgcs{v}{v'}$
+  \item $\forall\setsubgcSym \tq \setsubgcSym \subseteq
+  \setsubgcsem{v}{v'}$ temos que $\distintos{\setsubgcsem{v}{v'}\times
+  \setsubgcSym}=\setsubgcsem{v}{v'}$
+\end{itemize}
+\end{observacao}
+
+
 Denotaremos \adj{v}\ como o conjunto de vértices de $G$ que são vizinhos de $v$
 e \adjmaior{v}\ como o conjunto de vértices de $G$ que são vizinhos de $v$ e
 maiores que $v$.
 
 Denotaremos o subgrafo vazio, ou seja o subgrafo sem vértices nem arestas, como
-\subgempty.
+\subgempty. Portanto, para qualquer conjunto se subgrafos $\setsubgSym$ de $G$
+temos que $\setsubgSym \times \subgempty = \setsubgSym$.
+
+Dado um conjunto de subgrafos \setsubgSym, denotaremos por
+$\distintos{\setsubgSym}$ o conjunto dos subgrafos de \setsubgSym\ que são
+distintos.
 
 Podemos dizer que
-$$\setsubgc{v}=\{v \times \prod_{\forall v_i \in \adjmaior{v}}
-(\setsubgcsem{v_i}{v}\cup \subgempty)\}.$$
+$$\setsubgc{v}=\distintos{\{v \times \prod_{\forall v_i \in \adj{v}}
+(\setsubgc{v_i}\cup \subgempty)\}}\mbox{ e}$$
+$$\setsubgc{v}=\{v \times \distintos{\prod_{\forall v_i \in \adj{v}}
+(\setsubgcsem{v_i}{v}\cup \subgempty)}\}.$$
 
 Se $v$ é o menor vértice de $G$, podemos dizer que
-$$\setsubgcs{v}{v}=\{v \times \prod_{\forall v_i \in \adjmaior{v}}
-(\setsubgcsem{v_i}{v}\cup \subgempty)\}=\{v \times \prod_{\forall v_i \in
-\adjmaior{v}} (\bigcup_{\forall v_j\tq v< v_j\leq v_i}\setsubgcs{v_i}{v_j}\cup
-\subgempty)\}.$$
+$$\setsubgcs{v}{v}=\setsubgc{v}=\{v \times \distintos{\prod_{\forall v_i \in \adj{v}}
+(\setsubgcsem{v_i}{v}\cup \subgempty)}\}.$$
 
+$$=\{v \times \distintos{\prod_{\forall v_i \in
+\adj{v}} (\bigcup_{\forall v_j\tq v< v_j\leq v_i}\setsubgcs{v_i}{v_j}\cup
+\subgempty)}\}$$
 
+$$=\{v \times \distintos{\prod_{\forall v_i \in
+\adj{v}}(\setsubgcs{v_i}{v_i}\cup \subgempty)
+\times \prod_{\forall v_i \in
+\adj{v}} (\bigcup_{\forall v_j\tq v< v_j< v_i
+\mbox{ e } v_j \notin \adj{v}}\setsubgcs{v_i}{v_j}\cup \subgempty)}\}$$
 \end{document}
