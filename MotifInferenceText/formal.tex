@@ -47,102 +47,12 @@
 
 \newcommand{\seq}{seqüência}
 \newcommand{\seqs}{seqüências}
-\newcommand{\alignScore}[2]{\ensuremath{\omega(#1,#2)}}
-\newcommand{\alignScorest}[6]{\ensuremath{\alignScore{#1[#3..#4]}{#2[#5..#6]}}}
-\newcommand{\alignScoreSimples}[2]{\ensuremath{\omega'(#1,#2)}}
-\newcommand{\alignScoreSimplesst}[6]{\ensuremath{\alignScoreSimples{#1[#3..#4]}{#2[#5..#6]}}}
-\newcommand{\vomega}[2]{\ensuremath{\omega_v(#1[#2])}}
-\newcommand{\homega}[2]{\ensuremath{\omega_h(#1[#2])}}
-\newcommand{\domega}[4]{\ensuremath{\omega_d(#1[#3],#2[#4])}}
-\newcommand{\romega}{\ensuremath{\omega_r}}
-\newcommand{\dup}[3]{\ensuremath{\omega_{#1}(#2,#3)}}
-\newcommand{\dupoper}[4]{\ensuremath{\delta(#1,#2,#3,#4)}}
-\newcommand{\seqbaseLetter}{\ensuremath{x}}
-\newcommand{\seqbase}[3]{\ensuremath{\seqbaseLetter}(#1[#2..#3])}
-\newcommand{\seqbasei}[5]{\ensuremath{\seqbaseLetter_{#1[#3]}}(#2[#4..#5])}
-\newcommand{\dupi}[5]{\ensuremath{\omega_{#2|#1}(#3,#4,#5)}}
-\newcommand{\wts}[2]{\ensuremath{W_{#2|#1}}}
-\newcommand{\wdupi}[5]{\ensuremath{\wts{#1}{#2}[#3,#4,#5]}}
-\newcommand{\bestScoreA}[3]{\ensuremath{\omega_{#1}^{A}(#2,#3)}}
-\newcommand{\bestScoreB}[3]{\ensuremath{\omega_{#1}^{B}(#2,#3)}}
-\newcommand{\bestScoreC}[3]{\ensuremath{\omega_{#1}^{C}(#2,#3)}}
-\newcommand{\bestScoreD}[4]{\ensuremath{\omega_{#1|#2}^{D}(#3,#4)}}
-\newcommand{\setA}[3]{\ensuremath{A_{#1}(#2,#3)}}
-\newcommand{\setB}[3]{\ensuremath{B_{#1}(#2,#3)}}
-\newcommand{\setC}[3]{\ensuremath{C_{#1}(#2,#3)}}
-\newcommand{\setD}[4]{\ensuremath{D_{#1|#2}(#3,#4)}}
-\newcommand{\setE}[3]{\ensuremath{E_{#1}(#2,#3)}}
-
-\newcommand{\wbestScore}[1]{\ensuremath{W_{#1}}}
-\newcommand{\wbestScoreAjm}[1]{\ensuremath{\wbestScore{#1}^{A}}}
-\newcommand{\wbestScoreAj}[4]{\ensuremath{\wbestScoreAjm{#1}[#2,#3,#4]}}
-\newcommand{\wbestScoreBjm}[1]{\ensuremath{\wbestScore{#1}^{B}}}
-\newcommand{\wbestScoreBj}[4]{\ensuremath{\wbestScoreBjm{#1}[#2,#3,#4]}}
-\newcommand{\wbestScoreCjm}[1]{\ensuremath{\wbestScore{#1}^{C1}}}
-\newcommand{\wbestScoreCj}[3]{\ensuremath{\wbestScoreCjm{#1}[#2,#3]}}
-\newcommand{\wbestScoreCjjm}[1]{\ensuremath{\wbestScore{#1}^{C2}}}
-\newcommand{\wbestScoreCjj}[3]{\ensuremath{\wbestScoreCjjm{#1}[#2,#3]}}
-\newcommand{\wbestScoreDjm}[2]{\ensuremath{\wbestScore{#1|#2}^{D}}}
-\newcommand{\wbestScoreDj}[5]{\ensuremath{\wbestScoreDjm{#1}{#2}[#3,#4,#5]}}
-
-\newcommand{\wbestScorem}[1]{\ensuremath{\widehat{#1}}}
-\newcommand{\wbestScoreAm}[1]{\ensuremath{\wbestScorem{\wbestScoreAjm{#1}}}}
-\newcommand{\wbestScoreA}[3]{\ensuremath{\wbestScoreAm{#1}[#2,#3]}}
-\newcommand{\wbestScoreBm}[1]{\ensuremath{\wbestScorem{\wbestScoreBjm{#1}}}}
-\newcommand{\wbestScoreB}[3]{\ensuremath{\wbestScoreBm{#1}[#2,#3]}}
-\newcommand{\wbestScoreCm}[1]{\ensuremath{\wbestScorem{\wbestScore{#1}^{C}}}}
-\newcommand{\wbestScoreC}[3]{\ensuremath{\wbestScoreCm{#1}[#2,#3]}}
-\newcommand{\wbestScoreDm}[2]{\ensuremath{\wbestScorem{\wbestScoreDjm{#1}{#2}}}}
-\newcommand{\wbestScoreD}[4]{\ensuremath{\wbestScoreDm{#1}{#2}[#3,#4]}}
-
-% \newcommand{\fmia}[7]{\ensuremath{\delta_{m1}(#1,#2,#3,#4,#5,#6,#7)}}
-% \newcommand{\fmiia}[4]{\ensuremath{\omega_{#1}^{#4}(#2,#3)}}
-% \newcommand{\fmii}[3]{\ensuremath{\omega_{#1}(#2,#3)}}
-% \newcommand{\fmiiia}[4]{\ensuremath{\omega_{#1}^{#4}(#2,#3)}}
-% \newcommand{\fmiii}[3]{\ensuremath{\omega_{#1}(#2,#3)}}
-% \newcommand{\fmiv}[6]{\ensuremath{\omega_{#2|#1}^{#3}(#4,#5,#6)}}
-% \newcommand{\fmiva}[6]{\ensuremath{\underline{\omega_{#2|#1}^{#3}}(#4,#5,#6)}}
-% \newcommand{\fmivb}[6]{\ensuremath{\overline{\omega_{#2|#1}^{#3}}(#4,#5,#6)}}
-% \newcommand{\maxnew}[3]{\ensuremath{\max\left\{#3\textrm{; }\forall #1 \tq #2\right\}}}
-\newcommand{\maxnew}[3]{\ensuremath{\max_{\forall #1 \tq #2}\left(#3\right)}}
-%#1 variables, #2 restrictions and #3 expression
-\newcommand{\mtm}{\ensuremath{M_t}}
-\newcommand{\msm}{\ensuremath{M_s}}
-\newcommand{\mt}[2]{\ensuremath{\mtm[#1,#2]}}
-\newcommand{\ms}[2]{\ensuremath{\msm[#1,#2]}}
-
-
-\newcommand{\Wt}{\ensuremath{W_t}}
-\newcommand{\Wtold}{\ensuremath{W_t^{old}}}
-\newcommand{\Ws}{\ensuremath{W_s}}
-\newcommand{\Wsold}{\ensuremath{W_s^{old}}}
-\newcommand{\wt}[2]{\ensuremath{\Wt[#1,#2]}}
-\newcommand{\wtold}[2]{\ensuremath{\Wtold[#1,#2]}}
-\newcommand{\ws}[2]{\ensuremath{\Ws[#1,#2]}}
-\newcommand{\wsold}[2]{\ensuremath{\Wsold[#1,#2]}}
-
-\newcommand{\WA}{\wbestScoreAm{t}}
-\newcommand{\WAj}{\wbestScoreAjm{t}}
-\newcommand{\wA}[2]{\ensuremath{\WA[#1,#2]}}
-\newcommand{\wAj}[2]{\ensuremath{\WAj[#1,#2]}}
-
-\newcommand{\WB}{\wbestScoreBm{t}}
-\newcommand{\WBj}{\wbestScoreBjm{t}}
-\newcommand{\wB}[2]{\ensuremath{\WB[#1,#2]}}
-\newcommand{\wBj}[2]{\ensuremath{\WBj[#1,#2]}}
-
-\newcommand{\WC}{\wbestScoreCm{t}}
-\newcommand{\WCj}{\wbestScoreCjm{t}}
-\newcommand{\WCjj}{\wbestScoreCjjm{t}}
-\newcommand{\wC}[2]{\ensuremath{\WC[#1,#2]}}
-\newcommand{\wCj}[2]{\ensuremath{\WCj[#1,#2]}}
-\newcommand{\wCjj}[2]{\ensuremath{\WCjj[#1,#2]}}
-
-\newcommand{\WD}{\wbestScoreDm{t}{s}}
-\newcommand{\WDj}{\wbestScoreDjm{t}{s}}
-\newcommand{\wD}[2]{\ensuremath{\WD[#1,#2]}}
-\newcommand{\wDj}[2]{\ensuremath{\WDj[#1,#2]}}
-
+\newcommand{\subasubg}{subárvore de subgrafos}
+\newcommand{\asubg}{árvore de subgrafos}
+\newcommand{\asubgc}{árvore de subgrafos conexos}
+\newcommand{\Asubg}{Árvore de subgrafos}
+\newcommand{\assubg}{árvores de subgrafos}
+\newcommand{\assubgc}{árvores de subgrafos conexos}
 
 \newcount\hour
 \newcount\minute
@@ -190,6 +100,12 @@
 \newcommand{\adjmaior}[1]{\ensuremath{adj^>(#1)}}
 \newcommand{\subgempty}{\ensuremath{\subgraphSym_{\emptyset}}}
 \newcommand{\distintos}[1]{\ensuremath{d(#1)}}
+
+\newcommand{\nodeSym}{\ensuremath{n}}
+\newcommand{\treeSym}{\ensuremath{T}}
+\newcommand{\subtreeSym}[1]{\ensuremath{T_{#1}}}
+\newcommand{\treeSetSubg}[1]{\ensuremath{S}_{#1}}
+\newcommand{\treeroot}[1]{\ensuremath{raiz}({#1})}
 
 \begin{document}
 
@@ -359,4 +275,54 @@ $$=\{v \times \distintos{\prod_{\forall v_i \in
 \times \prod_{\forall v_i \in
 \adj{v}} (\bigcup_{\forall v_j\tq v< v_j< v_i
 \mbox{ e } v_j \notin \adj{v}}\setsubgcs{v_i}{v_j}\cup \subgempty)}\}$$
+
+\section{\Asubg}
+
+Cada nó de uma \asubg\ \treeSym\ tem os seguintes atributos:
+\begin{enumerate}
+  \item v: a identificação de um vértice no grafo $G$
+  \item filhos: uma lista com os nós filhos na árvore. Dois nós irmãos não podem
+  ter o mesmo atributo $v$.
+  \item pai: o nó pai na árvore (para a raiz este atributo pode ser nulo)
+  \item altura: a altura na árvore
+  \item tipo: terminal ou não terminal
+\end{enumerate}
+
+Chamaremos de $\treeroot{\treeSym}$ o nó raiz de \treeSym.
+
+Podemos dizer que uma \asubg\ \treeSym\ representa os subgrafos de $G$
+que podem ser representados por um caminho de $\treeroot{\treeSym}$ até um nó
+terminal de \treeSym.
+
+Diremos que $\treeSetSubg{\treeSym}$ é o conjunto dos subgrafos representados
+por \treeSym.
+
+Uma \asubgc\ é uma \asubg\ tal que todo caminho da raiz até um nó terminal
+representa um subgrafo conexo em $G$, ou seja, se \treeSym\ é uma \asubgc\
+então $\forall\ \subgraphSym \in \treeSetSubg{\treeSym}$ temos que
+\subgraphSym\ é conexo.
+
+\begin{problema}
+Construir \assubg\ tal que todo subgrafo
+conexo de $G$ está contido em uma e somente uma das \assubg\ construídas.
+\end{problema}
+
+Iremos representar um subgrafo de $G$ pela \seq\ crescente de seus vértices.
+
+Iremos construir as \assubg\ de $G$ de tal forma que cada vértice
+de $G$ seja raiz de uma só árvore. Portanto, a \asubg\ do vértice
+$v$ deverá conter todos e somente os subgrafos de $G$ que comecem com $v$.
+
+Dados um nó \nodeSym\ de uma \asubg\ \treeSym, chamaremos  de
+\subtreeSym{\nodeSym} a subárvore obtida a partir do nó \nodeSym\ em \treeSym. A
+subárvore \subtreeSym{\nodeSym} representa todos os subgrafos que podem ser
+obtidos de um caminho de \nodeSym\ até um nó terminal de \subtreeSym{\nodeSym}.
+
+\section{Algoritmos}
+
+Dados duas subárvores $\treeSym_1$ e $\treeSym_2$ tais que
+$\treeroot{\treeSym_1}.v< \treeroot{\treeSym_2}.v$, o algoritmo
+\ref{alg:cartesian} constrói a subárvore \treeSym\ tal que
+$\treeSetSubg{\treeSym}=\treeSetSubg{\treeSym_1}\times \{\treeSetSubg{\treeSym_2}
+\cup \emptyset\}$.
 \end{document}
