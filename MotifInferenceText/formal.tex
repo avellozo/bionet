@@ -103,7 +103,7 @@
 
 \newcommand{\nodeSym}{\ensuremath{n}}
 \newcommand{\treeSym}{\ensuremath{T}}
-\newcommand{\subtreeSym}[1]{\ensuremath{T_{#1}}}
+\newcommand{\subtreeSym}[1]{\ensuremath{st(#1)}}
 \newcommand{\treeSetSubg}[1]{\ensuremath{S}_{#1}}
 \newcommand{\treeroot}[1]{\ensuremath{raiz}({#1})}
 
@@ -223,6 +223,15 @@ $\setsubgSym_2$ é dado por: $$\setsubgSym_1 \times
 \subgraphSym_2,\ \forall\ \subgraphSym_1 \in \setsubgSym_1\ e\
 \forall\ \subgraphSym_2 \in \setsubgSym_2\}. $$
 
+O produto cartesiano de $n$ conjuntos de subgrafos $\setsubgSym_1,
+\setsubgSym_2, \ldots, \setsubgSym_n$ é dado por: $$\setsubgSym_1 \times
+\setsubgSym_2 \times \ldots \times \setsubgSym_2=
+\prod_{i=1}^{n}\setsubgSym_i=\{\subgraphSym \tq \subgraphSym=
+\bigcup_{i=1}^{n}\subgraphSym_i \mbox{, onde } \subgraphSym_i \in
+\setsubgSym_i\}. $$
+
+
+
 O produto cartesiano de um vértice de $G$ e um conjunto de subgrafos de $G$ é
 dado por $$v \times \setsubgSym = \{v \cup \subgraphSym,\ \forall\ \subgraphSym
 \in \setsubgSym\}.$$
@@ -303,20 +312,43 @@ então $\forall\ \subgraphSym \in \treeSetSubg{\treeSym}$ temos que
 \subgraphSym\ é conexo.
 
 \begin{problema}
-Construir \assubg\ tal que todo subgrafo
-conexo de $G$ está contido em uma e somente uma das \assubg\ construídas.
+Construir \assubgc\ tal que todo subgrafo
+conexo de $G$ está contido em uma e somente uma das \assubgc\ construídas.
 \end{problema}
 
 Iremos representar um subgrafo de $G$ pela \seq\ crescente de seus vértices.
 
-Iremos construir as \assubg\ de $G$ de tal forma que cada vértice
-de $G$ seja raiz de uma só árvore. Portanto, a \asubg\ do vértice
-$v$ deverá conter todos e somente os subgrafos de $G$ que comecem com $v$.
+Iremos construir as \assubgc\ de $G$ de tal forma que cada vértice
+de $G$ seja raiz de uma só árvore. Portanto, a \asubgc\ do vértice
+$v$ deverá conter todos e somente os subgrafos conexos de $G$ que comecem com
+$v$.
 
 Dados um nó \nodeSym\ de uma \asubg\ \treeSym, chamaremos  de
-\subtreeSym{\nodeSym} a subárvore obtida a partir do nó \nodeSym\ em \treeSym. A
-subárvore \subtreeSym{\nodeSym} representa todos os subgrafos que podem ser
-obtidos de um caminho de \nodeSym\ até um nó terminal de \subtreeSym{\nodeSym}.
+\subtreeSym{\nodeSym} a subárvore obtida a partir do nó \nodeSym. A
+subárvore \subtreeSym{\nodeSym} representa todos os subgrafos que podem
+ser obtidos de um caminho de \nodeSym\ até um nó terminal de
+\subtreeSym{\nodeSym}.
+
+\begin{equation*}\treeSetSubg{\subtreeSym{\nodeSym_1}}\times
+\treeSetSubg{\subtreeSym{\nodeSym_2}}=\left\{\begin{array}{ll}
+
+\nodeSym_1.v \times \left(\bigcup_{\nodeSym_1' \in
+\nodeSym_1.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_1'}} \cup \emptyset)
+\times \treeSetSubg{\subtreeSym{\nodeSym_2}}\right)&, \nodeSym_1.v
+< \nodeSym_2.v\\
+\nodeSym_2.v \times \left(\bigcup_{\nodeSym_2' \in
+\nodeSym_2.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_2'}} \cup \emptyset)
+\times \treeSetSubg{\subtreeSym{\nodeSym_1}}\right)&, \nodeSym_2.v
+< \nodeSym_1.v\\
+\nodeSym_1.v \times \left(\bigcup_{\nodeSym_1' \in
+\nodeSym_1.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_1'}} \cup \emptyset)
+\times \bigcup_{\nodeSym_2' \in
+\nodeSym_2.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_2'}} \cup \emptyset)\right)&, \nodeSym_1.v
+= \nodeSym_2.v
+
+\end{array}\right.\end{equation*}
+
+% ?????
 
 \section{Algoritmos}
 
