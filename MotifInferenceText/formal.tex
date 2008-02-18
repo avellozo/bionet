@@ -98,11 +98,13 @@
 
 \newcommand{\adj}[1]{\ensuremath{adj (#1)}}
 \newcommand{\adjmaior}[1]{\ensuremath{adj^>(#1)}}
-\newcommand{\subgempty}{\ensuremath{\subgraphSym_{\emptyset}}}
+\newcommand{\subgempty}{\ensuremath{\subgraphconSym_{\emptyset}}}
+\newcommand{\setsubgempty}{\ensuremath{\setsubgraphconSym_{\emptyset}}}
 \newcommand{\distintos}[1]{\ensuremath{d(#1)}}
 
 \newcommand{\nodeSym}{\ensuremath{n}}
 \newcommand{\treeSym}{\ensuremath{T}}
+\newcommand{\forestSym}{\ensuremath{F}}
 \newcommand{\subtreeSym}[1]{\ensuremath{st(#1)}}
 \newcommand{\treeSetSubg}[1]{\ensuremath{S}_{#1}}
 \newcommand{\treeroot}[1]{\ensuremath{raiz}({#1})}
@@ -258,8 +260,9 @@ e \adjmaior{v}\ como o conjunto de vértices de $G$ que são vizinhos de $v$ e
 maiores que $v$.
 
 Denotaremos o subgrafo vazio, ou seja o subgrafo sem vértices nem arestas, como
-\subgempty. Portanto, para qualquer conjunto se subgrafos $\setsubgSym$ de $G$
-temos que $\setsubgSym \times \subgempty = \setsubgSym$.
+\subgempty\ e diremos que $\{\subgempty\}=\setsubgempty$. Portanto, para qualquer
+conjunto se subgrafos $\setsubgSym$ de $G$ temos que $\setsubgSym \times
+\setsubgempty = \setsubgSym$.
 
 Dado um conjunto de subgrafos \setsubgSym, denotaremos por
 $\distintos{\setsubgSym}$ o conjunto dos subgrafos de \setsubgSym\ que são
@@ -267,32 +270,35 @@ distintos.
 
 Podemos dizer que
 $$\setsubgc{v}=\distintos{\{v \times \prod_{\forall v_i \in \adj{v}}
-(\setsubgc{v_i}\cup \subgempty)\}}\mbox{ e}$$
+(\setsubgc{v_i}\cup \setsubgempty)\}}\mbox{ e}$$
 $$\setsubgc{v}=\{v \times \distintos{\prod_{\forall v_i \in \adj{v}}
-(\setsubgcsem{v_i}{v}\cup \subgempty)}\}.$$
+(\setsubgcsem{v_i}{v}\cup \setsubgempty)}\}.$$
 
 Se $v$ é o menor vértice de $G$, podemos dizer que
 $$\setsubgcs{v}{v}=\setsubgc{v}=\{v \times \distintos{\prod_{\forall v_i \in \adj{v}}
-(\setsubgcsem{v_i}{v}\cup \subgempty)}\}.$$
+(\setsubgcsem{v_i}{v}\cup \setsubgempty)}\}.$$
 
-$$=\{v \times \distintos{\prod_{\forall v_i \in
-\adj{v}} (\bigcup_{\forall v_j\tq v< v_j\leq v_i}\setsubgcs{v_i}{v_j}\cup
-\subgempty)}\}$$
+Podemos dizer que $\setsubgcsem{v_i}{v}=\bigcup_{\forall v_j\tq v< v_j\leq
+v_i}\setsubgcs{v_i}{v_j}$. Logo,
 
-$$=\{v \times \distintos{\prod_{\forall v_i \in
-\adj{v}}(\setsubgcs{v_i}{v_i}\cup \subgempty)
-\times \prod_{\forall v_i \in
-\adj{v}} (\bigcup_{\forall v_j\tq v< v_j< v_i
-\mbox{ e } v_j \notin \adj{v}}\setsubgcs{v_i}{v_j}\cup \subgempty)}\}$$
+$$\setsubgc{v}=\{v \times \distintos{\prod_{\forall v_i \in
+\adj{v}} ((\bigcup_{\forall v_j\tq v< v_j\leq v_i}\setsubgcs{v_i}{v_j})\cup
+\setsubgempty)}\}$$
 
+% $$=\{v \times \distintos{\prod_{\forall v_i \in
+% \adj{v}}(\setsubgcs{v_i}{v_i}\cup \setsubgempty)
+% \times \prod_{\forall v_i \in
+% \adj{v}} (\bigcup_{\forall v_j\tq v< v_j< v_i
+% \mbox{ e } v_j \notin \adj{v}}(\setsubgcs{v_i}{v_j}\cup \setsubgempty))}\}$$
+%
 \section{\Asubg}
 
 Cada nó de uma \asubg\ \treeSym\ tem os seguintes atributos:
 \begin{enumerate}
   \item v: a identificação de um vértice no grafo $G$
-  \item filhos: uma lista com os nós filhos na árvore. Dois nós irmãos não podem
-  ter o mesmo atributo $v$.
-  \item pai: o nó pai na árvore (para a raiz este atributo pode ser nulo)
+  \item filhos: uma lista com os nós filhos na árvore. Se $v'$ e $v''$ são
+  filhos de $v$ então $v'\neq v''$ e $v'> v$.
+  \item pai: o nó pai na árvore (para a raiz este atributo é nulo)
   \item altura: a altura na árvore
   \item tipo: terminal ou não terminal
 \end{enumerate}
@@ -312,21 +318,20 @@ então $\forall\ \subgraphSym \in \treeSetSubg{\treeSym}$ temos que
 \subgraphSym\ é conexo.
 
 \begin{problema}
-Construir \assubgc\ tal que todo subgrafo
-conexo de $G$ está contido em uma e somente uma das \assubgc\ construídas.
+Construir uma floresta \forestSym\ de \assubgc\ tal que todo subgrafo
+conexo de $G$ está contido em uma e somente uma das \assubgc\ de \forestSym.
 \end{problema}
-
-Iremos representar um subgrafo de $G$ pela \seq\ crescente de seus vértices.
 
 Iremos construir as \assubgc\ de $G$ de tal forma que cada vértice
 de $G$ seja raiz de uma só árvore. Portanto, a \asubgc\ do vértice
 $v$ deverá conter todos e somente os subgrafos conexos de $G$ que comecem com
-$v$.
+$v$. Logo, se \treeSym\ é a \asubgc\ do vértice
+$v$ então $\treeSetSubg{\treeSym}=\setsubgcs{v}{v}$.
 
 Dados um nó \nodeSym\ de uma \asubg\ \treeSym, chamaremos  de
-\subtreeSym{\nodeSym} a subárvore obtida a partir do nó \nodeSym. A
-subárvore \subtreeSym{\nodeSym} representa todos os subgrafos que podem
-ser obtidos de um caminho de \nodeSym\ até um nó terminal de
+\subtreeSym{\nodeSym} a subárvore obtida a partir do nó \nodeSym\ e seus
+descendentes. A subárvore \subtreeSym{\nodeSym} representa todos os subgrafos
+que podem ser obtidos de um caminho de \nodeSym\ até um nó terminal de
 \subtreeSym{\nodeSym}.
 
 \begin{equation*}\treeSetSubg{\subtreeSym{\nodeSym_1}}\times
