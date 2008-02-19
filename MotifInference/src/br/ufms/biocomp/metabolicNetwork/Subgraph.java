@@ -18,4 +18,9 @@ public class Subgraph
 			size = (short) (parent.size + 1);
 	}
 
+	protected void delete()
+	{
+
+	}
+
 }
