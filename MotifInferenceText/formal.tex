@@ -260,9 +260,9 @@ e \adjmaior{v}\ como o conjunto de vértices de $G$ que são vizinhos de $v$ e
 maiores que $v$.
 
 Denotaremos o subgrafo vazio, ou seja o subgrafo sem vértices nem arestas, como
-\subgempty\ e diremos que $\{\subgempty\}=\setsubgempty$. Portanto, para qualquer
-conjunto se subgrafos $\setsubgSym$ de $G$ temos que $\setsubgSym \times
-\setsubgempty = \setsubgSym$.
+\subgempty\ e diremos que $\{\subgempty\}=\setsubgempty$. Diremos também que
+para qualquer conjunto de subgrafos $\setsubgSym$ de $G$ teremos
+$\setsubgSym \times \setsubgempty = \setsubgSym$.
 
 Dado um conjunto de subgrafos \setsubgSym, denotaremos por
 $\distintos{\setsubgSym}$ o conjunto dos subgrafos de \setsubgSym\ que são
@@ -334,26 +334,36 @@ descendentes. A subárvore \subtreeSym{\nodeSym} representa todos os subgrafos
 que podem ser obtidos de um caminho de \nodeSym\ até um nó terminal de
 \subtreeSym{\nodeSym}.
 
-\begin{equation*}\treeSetSubg{\subtreeSym{\nodeSym_1}}\times
-\treeSetSubg{\subtreeSym{\nodeSym_2}}=\left\{\begin{array}{ll}
+\begin{observacao}
+Dados dois nós $\nodeSym_1$ e $\nodeSym_2$ de \assubgc, podemos dizer que o
+produto cartesiano $\treeSetSubg{\subtreeSym{\nodeSym_1}}\times
+\treeSetSubg{\subtreeSym{\nodeSym_2}}$ é dado por:
 
-\nodeSym_1.v \times \left(\bigcup_{\nodeSym_1' \in
-\nodeSym_1.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_1'}} \cup \emptyset)
-\times \treeSetSubg{\subtreeSym{\nodeSym_2}}\right)&, \nodeSym_1.v
-< \nodeSym_2.v\\
-\nodeSym_2.v \times \left(\bigcup_{\nodeSym_2' \in
-\nodeSym_2.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_2'}} \cup \emptyset)
-\times \treeSetSubg{\subtreeSym{\nodeSym_1}}\right)&, \nodeSym_2.v
-< \nodeSym_1.v\\
-\nodeSym_1.v \times \left(\bigcup_{\nodeSym_1' \in
-\nodeSym_1.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_1'}} \cup \emptyset)
-\times \bigcup_{\nodeSym_2' \in
-\nodeSym_2.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_2'}} \cup \emptyset)\right)&, \nodeSym_1.v
-= \nodeSym_2.v
+$$\nodeSym_1.v \times \left(\left(\bigcup_{\nodeSym_1' \in
+\nodeSym_1.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_1'}}) \cup
+\setsubgempty^{\nodeSym_1}\right) \times
+\treeSetSubg{\subtreeSym{\nodeSym_2}}\right)\mbox{, se } \nodeSym_1.v < \nodeSym_2.v$$
+$$\nodeSym_2.v \times \left(\left(\bigcup_{\nodeSym_2' \in
+\nodeSym_2.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_2'}}) \cup
+\setsubgempty^{\nodeSym_2}\right) \times
+\treeSetSubg{\subtreeSym{\nodeSym_1}}\right)\mbox{, se }  \nodeSym_2.v < \nodeSym_1.v$$
+$$\nodeSym_1.v \times \left(\left(\bigcup_{\nodeSym_1' \in
+\nodeSym_1.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_1'}}) \cup
+\setsubgempty^{\nodeSym_1}\right) \times \left(\bigcup_{\nodeSym_2' \in
+\nodeSym_2.filhos} (\treeSetSubg{\subtreeSym{\nodeSym_2'}}) \cup
+\setsubgempty^{\nodeSym_2}\right)\right)\mbox{, se }  \nodeSym_1.v =
+\nodeSym_2.v$$
 
-\end{array}\right.\end{equation*}
 
-% ?????
+, onde $$\setsubgempty^{\nodeSym_1}=\left\{\begin{array}{ll}\setsubgempty &
+\mbox{, se } \{\nodeSym_1.v\} \in \treeSetSubg{\subtreeSym{\nodeSym_1}}\\
+\emptyset &\mbox{, caso contrário.}\end{array}\right.$$
+e
+$$\setsubgempty^{\nodeSym_2}=\left\{\begin{array}{ll}\setsubgempty &
+\mbox{, se } \{\nodeSym_2.v\} \in \treeSetSubg{\subtreeSym{\nodeSym_2}}\\
+\emptyset &\mbox{, caso contrário.}\end{array}\right.$$
+
+\end{observacao}
 
 \section{Algoritmos}
 
