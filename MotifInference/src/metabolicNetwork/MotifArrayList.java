@@ -9,13 +9,11 @@ public class MotifArrayList implements MotifList
 {
 	ArrayList<Subgraph>	list	= new ArrayList<Subgraph>();
 
-	@Override
 	public void add(Subgraph motif)
 	{
 		list.add(motif);
 	}
 
-	@Override
 	public int size()
 	{
 		return list.size();

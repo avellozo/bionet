@@ -367,7 +367,6 @@ public class Node extends Subgraph implements Comparable<Node>
 	}
 	*/
 
-	@Override
 	public int compareTo(Node node)
 	{
 		return reaction.compareTo(node.reaction);

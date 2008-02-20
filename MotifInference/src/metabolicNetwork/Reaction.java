@@ -49,7 +49,6 @@ public class Reaction implements Comparable<Reaction>
 		return nodes.size() != 0;
 	}
 
-	@Override
 	public int compareTo(Reaction o)
 	{
 		return orderCreated - o.orderCreated;

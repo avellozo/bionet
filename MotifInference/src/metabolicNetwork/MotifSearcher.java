@@ -30,7 +30,7 @@ public class MotifSearcher
 		long time = System.currentTimeMillis();
 		MotifList motifList = buildMotifList(network, Integer.parseInt(args[3]));
 		System.out.println("Execution time: " + (System.currentTimeMillis() - time));
-		System.out.println("Number of subgraphs of size k: " + motifList.size());
+		System.out.println("Number of subgraphs of size " + args[3] + ": " + motifList.size());
 
 	}
 
@@ -96,7 +96,6 @@ public class MotifSearcher
 class DescendentComparatorReaction implements Comparator<Reaction>
 {
 
-	@Override
 	public int compare(Reaction o1, Reaction o2)
 	{
 		return -o1.compareTo(o2);
