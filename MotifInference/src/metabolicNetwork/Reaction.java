@@ -46,7 +46,7 @@ public class Reaction implements Comparable<Reaction>
 
 	public boolean isInTree()
 	{
-		return nodes.size() == 0;
+		return nodes.size() != 0;
 	}
 
 	@Override

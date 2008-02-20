@@ -147,6 +147,7 @@ public class Node extends Subgraph implements Comparable<Node>
 	{
 		int comp = n1.compareTo(n2);
 		Node nNextParent;
+		List<Node> childrenOld;
 
 		if (comp == 0) //n1 == n2
 		{
@@ -186,7 +187,8 @@ public class Node extends Subgraph implements Comparable<Node>
 			{
 				if (n1.children != null)
 				{
-					for (Node n1f : n1.children)
+					childrenOld = new ArrayList<Node>(n1.children);
+					for (Node n1f : childrenOld)
 					{
 						nNextParent.addCartesianTree(n1f, n2);
 					}
@@ -205,7 +207,8 @@ public class Node extends Subgraph implements Comparable<Node>
 			{
 				if (n2.children != null)
 				{
-					for (Node n2f : n2.children)
+					childrenOld = new ArrayList<Node>(n2.children);
+					for (Node n2f : childrenOld)
 					{
 						nNextParent.addCartesianTree(n2f, n1);
 					}
@@ -221,6 +224,7 @@ public class Node extends Subgraph implements Comparable<Node>
 
 	public Node addCartesianTree1(Node n1, Node n2) //code clean
 	{
+		List<Node> childrenOld;
 		int comp = n1.compareTo(n2);
 		if (comp > 0)
 		{
@@ -234,7 +238,8 @@ public class Node extends Subgraph implements Comparable<Node>
 		{
 			if (n1.children != null)
 			{
-				for (Node n1f : n1.children)
+				childrenOld = new ArrayList<Node>(n2.children);
+				for (Node n1f : childrenOld)
 				{
 					nNextParent.addCartesianTree1(n1f, n2);
 				}

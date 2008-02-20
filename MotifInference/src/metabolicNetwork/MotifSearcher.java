@@ -27,7 +27,9 @@ public class MotifSearcher
 
 		System.out.println("Number of Colors: " + network.numberOfColors());
 		// Build the tree of the motif seeds, searching for motifs with size k = args[4]
+		long time = System.currentTimeMillis();
 		MotifList motifList = buildMotifList(network, Integer.parseInt(args[3]));
+		System.out.println("Execution time: " + (System.currentTimeMillis() - time));
 		System.out.println("Number of subgraphs of size k: " + motifList.size());
 
 	}
@@ -39,16 +41,18 @@ public class MotifSearcher
 		Node.targetMotifSize = k - 1;
 		Node treeRoot = null;
 		List<Reaction> reactionsList = sortNetwork(network);
+		List<Node> ocurrences;
 
 		for (Reaction reaction : reactionsList)
 		{
 			treeRoot = new Node(reaction, true);
 			reaction.setSubgraphsTree(treeRoot);
-			for (Reaction reactionLinked : reaction.linkedTo)
+			for (Reaction neighbour : reaction.linkedTo)
 			{
-				if (reactionLinked.isInTree())
+				if (neighbour.isInTree())
 				{
-					for (Node ocurrence : reactionLinked.nodes)
+					ocurrences = new ArrayList<Node>(neighbour.nodes);
+					for (Node ocurrence : ocurrences)
 					{
 						if (ocurrence.parent == null)
 						{
