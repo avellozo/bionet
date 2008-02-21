@@ -449,4 +449,21 @@ public class Node extends Subgraph implements Comparable<Node>
 		}
 	}
 
+	public void shrink()
+	{
+		if (children != null)
+		{
+			((ArrayList<Node>) children).trimToSize();
+			ArrayList<Node> children1 = new ArrayList<Node>(children);
+			for (int i = 0; i < children1.size(); i++)
+			{
+				children1.get(i).shrink();
+			}
+		}
+		if ((children == null || children.size() == 0) && !connected)
+		{
+			delete();
+		}
+	}
+
 }

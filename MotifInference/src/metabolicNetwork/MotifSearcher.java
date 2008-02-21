@@ -44,6 +44,7 @@ public class MotifSearcher
 		Node treeRoot = null;
 		List<Reaction> reactionsList = sortNetwork(network);
 		List<Node> ocurrences;
+		ArrayList<Node> children;
 
 		for (Reaction reaction : reactionsList)
 		{
@@ -56,29 +57,47 @@ public class MotifSearcher
 					ocurrences = new ArrayList<Node>(neighbour.nodes);
 					for (Node ocurrence : ocurrences)
 					{
-						if (ocurrence.parent == null)
-						{
-							treeRoot.addCartesianTree(ocurrence);
-						}
-						/*						else if (!reaction.linkedTo.contains(ocurrence.getParentRoot().reaction))
-												{
-													ArrayList<Node> brothers = new ArrayList<Node>(treeRoot.children);
-													Node newOcurrence = treeRoot.addNewSubgAndTree(ocurrence);
-													if (newOcurrence != null)
-													{
-														while (newOcurrence.parent != treeRoot)
-														{
-															newOcurrence = (Node) newOcurrence.parent;
-														}
-														for (Node brother : brothers)
-														{
-															treeRoot.addCartesianTree(newOcurrence, brother);
-														}
-													}
-												}
-						*/}
+						treeRoot.addNewSubgAndTree(ocurrence);
+					}
 				}
 			}
+			if (treeRoot.children != null)
+			{
+				children = (ArrayList<Node>) (treeRoot.children);
+				Collections.sort(children);
+				for (int i = 0; i < children.size(); i++)
+				{
+					for (int j = i + 1; j < children.size(); j++)
+					{
+						treeRoot.addCartesianTree1(children.get(i), children.get(j));
+					}
+					children.get(i).shrink();
+				}
+			}
+			//						if (ocurrence.parent == null)
+			//						{
+			//							treeRoot.addCartesianTree(ocurrence);
+			//						}
+			//						else if (!reaction.linkedTo.contains(ocurrence.getParentRoot().reaction))
+			//						{
+			//							ArrayList<Node> brothers = new ArrayList<Node>(treeRoot.children);
+			//							Node newOcurrence = treeRoot.addNewSubgAndTree(ocurrence);
+			//							if (newOcurrence != null)
+			//							{
+			//								while (newOcurrence.parent != treeRoot)
+			//								{
+			//									newOcurrence = (Node) newOcurrence.parent;
+			//								}
+			//								for (Node brother : brothers)
+			//								{
+			//									treeRoot.addCartesianTree1(newOcurrence, brother);
+			//								}
+			//							}
+			//						}
+			//					}
+			//				}
+			//			}
+			//			treeRoot.shrink();
 
 			//			if (!neighbourInTree)
 			//			{
