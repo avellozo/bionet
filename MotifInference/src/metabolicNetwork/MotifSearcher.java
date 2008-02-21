@@ -71,7 +71,7 @@ public class MotifSearcher
 					{
 						treeRoot.addCartesianTree1(children.get(i), children.get(j));
 					}
-					children.get(i).shrink();
+					//					children.get(i).shrink();
 				}
 			}
 			//						if (ocurrence.parent == null)

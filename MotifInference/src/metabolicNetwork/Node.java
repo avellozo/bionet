@@ -426,11 +426,13 @@ public class Node extends Subgraph implements Comparable<Node>
 			{
 				nf.parent = null;
 			}
+			children = null;
 		}
-		children = null;
+
 		if (this.parent != null)
 		{
 			((Node) this.parent).removeChild(this);
+			parent = null;
 		}
 		reaction.removeNode(this);
 		super.delete();
