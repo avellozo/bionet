@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 public class MotifSearcher
 {
@@ -26,6 +27,7 @@ public class MotifSearcher
 		// network.print();
 
 		System.out.println("Number of Colors: " + network.numberOfColors());
+		System.out.println("Number of Vertexes: " + network.reactions.size());
 		// Build the tree of the motif seeds, searching for motifs with size k = args[4]
 		long time = System.currentTimeMillis();
 		MotifList motifList = buildMotifList(network, Integer.parseInt(args[3]));
@@ -58,11 +60,23 @@ public class MotifSearcher
 						{
 							treeRoot.addCartesianTree(ocurrence);
 						}
-						else if (!reaction.linkedTo.contains(ocurrence.getParentRoot().reaction))
-						{
-							treeRoot.addCartesianSubg(ocurrence);
-						}
-					}
+						/*						else if (!reaction.linkedTo.contains(ocurrence.getParentRoot().reaction))
+												{
+													ArrayList<Node> brothers = new ArrayList<Node>(treeRoot.children);
+													Node newOcurrence = treeRoot.addNewSubgAndTree(ocurrence);
+													if (newOcurrence != null)
+													{
+														while (newOcurrence.parent != treeRoot)
+														{
+															newOcurrence = (Node) newOcurrence.parent;
+														}
+														for (Node brother : brothers)
+														{
+															treeRoot.addCartesianTree(newOcurrence, brother);
+														}
+													}
+												}
+						*/}
 				}
 			}
 
@@ -86,9 +100,36 @@ public class MotifSearcher
 
 	public static List<Reaction> sortNetwork(ReactionNetwork network)
 	{
-		ArrayList<Reaction> reactionsList = new ArrayList<Reaction>(network.reactions.values());
-		Collections.sort(reactionsList, new DescendentComparatorReaction());
-		return reactionsList;
+		ArrayList<Reaction> reactions = new ArrayList<Reaction>(network.reactions.values().size());
+		Reaction r;
+		TreeSet<Reaction> reactionSet = new TreeSet<Reaction>(network.reactions.values());
+		TreeSet<Reaction> reactionSet1 = new TreeSet<Reaction>(); //já foram analisados, mas os filhos ainda não
+		while (!reactionSet.isEmpty())
+		{
+			r = reactionSet.first();
+			reactions.add(r);
+			reactionSet.remove(r);
+			reactionSet1.add(r);
+			while (!reactionSet1.isEmpty())
+			{
+				r = reactionSet1.first();
+				for (Reaction r1 : r.linkedTo)
+				{
+					if (reactionSet.remove(r1))
+					{
+						reactionSet1.add(r1);
+						reactions.add(r1);
+					}
+				}
+				reactionSet1.remove(r);
+			}
+		}
+		for (int i = 0; i < reactions.size(); i++)
+		{
+			reactions.get(i).orderCreated = (short) i;
+		}
+		Collections.sort(reactions, new DescendentComparatorReaction());
+		return reactions;
 	}
 
 }

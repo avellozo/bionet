@@ -19,9 +19,14 @@ public class Node extends Subgraph implements Comparable<Node>
 	{
 		super(reaction, parent);
 		this.connected = connected;
-		if (reaction != null)
+		if (reaction == null)
 		{
-			reaction.addNode(this);
+			throw new RuntimeException();
+		}
+		reaction.addNode(this);
+		if (connected && size == targetMotifSize)
+		{
+			TargetMotifs.add(this);
 		}
 		if (parent != null)
 		{
@@ -94,18 +99,14 @@ public class Node extends Subgraph implements Comparable<Node>
 
 	public Node createChild(Reaction r, boolean connected)
 	{
-		if (size == targetMotifSize - 1)
+		if (size < targetMotifSize - 1 || (size == targetMotifSize - 1 && connected))
 		{
-			if (connected)
-			{
-				Subgraph motif = new Subgraph(r, this);
-				TargetMotifs.add(motif);
-			}
-			return null;
+			Node node = new Node(r, this, connected);
+			return node;
 		}
 		else
 		{
-			return new Node(r, this, connected);
+			return null;
 		}
 	}
 
@@ -129,17 +130,21 @@ public class Node extends Subgraph implements Comparable<Node>
 		{
 			nRes.connected = connected;
 		}
+		//		if (nRes != null && nRes.size >= targetMotifSize)
+		//		{
+		//			nRes = null;
+		//		}
 		return nRes;
 	}
 
 	private void createChildrenList()
 	{
-		children = new ArrayList<Node>();
+		children = new ArrayList<Node>(6);
 	}
 
 	public Node addCartesianTree(Node node)
 	{
-		return addCartesianTree(this, node);
+		return addCartesianTree1(this, node);
 	}
 
 	// faz o produto cartesiano de n1 e n2 e coloca a árvore gerada como filha deste nó
@@ -148,17 +153,21 @@ public class Node extends Subgraph implements Comparable<Node>
 		int comp = n1.compareTo(n2);
 		Node nNextParent;
 		List<Node> childrenOld;
+		List<Node> children1Old;
+		List<Node> children2Old;
 
 		if (comp == 0) //n1 == n2
 		{
 			nNextParent = this.getOrCreateUniqueChild(n1.reaction, n1.connected && n2.connected);
-			if (nNextParent != null)
+			if (nNextParent != null && nNextParent.size < targetMotifSize)
 			{
 				if (n1.children != null && n2.children != null)
 				{
-					for (Node n1f : n1.children)
+					children1Old = new ArrayList<Node>(n1.children);
+					for (Node n1f : children1Old)
 					{
-						for (Node n2f : n2.children)
+						children2Old = new ArrayList<Node>(n2.children);
+						for (Node n2f : children2Old)
 						{
 							nNextParent.addCartesianTree(n1f, n2f);
 						}
@@ -166,14 +175,16 @@ public class Node extends Subgraph implements Comparable<Node>
 				}
 				if (n2.children != null && n1.connected && nNextParent != n2)
 				{
-					for (Node n2f : n2.children)
+					children2Old = new ArrayList<Node>(n2.children);
+					for (Node n2f : children2Old)
 					{
 						nNextParent.addNewTree(n2f);
 					}
 				}
 				if (n1.children != null && n2.connected && nNextParent != n1)
 				{
-					for (Node n1f : n1.children)
+					children1Old = new ArrayList<Node>(n1.children);
+					for (Node n1f : children1Old)
 					{
 						nNextParent.addNewTree(n1f);
 					}
@@ -234,11 +245,11 @@ public class Node extends Subgraph implements Comparable<Node>
 		}
 		//n1 <= n2
 		Node nNextParent = this.getOrCreateUniqueChild(n1.reaction, comp == 0 && n1.connected && n2.connected);
-		if (nNextParent != null)
+		if (nNextParent != null && nNextParent.size < targetMotifSize)
 		{
 			if (n1.children != null)
 			{
-				childrenOld = new ArrayList<Node>(n2.children);
+				childrenOld = new ArrayList<Node>(n1.children);
 				for (Node n1f : childrenOld)
 				{
 					nNextParent.addCartesianTree1(n1f, n2);
@@ -279,10 +290,35 @@ public class Node extends Subgraph implements Comparable<Node>
 		return nRes;
 	}
 
-	public void addCartesianSubg(Node ocurrence)
+	public Node addNewSubgAndTree(Node ocurrence)
 	{
-		// TODO Auto-generated method stub
+		Node nRes = addNewSubg(ocurrence, ocurrence.connected);
+		if (nRes != null && ocurrence.children != null)
+		{
+			for (Node nf : ocurrence.children)
+			{
+				nRes.addNewTree(nf);
+			}
+		}
+		return nRes;
+	}
 
+	public Node addNewSubg(Node subg, boolean connected)
+	{
+		Node nRes;
+		if (subg.parent == null)
+		{
+			nRes = getOrCreateUniqueChild(subg.reaction, connected);
+		}
+		else
+		{
+			nRes = addNewSubg((Node) subg.parent, false);
+			if (nRes != null)
+			{
+				nRes = nRes.getOrCreateUniqueChild(subg.reaction, connected);
+			}
+		}
+		return nRes;
 	}
 
 	/*	public Node addTree(Node node)
@@ -396,7 +432,21 @@ public class Node extends Subgraph implements Comparable<Node>
 		{
 			((Node) this.parent).removeChild(this);
 		}
+		reaction.removeNode(this);
 		super.delete();
+	}
+
+	protected void deleteTree()
+	{
+		List<Node> children = new ArrayList<Node>(this.children);
+		delete();
+		if (children != null)
+		{
+			for (Node nf : children)
+			{
+				nf.deleteTree();
+			}
+		}
 	}
 
 }

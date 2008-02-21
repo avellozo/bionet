@@ -44,6 +44,11 @@ public class Reaction implements Comparable<Reaction>
 		nodes.add(node);
 	}
 
+	public void removeNode(Node node)
+	{
+		nodes.remove(node);
+	}
+
 	public boolean isInTree()
 	{
 		return nodes.size() != 0;
