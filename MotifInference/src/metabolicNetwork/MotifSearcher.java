@@ -38,8 +38,19 @@ public class MotifSearcher
 		{
 			k=Integer.parseInt(args[3]);
 		}
-		
-		int printSubg = JOptionPane.showConfirmDialog(null, "Show subgraphs?", "Show subgraphs?", JOptionPane.YES_NO_OPTION);
+		int printSubg;
+		if (args.length >4)
+		{
+			if (args[4].equals("y"))
+			{
+				printSubg = JOptionPane.YES_OPTION;
+			}
+			else
+			{
+				printSubg = JOptionPane.NO_OPTION;
+			}
+		}
+		printSubg = JOptionPane.showConfirmDialog(null, "Show subgraphs?", "Show subgraphs?", JOptionPane.YES_NO_OPTION);
 
 		System.out.println("Number of Colors: " + network.numberOfColors());
 		System.out.println("Number of Vertexes: " + network.reactions.size());
