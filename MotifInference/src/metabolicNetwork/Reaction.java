@@ -59,4 +59,8 @@ public class Reaction implements Comparable<Reaction>
 		return orderCreated - o.orderCreated;
 	}
 
+	public String toString()
+	{
+		return ID;
+	}
 }

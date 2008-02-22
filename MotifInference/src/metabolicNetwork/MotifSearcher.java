@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.swing.JOptionPane;
+
 public class MotifSearcher
 {
 
@@ -18,22 +20,39 @@ public class MotifSearcher
 	//args[3] = k
 	{
 		ReactionNetwork network = new ReactionNetwork();
-		//network.buildFromSifFile("T:\\Trabalho em Lyon\\MotifInference\\Examples\\reaction_graph_motus_coli.sif");
-		//network.loadColorsFrom("T:\\Trabalho em Lyon\\MotifInference\\Examples\\primCpdsSmmReactionsCompounds.col", 3);
+		//network.buildFromSifFile("reaction_graph_motus_coli.sif");
+		//network.loadColorsFrom("primCpdsSmmReactionsCompounds.col", 3);
 
 		network.buildFromSifFile(args[0]);
 		network.loadColorsFrom(args[1], Integer.parseInt(args[2]));
 		network.eraseVerticesWithoutColor();
 		// network.print();
+		
+		int k;
+		
+		if (args.length < 4)
+		{
+			k=Integer.parseInt(JOptionPane.showInputDialog("Please input a 'k' value:"));
+		}
+		else
+		{
+			k=Integer.parseInt(args[3]);
+		}
+		
+		int printSubg = JOptionPane.showConfirmDialog(null, "Show subgraphs?", "Show subgraphs?", JOptionPane.YES_NO_OPTION);
 
 		System.out.println("Number of Colors: " + network.numberOfColors());
 		System.out.println("Number of Vertexes: " + network.reactions.size());
 		// Build the tree of the motif seeds, searching for motifs with size k = args[4]
 		long time = System.currentTimeMillis();
-		MotifList motifList = buildMotifList(network, Integer.parseInt(args[3]));
+		MotifList motifList = buildMotifList(network, k);
 		System.out.println("Execution time: " + (System.currentTimeMillis() - time));
-		System.out.println("Number of subgraphs of size " + args[3] + ": " + motifList.size());
+		System.out.println("Number of subgraphs of size " + k + ": " + motifList.size());
 
+		if (printSubg == JOptionPane.YES_OPTION)
+		{
+			motifList.print(System.out);
+		}
 	}
 
 	public static MotifList buildMotifList(ReactionNetwork network, int k)
@@ -43,7 +62,7 @@ public class MotifSearcher
 		Node.targetMotifSize = k - 1;
 		Node treeRoot = null;
 		List<Reaction> reactionsList = sortNetwork(network);
-		List<Node> ocurrences;
+		List<Node> occurrences;
 		ArrayList<Node> children;
 
 		for (Reaction reaction : reactionsList)
@@ -54,34 +73,48 @@ public class MotifSearcher
 			{
 				if (neighbour.isInTree())
 				{
-					ocurrences = new ArrayList<Node>(neighbour.nodes);
-					for (Node ocurrence : ocurrences)
+					occurrences = new ArrayList<Node>(neighbour.nodes);
+					for (Node occurrence : occurrences)
 					{
-						treeRoot.addNewSubgAndTree(ocurrence);
+						if (occurrence.size < Node.targetMotifSize-1 || (occurrence.connected && occurrence.size == Node.targetMotifSize-1))
+						{
+							treeRoot.addNewSubgAndTree(occurrence);
+						}
 					}
+//					System.out.println("Depois de colocar as ocorrências de "+neighbour+" em "+reaction);
+//					treeRoot.printTree(System.out);
+//					System.out.println();
 				}
 			}
+			treeRoot.shrink();
 			if (treeRoot.children != null)
 			{
-				children = (ArrayList<Node>) (treeRoot.children);
+				children = new ArrayList<Node>(treeRoot.children);
 				Collections.sort(children);
-				for (int i = 0; i < children.size(); i++)
+				for (int i = children.size()-2; i >=0 ; i--)
 				{
 					for (int j = i + 1; j < children.size(); j++)
 					{
+						if (!children.get(i).connected || !children.get(i).reaction.linkedTo.contains(children.get(j).reaction))
+						{
 						treeRoot.addCartesianTree1(children.get(i), children.get(j));
+						}
 					}
-					//					children.get(i).shrink();
+//					System.out.println("Antes do shrink:");
+//					treeRoot.printTree(System.out);
+//					System.out.println("Depois do shrink:");
+										children.get(i).shrink();
+//										treeRoot.printTree(System.out);
 				}
 			}
-			//						if (ocurrence.parent == null)
+			//						if (occurrence.parent == null)
 			//						{
-			//							treeRoot.addCartesianTree(ocurrence);
+			//							treeRoot.addCartesianTree(occurrence);
 			//						}
-			//						else if (!reaction.linkedTo.contains(ocurrence.getParentRoot().reaction))
+			//						else if (!reaction.linkedTo.contains(occurrence.getParentRoot().reaction))
 			//						{
 			//							ArrayList<Node> brothers = new ArrayList<Node>(treeRoot.children);
-			//							Node newOcurrence = treeRoot.addNewSubgAndTree(ocurrence);
+			//							Node newOcurrence = treeRoot.addNewSubgAndTree(occurrence);
 			//							if (newOcurrence != null)
 			//							{
 			//								while (newOcurrence.parent != treeRoot)
@@ -97,7 +130,7 @@ public class MotifSearcher
 			//					}
 			//				}
 			//			}
-			//			treeRoot.shrink();
+//						treeRoot.shrink();
 
 			//			if (!neighbourInTree)
 			//			{

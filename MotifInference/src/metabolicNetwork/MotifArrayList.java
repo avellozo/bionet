@@ -3,6 +3,7 @@
  */
 package metabolicNetwork;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class MotifArrayList implements MotifList
@@ -17,6 +18,13 @@ public class MotifArrayList implements MotifList
 	public int size()
 	{
 		return list.size();
+	}
+	public void print(PrintStream p)
+	{
+		for (Subgraph n : list)
+		{
+			p.println(n.toString());
+		}
 	}
 
 }

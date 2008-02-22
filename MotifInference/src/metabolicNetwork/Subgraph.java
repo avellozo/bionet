@@ -28,5 +28,15 @@ public class Subgraph
 	{
 
 	}
+	
+	public String toString()
+	{
+		String str = reaction.ID;
+		if (parent!=null)
+		{
+			str = parent.toString() + " " + str;
+		}
+		return str;
+	}
 
 }

@@ -3,6 +3,7 @@
  */
 package metabolicNetwork;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -290,12 +291,12 @@ public class Node extends Subgraph implements Comparable<Node>
 		return nRes;
 	}
 
-	public Node addNewSubgAndTree(Node ocurrence)
+	public Node addNewSubgAndTree(Node occurrence)
 	{
-		Node nRes = addNewSubg(ocurrence, ocurrence.connected);
-		if (nRes != null && ocurrence.children != null)
+		Node nRes = addNewSubg(occurrence, occurrence.connected);
+		if (nRes != null && occurrence.children != null)
 		{
-			for (Node nf : ocurrence.children)
+			for (Node nf : occurrence.children)
 			{
 				nRes.addNewTree(nf);
 			}
@@ -467,5 +468,28 @@ public class Node extends Subgraph implements Comparable<Node>
 			delete();
 		}
 	}
+	
+	public void printTree(PrintStream p)
+	{
+		p.print(reaction+" ->");
+		if (children != null)
+		{
+		for (Node n : children)
+		{
+			p.print(" "+n.reaction);
+		}
+		p.println();
+		for (Node n : children)
+		{
+			n.printTree(p);
+		}
+		}
+		p.println();
+	}
+	
+//	public String toString()
+//	{
+//		return reaction.toString();
+//	}
 
 }
