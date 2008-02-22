@@ -12,6 +12,7 @@ public class Node extends Subgraph implements Comparable<Node>
 	List<Node>			children	= null;
 	//	Reaction	lastVisitedFor	= null;
 	boolean				connected;
+	short		height;
 
 	static int			targetMotifSize;
 	static MotifList	TargetMotifs;
@@ -19,24 +20,27 @@ public class Node extends Subgraph implements Comparable<Node>
 	private Node(Reaction reaction, Node parent, boolean connected)
 	{
 		super(reaction, parent);
-		this.connected = connected;
-		if (reaction == null)
+		if (parent == null)
+			height = 0;
+		else
 		{
-			throw new RuntimeException();
-		}
-		reaction.addNode(this);
-		if (connected && size == targetMotifSize)
-		{
-			TargetMotifs.add(this);
-		}
-		if (parent != null)
-		{
+//			if (reaction.compareTo(parent.reaction) <= 0)
+//			{
+//				throw new RuntimeException("Reaction is less than parent's reaction.");
+//			}
+			height = (short) (parent.height + 1);
 			if (parent.children == null)
 			{
 				parent.createChildrenList();
 			}
 			parent.children.add(this);
 		}
+		this.connected = connected;
+//		if (reaction == null)
+//		{
+//			throw new RuntimeException();
+//		}
+		reaction.addNode(this);
 	}
 
 	public Node(Reaction reaction, boolean connected)
@@ -100,10 +104,14 @@ public class Node extends Subgraph implements Comparable<Node>
 
 	public Node createChild(Reaction r, boolean connected)
 	{
-		if (size < targetMotifSize - 1 || (size == targetMotifSize - 1 && connected))
+		if (height < targetMotifSize - 1)
 		{
-			Node node = new Node(r, this, connected);
-			return node;
+			return new Node(r, this, connected);
+		}
+		else if ((height == targetMotifSize - 1) && connected)
+		{
+			TargetMotifs.add(new Subgraph(r, this));
+			return null;
 		}
 		else
 		{
@@ -160,7 +168,7 @@ public class Node extends Subgraph implements Comparable<Node>
 		if (comp == 0) //n1 == n2
 		{
 			nNextParent = this.getOrCreateUniqueChild(n1.reaction, n1.connected && n2.connected);
-			if (nNextParent != null && nNextParent.size < targetMotifSize)
+			if (nNextParent != null && nNextParent.height < targetMotifSize)
 			{
 				if (n1.children != null && n2.children != null)
 				{
@@ -246,7 +254,7 @@ public class Node extends Subgraph implements Comparable<Node>
 		}
 		//n1 <= n2
 		Node nNextParent = this.getOrCreateUniqueChild(n1.reaction, comp == 0 && n1.connected && n2.connected);
-		if (nNextParent != null && nNextParent.size < targetMotifSize)
+		if (nNextParent != null && nNextParent.height < targetMotifSize)
 		{
 			if (n1.children != null)
 			{

@@ -90,7 +90,7 @@ public class MotifSearcher
 					occurrences = new ArrayList<Node>(neighbour.nodes);
 					for (Node occurrence : occurrences)
 					{
-						if (occurrence.size < Node.targetMotifSize-1 || (occurrence.connected && occurrence.size == Node.targetMotifSize-1))
+						if (occurrence.height < Node.targetMotifSize-1 || (occurrence.connected && occurrence.height == Node.targetMotifSize-1))
 						{
 							treeRoot.addNewSubgAndTree(occurrence);
 						}
