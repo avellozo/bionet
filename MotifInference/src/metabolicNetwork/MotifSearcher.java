@@ -50,7 +50,10 @@ public class MotifSearcher
 				printSubg = JOptionPane.NO_OPTION;
 			}
 		}
+		else
+		{
 		printSubg = JOptionPane.showConfirmDialog(null, "Show subgraphs?", "Show subgraphs?", JOptionPane.YES_NO_OPTION);
+		}
 
 		System.out.println("Number of Colors: " + network.numberOfColors());
 		System.out.println("Number of Vertexes: " + network.reactions.size());
