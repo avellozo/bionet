@@ -40,7 +40,14 @@ public class Node extends Subgraph implements Comparable<Node>
 //		{
 //			throw new RuntimeException();
 //		}
-		reaction.addNode(this);
+		if (connected && height == targetMotifSize)
+		{
+			TargetMotifs.add(this);
+		}
+		else
+		{
+			reaction.addNode(this);
+		}
 	}
 
 	public Node(Reaction reaction, boolean connected)
@@ -104,14 +111,9 @@ public class Node extends Subgraph implements Comparable<Node>
 
 	public Node createChild(Reaction r, boolean connected)
 	{
-		if (height < targetMotifSize - 1)
+		if (height < targetMotifSize - 1 || ((height == targetMotifSize - 1) && connected))
 		{
 			return new Node(r, this, connected);
-		}
-		else if ((height == targetMotifSize - 1) && connected)
-		{
-			TargetMotifs.add(new Subgraph(r, this));
-			return null;
 		}
 		else
 		{
