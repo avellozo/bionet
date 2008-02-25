@@ -15,11 +15,11 @@ public class Node extends Subgraph implements Comparable<Node>
 	short		height;
 
 	static int			targetMotifSize;
-	static MotifList	TargetMotifs;
+	static SubgraphSet	TargetMotifs;
 
 	private Node(Reaction reaction, Node parent, boolean connected)
 	{
-		super(reaction, parent);
+		super(parent, reaction);
 		if (parent == null)
 			height = 0;
 		else

@@ -1,29 +1,16 @@
 package metabolicNetwork;
 
-public class Subgraph
+public class Subgraph extends LinkedListReverse<Reaction>
 {
-	Reaction	reaction;
-	Subgraph	parent;
 
-	public Subgraph(Reaction reaction, Subgraph parent)
+	public Subgraph(Subgraph parent, Reaction reaction)
 	{
-		this.reaction = reaction;
-		this.parent = parent;
+		super(parent, reaction);
 	}
 
-	protected void delete()
+	public Reaction getRection()
 	{
-
-	}
-	
-	public String toString()
-	{
-		String str = reaction.toString();
-		if (parent!=null)
-		{
-			str = parent.toString() + " " + str;
-		}
-		return str;
+		return super.getData();
 	}
 
 }

@@ -6,19 +6,20 @@ package metabolicNetwork;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-public class MotifArrayList implements MotifList
+public class SubgraphSetArrayList implements SubgraphSet
 {
 	ArrayList<Subgraph>	list	= new ArrayList<Subgraph>();
 
-	public void add(Subgraph motif)
+	public void add(Subgraph subg)
 	{
-		list.add(motif);
+		list.add(subg);
 	}
 
 	public int size()
 	{
 		return list.size();
 	}
+
 	public void print(PrintStream p)
 	{
 		for (Subgraph n : list)

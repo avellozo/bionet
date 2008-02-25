@@ -59,7 +59,7 @@ public class MotifSearcher
 		System.out.println("Number of Vertexes: " + network.reactions.size());
 		// Build the tree of the motif seeds, searching for motifs with size k = args[4]
 		long time = System.currentTimeMillis();
-		MotifList motifList = buildMotifList(network, k);
+		SubgraphSet motifList = buildMotifList(network, k);
 		System.out.println("Execution time: " + (System.currentTimeMillis() - time));
 		System.out.println("Number of subgraphs of size " + k + ": " + motifList.size());
 
@@ -69,9 +69,9 @@ public class MotifSearcher
 		}
 	}
 
-	public static MotifList buildMotifList(ReactionNetwork network, int k)
+	public static SubgraphSet buildMotifList(ReactionNetwork network, int k)
 	{
-		MotifList motifList = new MotifArrayList();
+		SubgraphSet motifList = new SubgraphSetArrayList();
 		Node.TargetMotifs = motifList;
 		Node.targetMotifSize = k - 1;
 		Node treeRoot = null;
