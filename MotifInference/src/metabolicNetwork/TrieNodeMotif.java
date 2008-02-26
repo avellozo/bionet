@@ -3,7 +3,7 @@
  */
 package metabolicNetwork;
 
-public class TrieNodeMotif extends TrieNodeChildrenSorted<Color>
+public class TrieNodeMotif extends TrieNodeChildrenSortedUnique<Color>
 {
 
 	public TrieNodeMotif(Color color)

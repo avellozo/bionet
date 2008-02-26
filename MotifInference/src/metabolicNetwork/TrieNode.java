@@ -6,7 +6,7 @@ package metabolicNetwork;
 import java.io.PrintStream;
 import java.util.Collection;
 
-public abstract class TrieNode<O extends Comparable<O>> implements Comparable<TrieNode<O>>
+public abstract class TrieNode<O> implements Comparable<TrieNode<O>>
 {
 	O	data;
 
@@ -47,15 +47,25 @@ public abstract class TrieNode<O extends Comparable<O>> implements Comparable<Tr
 
 	public abstract TrieNode<O> addChild(O data, boolean terminal);
 
-	//assumindo que não há dois filhos com o mesmo dado
-	public abstract TrieNode<O> getChild(O data);
+	//assumindo que há dois filhos com o mesmo dado
+	public abstract TrieNode<O> getChild(O data, boolean terminal);
+
+	//	//assumindo que não há dois filhos com o mesmo dado
+	//	public abstract TrieNode<O> getChild(O data);
 
 	public abstract void shrink();
 
-	public abstract TrieNode<O> removeChild(O data);
+	public abstract TrieNode<O> removeChild(O data, boolean terminal);
 
 	public abstract void deleteTree();
 
 	public abstract int getNumberOfChildren();
+
+	public abstract int compareTo(O data, boolean terminal);
+
+	public int compareTo(TrieNode<O> node)
+	{
+		return compareTo(node.getData(), node.isTerminal());
+	}
 
 }

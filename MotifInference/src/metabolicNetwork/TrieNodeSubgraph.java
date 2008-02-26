@@ -3,7 +3,7 @@
  */
 package metabolicNetwork;
 
-public class TrieNodeSubgraph extends TrieNodeChildrenSorted<Reaction>
+public class TrieNodeSubgraph extends TrieNodeChildrenSortedUnique<Reaction>
 {
 
 	public TrieNodeSubgraph(Reaction data)

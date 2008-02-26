@@ -20,6 +20,12 @@ public class TrieLeafMotif extends TrieNode<Color>
 		return null;
 	}
 
+	@Override
+	public TrieNode<Color> getChild(Color data, boolean terminal)
+	{
+		return null;
+	}
+
 	public TrieNode<Color> getChild(Color color)
 	{
 		return null;
@@ -55,11 +61,6 @@ public class TrieLeafMotif extends TrieNode<Color>
 		return ++counter;
 	}
 
-	public int compareTo(TrieNode<Color> node)
-	{
-		return data.compareTo(node.getData());
-	}
-
 	public void printTree(PrintStream p)
 	{
 		p.println(data);
@@ -75,7 +76,7 @@ public class TrieLeafMotif extends TrieNode<Color>
 
 	}
 
-	public TrieNode<Color> removeChild(Color color)
+	public TrieNode<Color> removeChild(Color color, boolean terminal)
 	{
 		return null;
 	}
@@ -89,6 +90,12 @@ public class TrieLeafMotif extends TrieNode<Color>
 	@Override
 	public void setTerminal(boolean terminal)
 	{
+	}
+
+	@Override
+	public int compareTo(Color data, boolean terminal)
+	{
+		return this.data.compareTo(data);
 	}
 
 }
