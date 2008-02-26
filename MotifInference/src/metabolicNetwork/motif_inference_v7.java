@@ -1,5 +1,6 @@
 // works with hash table with mapping of colors to reduce key size
 // Design and implementation Cinzia Pizzi, 2007
+
 package metabolicNetwork;
 
 import java.io.BufferedReader;
@@ -12,7 +13,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-public class motif_inference_v6
+public class motif_inference_v7
 {
 
 	static int[][]	matrix;
@@ -82,7 +83,8 @@ public class motif_inference_v6
 			String[] sword;
 			Hashtable ht = new Hashtable(600);
 			Hashtable htcolors = new Hashtable(100);
-			Hashtable htmotifs = new Hashtable(1000);
+			//			Hashtable htmotifs = new Hashtable(1000);
+			TrieNodeMotif motifRoot = new TrieNodeMotif(null);
 			Hashtable colormap = new Hashtable(500);
 
 			br = new BufferedReader(new FileReader(args[0] + ".col"));
@@ -438,7 +440,7 @@ public class motif_inference_v6
 			int q_index;
 
 			//Hashtable ht = new Hashtable();
-			ArrayList list = new ArrayList(k);
+			ArrayList<Color> list = new ArrayList<Color>(k);
 			ArrayList candidatelist = new ArrayList();
 
 			sb = new StringBuffer();
@@ -589,7 +591,7 @@ public class motif_inference_v6
 						{
 							for (int j = 0; j <= k - 1; j++)
 							{
-								list.add(colors[queue[pointers[j]]]);
+								list.add(new Color(colors[queue[pointers[j]]]));
 							}
 							//System.out.println("list size "+list.size());
 							Collections.sort(list);
@@ -597,14 +599,26 @@ public class motif_inference_v6
 							motcount++;
 							pcount++;
 
-							if (!htmotifs.containsKey(list))
+							TrieNodeMotif node = motifRoot;
+							for (int i1 = 0; i1 < list.size(); i1++)
 							{
-								htmotifs.put(list.clone(), new Integer(1));
+								if (i1 == k - 1)
+								{
+									node.addChild(list.get(i1), true);
+								}
+								else
+								{
+									node.addChild(list.get(i1), false);
+								}
 							}
-							else
-							{
-								htmotifs.put(list.clone(), new Integer(((Integer) htmotifs.get(list)).intValue() + 1));
-							}
+							//							if (!htmotifs.containsKey(list))
+							//							{
+							//								htmotifs.put(list.clone(), new Integer(1));
+							//							}
+							//							else
+							//							{
+							//								htmotifs.put(list.clone(), new Integer(((Integer) htmotifs.get(list)).intValue() + 1));
+							//							}
 							list.clear();
 
 							// backtrack
@@ -676,25 +690,23 @@ public class motif_inference_v6
 			//
 			//			while (myenum.hasMoreElements())
 			//			{
-			//
 			//				colmot = (ArrayList) myenum.nextElement();
-			//				System.out.println(colmot.toString() + " " + htmotifs.get(colmot));
+			//				//					System.out.println(colmot.toString() + " " + htmotifs.get(colmot));
 			//				keysb.delete(0, keysb.length());
 			//				for (int j = 0; j < k; j++)
 			//				{
-			//					System.out.println(colmot.get(j));
+			//					//						System.out.println(colmot.get(j));
 			//					keysb.append(inverseColorMap[((Short) colmot.get(j)).intValue()]);
 			//					keysb.append(" ");
 			//				}
 			//				keysb.substring(0, keysb.length() - 1);
 			//				key = keysb.toString();
 			//				fw.write(((Integer) htmotifs.get(colmot)).toString() + "\t" + key + "\n");
-			//
 			//			}
 			//
 			//			fw.flush();
 			//			fw.close();
-			//
+
 			d3 = new Date();
 			dend = d3.getTime();
 			System.out.println("Time for searching " + (dend - ptime));

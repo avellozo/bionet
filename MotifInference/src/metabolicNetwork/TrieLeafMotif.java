@@ -8,11 +8,13 @@ import java.util.List;
 
 public class TrieLeafMotif extends TrieNode<Color>
 {
-	int	counter	= 0;
+	int			counter			= 0;
+	static int	counterLeafs	= 0;
 
 	public TrieLeafMotif(Color color)
 	{
 		super(color);
+		counterLeafs++;
 	}
 
 	public TrieNode<Color> addChild(Color color, boolean terminal)

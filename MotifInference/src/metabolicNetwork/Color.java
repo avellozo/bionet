@@ -5,25 +5,25 @@ package metabolicNetwork;
 
 public class Color implements Comparable<Color>
 {
-	String	id;
+	short	id;
 
-	public Color(String id)
+	public Color(short id)
 	{
 		this.id = id;
 	}
 
-	public String getId()
+	public short getId()
 	{
 		return id;
 	}
 
 	public int compareTo(Color o)
 	{
-		return getId().compareTo(o.getId());
+		return id - o.getId();
 	}
 
 	public String toString()
 	{
-		return id;
+		return ("" + getId());
 	}
 }

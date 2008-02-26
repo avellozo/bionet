@@ -24,7 +24,14 @@ public abstract class TrieNodeChildrenSortedUnique<O extends Comparable<O>> exte
 		else
 		{
 			node = createTrieNodeChild(data, terminal);
-			children.add(posChild, node);
+			if (-posChild >= children.size())
+			{
+				children.add(node);
+			}
+			else
+			{
+				children.add(-posChild, node);
+			}
 		}
 		return node;
 	}
