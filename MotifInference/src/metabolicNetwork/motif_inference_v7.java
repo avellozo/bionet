@@ -8,7 +8,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -84,7 +84,7 @@ public class motif_inference_v7
 			Hashtable ht = new Hashtable(600);
 			Hashtable htcolors = new Hashtable(100);
 			//			Hashtable htmotifs = new Hashtable(1000);
-			TrieNodeMotif motifRoot = new TrieNodeMotif(null);
+			TrieNodeMotifShort motifRoot = new TrieInternalNodeMotifShort((short) -1);
 			Hashtable colormap = new Hashtable(500);
 
 			br = new BufferedReader(new FileReader(args[0] + ".col"));
@@ -440,7 +440,7 @@ public class motif_inference_v7
 			int q_index;
 
 			//Hashtable ht = new Hashtable();
-			ArrayList<Color> list = new ArrayList<Color>(k);
+			short[] list = new short[k];
 			ArrayList candidatelist = new ArrayList();
 
 			sb = new StringBuffer();
@@ -589,26 +589,26 @@ public class motif_inference_v7
 						// the queue contains all marked nodes and their childrens, but only if they occur in the candidate set
 						if (index == k - 1)
 						{
-							for (int j = 0; j <= k - 1; j++)
+							for (int j = 0; j < k; j++)
 							{
-								list.add(new Color(colors[queue[pointers[j]]]));
+								list[j] = colors[queue[pointers[j]]];
 							}
 							//System.out.println("list size "+list.size());
-							Collections.sort(list);
+							Arrays.sort(list);
 
 							motcount++;
 							pcount++;
 
-							TrieNodeMotif node = motifRoot;
-							for (int i1 = 0; i1 < list.size(); i1++)
+							TrieNodeMotifShort node = motifRoot;
+							for (int j = 0; j < k; j++)
 							{
-								if (i1 == k - 1)
+								if (j == k - 1)
 								{
-									node.addChild(list.get(i1), true);
+									node = node.addChild(list[j], true);
 								}
 								else
 								{
-									node.addChild(list.get(i1), false);
+									node = node.addChild(list[j], false);
 								}
 							}
 							//							if (!htmotifs.containsKey(list))
@@ -619,7 +619,7 @@ public class motif_inference_v7
 							//							{
 							//								htmotifs.put(list.clone(), new Integer(((Integer) htmotifs.get(list)).intValue() + 1));
 							//							}
-							list.clear();
+							//							list.clear();
 
 							// backtrack
 							//System.out.println("backtrack "+queue[pointers[index]]);
@@ -712,6 +712,7 @@ public class motif_inference_v7
 			System.out.println("Time for searching " + (dend - ptime));
 			System.out.println("Total time " + (dend - dstart));
 			System.out.println("motifs " + motcount);
+			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
 
 		}
 		catch (Exception e)
