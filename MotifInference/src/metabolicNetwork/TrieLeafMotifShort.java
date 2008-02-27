@@ -5,14 +5,39 @@ package metabolicNetwork;
 
 public class TrieLeafMotifShort implements TrieNodeMotifShort
 {
-	int			counter			= 0;
-	static int	counterLeafs	= 0;
-	short		color;
+	private int		counter;
+	static int		counterLeafs	= 0;
+	static int[]	repeats			= {0};
+	private short	color;
 
 	public TrieLeafMotifShort(short color)
 	{
-		this.color = color;
+		setColor(color);
+		counter = 0;
+		repeats[0]++;
 		counterLeafs++;
+	}
+
+	private void setCounter(int i)
+	{
+		counter = i;
+		if (i >= repeats.length)
+		{
+			int[] newRepeats = new int[repeats.length + 1];
+			System.arraycopy(repeats, 0, newRepeats, 0, repeats.length);
+			newRepeats[repeats.length] = 0;
+			repeats = newRepeats;
+		}
+		if (i > 0)
+		{
+			repeats[i - 1]--;
+		}
+		repeats[i]++;
+	}
+
+	private void setColor(short color)
+	{
+		this.color = color;
 	}
 
 	public TrieInternalNodeMotifShort addChild(short color, boolean terminal)
@@ -30,9 +55,14 @@ public class TrieLeafMotifShort implements TrieNodeMotifShort
 	//		return counter;
 	//	}
 	//
-	public int incCounter()
+	public void incCounter()
 	{
-		return ++counter;
+		setCounter(getCounter() + 1);
+	}
+
+	private int getCounter()
+	{
+		return counter;
 	}
 
 	//	public void printTree(PrintStream p)

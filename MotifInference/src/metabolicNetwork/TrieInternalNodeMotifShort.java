@@ -5,6 +5,8 @@ package metabolicNetwork;
 
 public class TrieInternalNodeMotifShort implements TrieNodeMotifShort
 {
+
+	static int				counterInternalNodes	= 0;
 	TrieNodeMotifShort[]	children;
 	//	short[]					data		= new short[2];				//data[0] = color and data[1] = number of children
 
@@ -13,6 +15,7 @@ public class TrieInternalNodeMotifShort implements TrieNodeMotifShort
 	public TrieInternalNodeMotifShort(short color)
 	{
 		this.color = color;
+		counterInternalNodes++;
 	}
 
 	public TrieNodeMotifShort addChild(short color, boolean terminal)
@@ -67,6 +70,7 @@ public class TrieInternalNodeMotifShort implements TrieNodeMotifShort
 				System.arraycopy(children, pos, childrenNew, pos + 1, children.length - pos);
 			}
 			children = childrenNew;
+			//			System.gc();
 		}
 	}
 

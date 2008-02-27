@@ -713,6 +713,14 @@ public class motif_inference_v7
 			System.out.println("Total time " + (dend - dstart));
 			System.out.println("motifs " + motcount);
 			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
+			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);
+			System.out.println("first level " + ((TrieInternalNodeMotifShort) motifRoot).getNumberChildren());
+			System.out.println("Repeats ");
+			int repeats[] = TrieLeafMotifShort.repeats;
+			for (int j = 0; j < repeats.length; j++)
+			{
+				System.out.println(j + " " + repeats[j]);
+			}
 
 		}
 		catch (Exception e)
