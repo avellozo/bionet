@@ -5,22 +5,27 @@ package metabolicNetwork;
 
 public class TrieLeafMotifShort implements TrieNodeMotifShort
 {
-	private int		counter;
-	static int		counterLeafs	= 0;
-	static int[]	repeats			= {0};
-	private short	color;
+	//	private int					counter;
+	static int					counterLeafs	= 0;
+	static int[]				repeats			= {0};
+	//	private short				color;
+	private int					colorCounter;						//10 last bits for color
+	private TrieNodeMotifShort	brother;
+
+	private static int			flagColor		= 2047;
+	private static int			flagCounter		= 0 ^ flagColor;
 
 	public TrieLeafMotifShort(short color)
 	{
 		setColor(color);
-		counter = 0;
+		//		counter = 0;
 		repeats[0]++;
 		counterLeafs++;
 	}
 
 	private void setCounter(int i)
 	{
-		counter = i;
+		//		counter = i;
 		if (i >= repeats.length)
 		{
 			int[] newRepeats = new int[repeats.length + 1];
@@ -33,11 +38,24 @@ public class TrieLeafMotifShort implements TrieNodeMotifShort
 			repeats[i - 1]--;
 		}
 		repeats[i]++;
+		i = i << 10;
+		colorCounter = ((colorCounter & flagColor) | i);
+	}
+
+	public TrieNodeMotifShort getBrother()
+	{
+		return brother;
+	}
+
+	public void setBrother(TrieNodeMotifShort brother)
+	{
+		this.brother = brother;
 	}
 
 	private void setColor(short color)
 	{
-		this.color = color;
+		colorCounter = ((colorCounter & flagCounter) | color);
+		//		this.color = color;
 	}
 
 	public TrieInternalNodeMotifShort addChild(short color, boolean terminal)
@@ -47,7 +65,7 @@ public class TrieLeafMotifShort implements TrieNodeMotifShort
 
 	public short getColor()
 	{
-		return color;
+		return (short) (colorCounter & flagColor);
 	}
 
 	//	public int getCounter()
@@ -62,7 +80,7 @@ public class TrieLeafMotifShort implements TrieNodeMotifShort
 
 	private int getCounter()
 	{
-		return counter;
+		return ((colorCounter & flagCounter) >> 10);
 	}
 
 	//	public void printTree(PrintStream p)
