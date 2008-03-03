@@ -15,6 +15,8 @@ public class TrieInternalNodeMotifShort implements TrieNodeMotifShort
 	short						color;
 	private TrieNodeMotifShort	brother;
 
+	//	int							leafsCounter;
+
 	public TrieInternalNodeMotifShort(short color)
 	{
 		this.color = color;
@@ -61,6 +63,7 @@ public class TrieInternalNodeMotifShort implements TrieNodeMotifShort
 			insertChild(newNode, node);
 			node = newNode;
 		}
+		//		leafsCounter++;
 		return node;
 	}
 

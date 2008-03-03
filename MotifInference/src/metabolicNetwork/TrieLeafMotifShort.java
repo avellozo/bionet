@@ -5,15 +5,16 @@ package metabolicNetwork;
 
 public class TrieLeafMotifShort implements TrieNodeMotifShort
 {
+	private static int			flagColor		= 0x3FF;
+	private static int			flagCounter		= 0xFFFFFC00;
+
 	//	private int					counter;
 	static int					counterLeafs	= 0;
 	static int[]				repeats			= {0};
 	//	private short				color;
-	private int					colorCounter;						//10 last bits for color
-	private TrieNodeMotifShort	brother;
 
-	private static int			flagColor		= 2047;
-	private static int			flagCounter		= 0 ^ flagColor;
+	private int					colorCounter;					//10 last bits for color
+	private TrieNodeMotifShort	brother;
 
 	public TrieLeafMotifShort(short color)
 	{
@@ -80,7 +81,7 @@ public class TrieLeafMotifShort implements TrieNodeMotifShort
 
 	private int getCounter()
 	{
-		return ((colorCounter & flagCounter) >> 10);
+		return ((colorCounter & flagCounter) >>> 10);
 	}
 
 	//	public void printTree(PrintStream p)

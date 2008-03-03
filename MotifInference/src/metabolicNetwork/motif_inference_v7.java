@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
@@ -47,15 +46,12 @@ public class motif_inference_v7
 		String line;
 		int[] ok = new int[nV]; // this vector holds value 1 if the row i has at least k-1 neighbors at distance <k
 		int sum;
-		int nvisit;
 		BufferedReader br; // used to read files
 		BufferedWriter fw; // used to write files
-		StringBuffer sb; // used to buffer the motifs found so far up to 10000
 		int min, help;
 		int step;
 		int sort;
 		int thre;
-		ArrayList keymot;
 
 		// Read the parameter (to be done properly!!!)
 		filename = args[0];
@@ -66,8 +62,6 @@ public class motif_inference_v7
 		filename2 = args[5];
 
 		System.out.println("input " + args[0] + args[1] + args[2]);
-
-		keymot = new ArrayList(k);
 
 		// Set up time variables
 		Date d1 = new Date();
@@ -84,7 +78,7 @@ public class motif_inference_v7
 			Hashtable ht = new Hashtable(600);
 			Hashtable htcolors = new Hashtable(100);
 			//			Hashtable htmotifs = new Hashtable(1000);
-			TrieNodeMotifShort motifRoot = new TrieInternalNodeMotifShort((short) -1);
+			//			TrieNodeMotifShort motifRoot = new TrieInternalNodeMotifShort((short) -1);
 			Hashtable colormap = new Hashtable(500);
 
 			br = new BufferedReader(new FileReader(args[0] + ".col"));
@@ -147,7 +141,6 @@ public class motif_inference_v7
 			}
 
 			br = new BufferedReader(new FileReader(filename2));
-			String newline = new String();
 
 			nV = 0;
 			while ((line = br.readLine()) != null)
@@ -300,7 +293,7 @@ public class motif_inference_v7
 				// c3 contains the number of neighbors for each row i
 				// c4 contains the indexes corresponding to c3
 				int[] bighelp = new int[nV];
-				Short colhelp, colhelp2;
+				Short colhelp;
 				for (int j = 0; j < nV - 1; j++)
 				{
 					min = j;
@@ -434,28 +427,19 @@ public class motif_inference_v7
 			fw.close();
 
 			int[] candidates = new int[nV];
-			int maxd = k * (k - 1) / 2;
 			line = new String();
 
 			int q_index;
 
 			//Hashtable ht = new Hashtable();
 			short[] list = new short[k];
-			ArrayList candidatelist = new ArrayList();
-
-			sb = new StringBuffer();
 
 			//int[] lookahed = new int[nV];
 
-			fw = new BufferedWriter(new FileWriter("v6output_" + k + ".out"));
+			fw = new BufferedWriter(new FileWriter("v7output_" + k + ".out"));
 
-			int goon;
 			long motcount = 0;
-			int prev_goon = -1;
-			int[] stops = new int[k - 1];
-			int ind, ind2;
-			int comb = 0;
-			int disco = 0;
+			int gc = 0;
 
 			int start, stop;
 			start = (step - 1) * 100;
@@ -491,13 +475,12 @@ public class motif_inference_v7
 				pointers[j] = -1;
 			}
 
-			String key = new String();
-			StringBuffer keysb = new StringBuffer();
+			MotifTrie trie = new MotifTrie((int) Runtime.getRuntime().freeMemory() - 1000000);
 
 			for (int i = start; i < stop; i++)
 			{
 
-				System.gc();
+				//				System.gc();
 				if (ok[i] == 1)
 				{
 
@@ -599,18 +582,26 @@ public class motif_inference_v7
 							motcount++;
 							pcount++;
 
-							TrieNodeMotifShort node = motifRoot;
-							for (int j = 0; j < k; j++)
-							{
-								if (j == k - 1)
-								{
-									node = node.addChild(list[j], true);
-								}
-								else
-								{
-									node = node.addChild(list[j], false);
-								}
-							}
+							trie.addMotif(list);
+							//							TrieNodeMotifShort node = motifRoot;
+							//							for (int j = 0; j < k; j++)
+							//							{
+							//								if (j == k - 1)
+							//								{
+							//									node = node.addChild(list[j], true);
+							//								}
+							//								else
+							//								{
+							//									node = node.addChild(list[j], false);
+							//								}
+							//							}
+
+							//							if (gc == 10000000)
+							//							{
+							//								gc = 0;
+							//								System.gc();
+							//							}
+							//							gc++;
 							//							if (!htmotifs.containsKey(list))
 							//							{
 							//								htmotifs.put(list.clone(), new Integer(1));
@@ -712,14 +703,17 @@ public class motif_inference_v7
 			System.out.println("Time for searching " + (dend - ptime));
 			System.out.println("Total time " + (dend - dstart));
 			System.out.println("motifs " + motcount);
-			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
-			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);
-			//			System.out.println("first level " + ((TrieInternalNodeMotifShort) motifRoot).getNumberChildren());
+			System.out.println("motifs leaves " + trie.totalLeafs);
+			System.out.println("motifs internal nodes " + trie.totalInternals);
+			int repeats[] = trie.repeats;
+			//			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
+			//			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);
+			//			int repeats[] = TrieLeafMotifShort.repeats;
 			System.out.println("Repeats ");
-			int repeats[] = TrieLeafMotifShort.repeats;
 			for (int j = 0; j < repeats.length; j++)
 			{
-				System.out.println(j + " " + repeats[j]);
+				if (repeats[j] != 0)
+					System.out.println(j + " " + repeats[j]);
 			}
 
 		}
