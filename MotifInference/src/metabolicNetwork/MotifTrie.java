@@ -89,7 +89,7 @@ public class MotifTrie
 
 	protected int getBrother(int pos)
 	{
-		return ((a[pos + 1] << 16) | a[pos + 2]);
+		return ((a[pos + 1] << 16) | (a[pos + 2] & 0xFFFF));
 	}
 
 	protected int getChild(int pos)
@@ -98,7 +98,7 @@ public class MotifTrie
 		{
 			throw new RuntimeException();
 		}
-		return ((a[pos + 3] << 16) | a[pos + 4]);
+		return ((a[pos + 3] << 16) | (a[pos + 4] & 0xFFFF));
 	}
 
 	protected void setChild(int pos, int child)

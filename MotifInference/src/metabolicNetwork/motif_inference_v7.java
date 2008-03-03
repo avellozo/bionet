@@ -52,6 +52,7 @@ public class motif_inference_v7
 		int step;
 		int sort;
 		int thre;
+		int maxSizeTrie = 2000000000;
 
 		// Read the parameter (to be done properly!!!)
 		filename = args[0];
@@ -475,7 +476,7 @@ public class motif_inference_v7
 				pointers[j] = -1;
 			}
 
-			MotifTrie trie = new MotifTrie((int) Runtime.getRuntime().freeMemory() - 1000000);
+			MotifTrie trie = new MotifTrie(maxSizeTrie);
 
 			for (int i = start; i < stop; i++)
 			{
