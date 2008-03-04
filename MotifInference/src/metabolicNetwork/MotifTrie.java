@@ -6,7 +6,7 @@ package metabolicNetwork;
 public class MotifTrie
 {
 
-	short[]	a;
+	short[]	a, a1;
 	//	int		sizeAlphabet;
 	int		nextFree		= 0;
 	int		totalLeafs		= 0;
@@ -19,8 +19,14 @@ public class MotifTrie
 
 	public MotifTrie(int sizeTrie) // Bytes of the array
 	{
+		System.out.println("Max Memory before array create " + Runtime.getRuntime().maxMemory());
+		System.out.println("Total Memory before array create " + Runtime.getRuntime().totalMemory());
+		System.out.println("Free Memory before array create " + Runtime.getRuntime().freeMemory());
 		a = new short[sizeTrie / 2];
 		newInternal((short) 0);
+		System.out.println("Max Memory after array create " + Runtime.getRuntime().maxMemory());
+		System.out.println("Total Memory after array create " + Runtime.getRuntime().totalMemory());
+		System.out.println("Free Memory after array create " + Runtime.getRuntime().freeMemory());
 	}
 
 	//	public MotifTrie(int sizeTrie, int sizeAlphabet)
@@ -123,7 +129,7 @@ public class MotifTrie
 		{
 			throw new RuntimeException();
 		}
-		if (a[pos + 3] != Short.MAX_VALUE)
+		if (a[pos + 3] != Short.MAX_VALUE - 1)
 		{
 			a[pos + 3]++;
 			repeats[a[pos + 3] - 1]--;

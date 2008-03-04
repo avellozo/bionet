@@ -52,7 +52,14 @@ public class motif_inference_v7
 		int step;
 		int sort;
 		int thre;
-		int maxSizeTrie = 2000000000;
+		System.out.println("Max Memory " + Runtime.getRuntime().maxMemory());
+		System.out.println("Total Memory " + Runtime.getRuntime().totalMemory());
+		System.out.println("Free Memory " + Runtime.getRuntime().freeMemory());
+		int maxSizeTrie = (int) (Runtime.getRuntime().maxMemory() * 2 / 3);
+		if (maxSizeTrie < 0)
+			maxSizeTrie = Integer.MAX_VALUE - 1;
+		//		maxSizeTrie = 1400 * 1000000;
+		System.out.println("Array size " + maxSizeTrie);
 
 		// Read the parameter (to be done properly!!!)
 		filename = args[0];
@@ -62,7 +69,7 @@ public class motif_inference_v7
 		thre = (Integer.valueOf(args[4])).intValue();
 		filename2 = args[5];
 
-		System.out.println("input " + args[0] + args[1] + args[2]);
+		System.out.println("input " + args[0] + args[1] + args[2] + args[6]);
 
 		// Set up time variables
 		Date d1 = new Date();
