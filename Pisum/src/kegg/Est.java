@@ -89,7 +89,7 @@ public class Est
 		this.function = function;
 	}
 
-	public static Collection<Est> loadFromKoFile(String fileName) throws IOException, ServiceException
+	public static Collection<Est> loadFromKoFile(File fileIn) throws IOException, ServiceException
 	{
 		ArrayList<Est> ests = new ArrayList<Est>();
 		KOCollection kos = new KOCollection();
@@ -97,21 +97,27 @@ public class Est
 		KO ko;
 
 		FileReader file = null;
-		file = new FileReader(new File(fileName));
+		file = new FileReader(fileIn);
 		BufferedReader buffer = new BufferedReader(file);
 
 		// Each line of the file contains one relation between Est and KO
 		String line = buffer.readLine();
 		String[] estkoStr;
+		String koId;
 		while (line != null)
 		{
 			estkoStr = line.split("\t");
 			est = new Est(estkoStr[0]);
 			if (estkoStr.length > 1)
 			{
-				ko = new KO(estkoStr[1]);
+				koId = estkoStr[1];
+				ko = kos.getKo(koId);
+				if (ko == null)
+				{
+					ko = new KO(koId);
+					kos.add(ko);
+				}
 				est.setKo(ko);
-				kos.add(ko);
 			}
 			ests.add(est);
 			line = buffer.readLine();

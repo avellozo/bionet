@@ -24,8 +24,8 @@ public class KOCollection
 		KEGGLocator locator = new KEGGLocator();
 		KEGGPortType serv = locator.getKEGGPort();
 		String tits = serv.btit(kosId);
-		LinkDBRelation[] linksEC = serv.get_linkdb_by_entry(kosId, "ENZYME", 1, 100);
-		LinkDBRelation[] linksGO = serv.get_linkdb_by_entry(kosId, "GO", 1, 100);
+		LinkDBRelation[] linksEC = serv.get_linkdb_by_entry(kosId, "ENZYME", 1, 10000);
+		LinkDBRelation[] linksGO = serv.get_linkdb_by_entry(kosId, "GO", 1, 10000);
 		String tit, koDef, koId, koEc, koGo;
 		String[] strs, strs0;
 		KO ko;
@@ -119,5 +119,10 @@ public class KOCollection
 		{
 			updateFromKegg(query);
 		}
+	}
+
+	public KO getKo(String KoId)
+	{
+		return kos.get(KoId);
 	}
 }
