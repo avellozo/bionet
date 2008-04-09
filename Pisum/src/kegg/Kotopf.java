@@ -59,7 +59,7 @@ public class Kotopf
 		}
 		try
 		{
-			String[] strs = CONFIG.getStringArray("Kotopf.organisms");
+			String[] strs = CONFIG.getString("Kotopf.organisms").split(";");
 			Organism[] orgs = new Organism[strs.length];
 			for (int i = 0; i < strs.length; i++)
 			{
