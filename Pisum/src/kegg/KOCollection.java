@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.xml.rpc.ServiceException;
 
@@ -14,7 +15,7 @@ import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
 import keggapi.LinkDBRelation;
 
-public class KOCollection
+public class KOCollection implements Iterable<KO>
 {
 
 	Hashtable<String, KO>	kos	= new Hashtable<String, KO>();	//koId e KO
@@ -124,5 +125,10 @@ public class KOCollection
 	public KO getKo(String KoId)
 	{
 		return kos.get(KoId);
+	}
+
+	public Iterator<KO> iterator()
+	{
+		return kos.values().iterator();
 	}
 }

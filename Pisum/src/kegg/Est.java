@@ -3,26 +3,16 @@
  */
 package kegg;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
-import javax.xml.rpc.ServiceException;
+import com.db4o.ObjectContainer;
+import com.db4o.query.Predicate;
 
 public class Est
 {
 	String	id;
-	String	name;
-	String	function;
 
-	GO		go;
-
-	EC		ec;
-
-	KO		ko;
+	byte[]	sequence;
 
 	public Est(String id)
 	{
@@ -34,96 +24,38 @@ public class Est
 		return id;
 	}
 
-	public KO getKo()
+	public byte[] getSequence()
 	{
-		return ko;
+		return sequence;
 	}
 
-	public void setKo(KO ko)
+	public void setSequence(byte[] sequence)
 	{
-		this.ko = ko;
+		this.sequence = sequence;
 	}
 
-	public String getName()
+	public static Est getOrCreate(final String estId, ObjectContainer db)
 	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	public GO getGo()
-	{
-		return go;
-	}
-
-	public void setGo(GO go)
-	{
-		this.go = go;
-	}
-
-	public EC getEc()
-	{
-		return ec;
-	}
-
-	public void setEc(EC ec)
-	{
-		this.ec = ec;
-	}
-
-	public String toString()
-	{
-		return getId();
-	}
-
-	public String getFunction()
-	{
-		return function;
-	}
-
-	public void setFunction(String function)
-	{
-		this.function = function;
-	}
-
-	public static Collection<Est> loadFromKoFile(File fileIn) throws IOException, ServiceException
-	{
-		ArrayList<Est> ests = new ArrayList<Est>();
-		KOCollection kos = new KOCollection();
-		Est est;
-		KO ko;
-
-		FileReader file = null;
-		file = new FileReader(fileIn);
-		BufferedReader buffer = new BufferedReader(file);
-
-		// Each line of the file contains one relation between Est and KO
-		String line = buffer.readLine();
-		String[] estkoStr;
-		String koId;
-		while (line != null)
+		List<Est> ests = db.query(new Predicate<Est>()
 		{
-			estkoStr = line.split("\t");
-			est = new Est(estkoStr[0]);
-			if (estkoStr.length > 1)
+			public boolean match(Est est)
 			{
-				koId = estkoStr[1];
-				ko = kos.getKo(koId);
-				if (ko == null)
-				{
-					ko = new KO(koId);
-					kos.add(ko);
-				}
-				est.setKo(ko);
+				return est.getId().equals(estId);
 			}
-			ests.add(est);
-			line = buffer.readLine();
+		});
+		if (ests.size() == 0)
+		{
+			Est est = new Est(estId);
+			db.set(est);
+			return est;
 		}
-		file.close();
-		kos.updateFromKegg();
-		return ests;
+		else if (ests.size() == 1)
+		{
+			return ests.get(0);
+		}
+		else
+		{
+			throw new RuntimeException("More than one EST with the same ID.");
+		}
 	}
 }
