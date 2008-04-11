@@ -14,6 +14,11 @@ import keggapi.Definition;
 import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
 
+import bionet.general.EC;
+import bionet.general.GO;
+import bionet.general.Gene;
+import bionet.general.Organism;
+
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 

@@ -13,6 +13,9 @@ import java.util.ResourceBundle;
 import javax.swing.JFileChooser;
 import javax.xml.rpc.ServiceException;
 
+import bionet.general.Gene;
+import bionet.general.Organism;
+
 public class Kotopf
 {
 	private static final ResourceBundle	MESSAGES	= ResourceBundle.getBundle("kegg.messages");
@@ -59,7 +62,7 @@ public class Kotopf
 		}
 		try
 		{
-			String[] strs = CONFIG.getString("Kotopf.organisms").split(";");
+			String[] strs = CONFIG.getString("organisms").split(";");
 			Organism[] orgs = new Organism[strs.length];
 			for (int i = 0; i < strs.length; i++)
 			{

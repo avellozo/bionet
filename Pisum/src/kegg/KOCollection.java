@@ -11,6 +11,9 @@ import java.util.Iterator;
 
 import javax.xml.rpc.ServiceException;
 
+import bionet.general.EC;
+import bionet.general.GO;
+
 import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
 import keggapi.LinkDBRelation;

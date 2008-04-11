@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.xml.rpc.ServiceException;
 
+import bionet.general.Organism;
+
 import com.db4o.ObjectContainer;
 
 public class EstKoHashMap extends HashMap<Est, KO> implements EstKoMap
@@ -47,7 +49,8 @@ public class EstKoHashMap extends HashMap<Est, KO> implements EstKoMap
 		return mapId;
 	}
 
-	public static EstKoHashMap loadFromKoFile(File fileIn, ObjectContainer db) throws IOException, ServiceException
+	public static EstKoHashMap loadFromKoFile(File fileIn, Organism org, ObjectContainer db)
+			throws IOException, ServiceException
 	{
 		EstKoHashMap estKos = new EstKoHashMap(fileIn.getName());
 		KOCollection kos = new KOCollection();
@@ -65,7 +68,7 @@ public class EstKoHashMap extends HashMap<Est, KO> implements EstKoMap
 		while (line != null)
 		{
 			estkoStr = line.split("\t");
-			est = Est.getOrCreate(estkoStr[0], db);
+			est = Est.getOrCreate(estkoStr[0], org, db);
 			ko = null;
 			if (estkoStr.length > 1)
 			{

@@ -5,36 +5,20 @@ package kegg;
 
 import java.util.List;
 
+import bionet.general.Gene;
+import bionet.general.Organism;
+
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 
-public class Est
+public class Est extends Gene
 {
-	String	id;
-
-	byte[]	sequence;
-
-	public Est(String id)
+	public Est(String id, Organism org)
 	{
-		this.id = id;
+		super(id, org);
 	}
 
-	public String getId()
-	{
-		return id;
-	}
-
-	public byte[] getSequence()
-	{
-		return sequence;
-	}
-
-	public void setSequence(byte[] sequence)
-	{
-		this.sequence = sequence;
-	}
-
-	public static Est getOrCreate(final String estId, ObjectContainer db)
+	public static Est getOrCreate(final String estId, Organism org, ObjectContainer db)
 	{
 		List<Est> ests = db.query(new Predicate<Est>()
 		{
@@ -45,7 +29,7 @@ public class Est
 		});
 		if (ests.size() == 0)
 		{
-			Est est = new Est(estId);
+			Est est = new Est(estId, org);
 			db.set(est);
 			return est;
 		}
