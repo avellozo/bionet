@@ -13,7 +13,7 @@ import java.util.List;
 public class ReactionNetwork
 {
 
-	HashMap<String, Reaction>	reactions	= new HashMap<String, Reaction>();
+	HashMap<String, ReactionTrie>	reactions	= new HashMap<String, ReactionTrie>();
 
 	public ReactionNetwork()
 	{
@@ -25,7 +25,7 @@ public class ReactionNetwork
 		List<String> colors = new ArrayList<String>();
 		for (Iterator iter = reactions.values().iterator(); iter.hasNext();)
 		{
-			Reaction reaction = (Reaction) iter.next();
+			ReactionTrie reaction = (ReactionTrie) iter.next();
 			if (!colors.contains(reaction.color))
 				colors.add(reaction.color);
 		}
@@ -37,7 +37,7 @@ public class ReactionNetwork
 
 		for (Iterator iter = reactions.values().iterator(); iter.hasNext();)
 		{
-			Reaction reaction = (Reaction) iter.next();
+			ReactionTrie reaction = (ReactionTrie) iter.next();
 			System.out.print(reaction.ID + " [ " + reaction.color + " ]" + ": ");
 			String separador = "";
 			for (int j = 0; j < reaction.linkedTo.size(); j++)
@@ -68,17 +68,17 @@ public class ReactionNetwork
 						"Error during parsing of the SIF file. Relation between 2 reactions was expected at each line, but found "
 							+ relation.length + " on line " + line);
 
-				Reaction reaction1 = reactions.get(relation[0]);
+				ReactionTrie reaction1 = reactions.get(relation[0]);
 				if (reaction1 == null)
 				{
-					reaction1 = new Reaction(relation[0]);
+					reaction1 = new ReactionTrie(relation[0]);
 					reactions.put(reaction1.ID, reaction1);
 				}
 
-				Reaction reaction2 = reactions.get(relation[1]);
+				ReactionTrie reaction2 = reactions.get(relation[1]);
 				if (reaction2 == null)
 				{
-					reaction2 = new Reaction(relation[1]);
+					reaction2 = new ReactionTrie(relation[1]);
 					reactions.put(reaction2.ID, reaction2);
 				}
 
@@ -102,7 +102,7 @@ public class ReactionNetwork
 	{
 		for (Iterator iter = reactions.values().iterator(); iter.hasNext();)
 		{
-			Reaction reaction = (Reaction) iter.next();
+			ReactionTrie reaction = (ReactionTrie) iter.next();
 			if (reaction.color == null || reaction.color.equals("") || reaction.color.equals("NA"))
 				reactions.remove(reaction);
 		}
@@ -123,7 +123,7 @@ public class ReactionNetwork
 			{
 				String[] information = line.split("\t");
 
-				Reaction reaction = reactions.get(information[0]);
+				ReactionTrie reaction = reactions.get(information[0]);
 				if (reaction == null)
 				{
 					//					 System.out.println("Reaction with ID = "+information[0]+" not found in the network." );

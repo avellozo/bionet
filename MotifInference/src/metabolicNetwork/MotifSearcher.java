@@ -75,15 +75,15 @@ public class MotifSearcher
 		Node.TargetMotifs = motifList;
 		Node.targetMotifSize = k - 1;
 		Node treeRoot = null;
-		List<Reaction> reactionsList = sortNetwork(network);
+		List<ReactionTrie> reactionsList = sortNetwork(network);
 		List<Node> occurrences;
 		ArrayList<Node> children;
 
-		for (Reaction reaction : reactionsList)
+		for (ReactionTrie reaction : reactionsList)
 		{
 			treeRoot = new Node(reaction, true);
 			reaction.setSubgraphsTree(treeRoot);
-			for (Reaction neighbour : reaction.linkedTo)
+			for (ReactionTrie neighbour : reaction.linkedTo)
 			{
 				if (neighbour.isInTree())
 				{
@@ -164,12 +164,12 @@ public class MotifSearcher
 		return motifList;
 	}
 
-	public static List<Reaction> sortNetwork(ReactionNetwork network)
+	public static List<ReactionTrie> sortNetwork(ReactionNetwork network)
 	{
-		ArrayList<Reaction> reactions = new ArrayList<Reaction>(network.reactions.values().size());
-		Reaction r;
-		TreeSet<Reaction> reactionSet = new TreeSet<Reaction>(network.reactions.values());
-		TreeSet<Reaction> reactionSet1 = new TreeSet<Reaction>(); //já foram analisados, mas os filhos ainda não
+		ArrayList<ReactionTrie> reactions = new ArrayList<ReactionTrie>(network.reactions.values().size());
+		ReactionTrie r;
+		TreeSet<ReactionTrie> reactionSet = new TreeSet<ReactionTrie>(network.reactions.values());
+		TreeSet<ReactionTrie> reactionSet1 = new TreeSet<ReactionTrie>(); //já foram analisados, mas os filhos ainda não
 		while (!reactionSet.isEmpty())
 		{
 			r = reactionSet.first();
@@ -179,7 +179,7 @@ public class MotifSearcher
 			while (!reactionSet1.isEmpty())
 			{
 				r = reactionSet1.first();
-				for (Reaction r1 : r.linkedTo)
+				for (ReactionTrie r1 : r.linkedTo)
 				{
 					if (reactionSet.remove(r1))
 					{
@@ -200,10 +200,10 @@ public class MotifSearcher
 
 }
 
-class DescendentComparatorReaction implements Comparator<Reaction>
+class DescendentComparatorReaction implements Comparator<ReactionTrie>
 {
 
-	public int compare(Reaction o1, Reaction o2)
+	public int compare(ReactionTrie o1, ReactionTrie o2)
 	{
 		return -o1.compareTo(o2);
 	}

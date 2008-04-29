@@ -3,16 +3,16 @@
  */
 package metabolicNetwork;
 
-public class TrieNodeSubgraph extends TrieNodeChildrenSortedUnique<Reaction>
+public class TrieNodeSubgraph extends TrieNodeChildrenSortedUnique<ReactionTrie>
 {
 
-	public TrieNodeSubgraph(Reaction data)
+	public TrieNodeSubgraph(ReactionTrie data)
 	{
 		super(data);
 	}
 
 	@Override
-	protected TrieNode<Reaction> createTrieNodeChild(Reaction data, boolean terminal)
+	protected TrieNode<ReactionTrie> createTrieNodeChild(ReactionTrie data, boolean terminal)
 	{
 		// TODO Auto-generated method stub
 		return null;

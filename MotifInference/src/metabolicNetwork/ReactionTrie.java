@@ -3,16 +3,17 @@ package metabolicNetwork;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Reaction implements Comparable<Reaction>
+public class ReactionTrie implements Comparable<ReactionTrie>
 {
 
 	static short	nextOrderCreated	= 0;
 	String			ID;
 	String			color;
-	List<Reaction>	linkedTo			= new ArrayList<Reaction>();
+	List<ReactionTrie>	linkedTo			= new ArrayList<ReactionTrie>();
 	List<Node>		nodes				= new ArrayList<Node>();
 	short			orderCreated;
 	Node			subgraphsTree;
+	String			ECNumber;
 
 	public Node getSubgraphsTree()
 	{
@@ -24,13 +25,13 @@ public class Reaction implements Comparable<Reaction>
 		this.subgraphsTree = subgraphsTree;
 	}
 
-	public Reaction(String ID)
+	public ReactionTrie(String ID)
 	{
 		this.ID = ID;
 		orderCreated = nextOrderCreated++;
 	}
 
-	public void addReactionLink(Reaction r)
+	public void addReactionLink(ReactionTrie r)
 	{
 		if (!linkedTo.contains(r))
 		{
@@ -54,7 +55,7 @@ public class Reaction implements Comparable<Reaction>
 		return nodes.size() != 0;
 	}
 
-	public int compareTo(Reaction o)
+	public int compareTo(ReactionTrie o)
 	{
 		return orderCreated - o.orderCreated;
 	}

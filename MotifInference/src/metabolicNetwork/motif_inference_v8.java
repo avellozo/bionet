@@ -3,21 +3,15 @@
 
 package metabolicNetwork;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
-public class motif_inference_v7
+public class motif_inference_v8
 {
 
 	static int[][]	matrix;
 
-	static int		nV, count, k;
+	static int		nV, k;
 
 	public static void apsp()
 	{
@@ -41,183 +35,175 @@ public class motif_inference_v7
 	public static void main(String args[])
 	{
 
-		String filename;
-		String filename2;
-		String line;
-		int[] ok = new int[nV]; // this vector holds value 1 if the row i has at least k-1 neighbors at distance <k
-		int sum;
-		BufferedReader br; // used to read files
-		BufferedWriter fw; // used to write files
-		int min, help;
-		int step;
-		int sort;
+		//		String filename;
+		//		String filename2;
+		//		String line;
+		//		int[] ok = new int[nV]; // this vector holds value 1 if the row i has at least k-1 neighbors at distance <k
+		//		int sum;
+		//		BufferedReader br; // used to read files
+		//		BufferedWriter fw; // used to write files
+		//		int min, help;
+		//		int step;
+		//		int sort;
 		int thre;
-		//		System.out.println("Max Memory " + Runtime.getRuntime().maxMemory());
-		//		System.out.println("Total Memory " + Runtime.getRuntime().totalMemory());
-		//		System.out.println("Free Memory " + Runtime.getRuntime().freeMemory());
+		//		//		System.out.println("Max Memory " + Runtime.getRuntime().maxMemory());
+		//		//		System.out.println("Total Memory " + Runtime.getRuntime().totalMemory());
+		//		//		System.out.println("Free Memory " + Runtime.getRuntime().freeMemory());
 		int maxSizeTrie = (int) (Runtime.getRuntime().maxMemory() * 2 / 3);
 		if (maxSizeTrie < 0)
 			maxSizeTrie = Integer.MAX_VALUE - 1;
 		//		maxSizeTrie = 1400 * 1000000;
 		System.out.println("Array size " + maxSizeTrie);
-
-		// Read the parameter (to be done properly!!!)
-		filename = args[0];
-		k = (Integer.valueOf(args[1])).intValue();
-		step = (Integer.valueOf(args[2])).intValue();
-		sort = (Integer.valueOf(args[3])).intValue();
+		//
+		//		// Read the parameter (to be done properly!!!)
+		//		filename = args[0];
+		//		k = (Integer.valueOf(args[1])).intValue();
+		//		step = (Integer.valueOf(args[2])).intValue();
+		//		sort = (Integer.valueOf(args[3])).intValue();
 		thre = (Integer.valueOf(args[4])).intValue();
-		filename2 = args[5];
-
-		System.out.println("input " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4] + " "
-			+ args[5]);
-
-		// Set up time variables
+		//		filename2 = args[5];
+		//
+		//		System.out.println("input " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4] + " "
+		//			+ args[5]);
+		//
+		//		// Set up time variables
 		Date d1 = new Date();
 		long dstart = d1.getTime();
 		long ptime, dend;
 
 		try
 		{
-
 			/***********************************************************************************************************
 			 * read the graph topology from the file args[0].sif new version
 			 */
 			String[] sword;
-			Hashtable ht = new Hashtable(600);
-			Hashtable htcolors = new Hashtable(100);
-			//			Hashtable htmotifs = new Hashtable(1000);
-			//			TrieNodeMotifShort motifRoot = new TrieInternalNodeMotifShort((short) -1);
-			Hashtable colormap = new Hashtable(500);
-
-			br = new BufferedReader(new FileReader(args[0] + ".col"));
-			fw = new BufferedWriter(new FileWriter(args[0] + ".incol"));
-			String filtered = new String();
-			int index = 0;
-			short colnum = 0;
-			while ((line = br.readLine()) != null)
-			{
-
-				sword = line.split("\t");
-				index = 0;
-
-				if (!sword[6].equals("NA"))
-				{
-
-					for (int i = 0; i < thre; i++)
-					{
-						index = sword[6].indexOf(".", index + 1);
-					}
-					if (index != -1)
-					{
-						filtered = sword[6].substring(0, index);
-					}
-					else
-					{
-						filtered = sword[6];
-					}
-					if (filtered.indexOf("-") == -1)
-					{
-						htcolors.put(sword[0], filtered);
-						//System.out.println(sword[0]+" "+filtered+" "+filtered.indexOf("-"));
-						//System.in.read();
-						fw.write(sword[0] + " " + filtered + "\n");
-
-						if (!colormap.containsKey(filtered))
-						{
-							colormap.put(filtered, new Short(colnum));
-							colnum++;
-						}
-
-					}
-				}
-
-			}
-			br.close();
-			fw.flush();
-			fw.close();
-			System.out.println("color num " + colnum);
-
-			String[] inverseColorMap = new String[colnum];
-			Enumeration e = colormap.keys();
-			String s;
-			Short code;
-			while (e.hasMoreElements())
-			{
-				s = (String) e.nextElement();
-				code = (Short) colormap.get(s);
-				inverseColorMap[code.intValue()] = s;
-			}
-
-			br = new BufferedReader(new FileReader(filename2));
-
-			short[] colorQtty = new short[colnum];
-			nV = 0;
-			while ((line = br.readLine()) != null)
-			{
-				sword = line.split("\t");
-				if (line.indexOf("linked") != -1)
-				{
-					if (htcolors.containsKey(sword[0]) && htcolors.containsKey(sword[2]))
-					{
-						if (ht.containsKey(sword[0]) == false)
-						{
-							ht.put(sword[0], String.valueOf(nV));
-							nV++;
-							colorQtty[(Short) colormap.get((String) htcolors.get(sword[0]))]++;
-						}
-						if (ht.containsKey(sword[2]) == false)
-						{
-							ht.put(sword[2], String.valueOf(nV));
-							nV++;
-							colorQtty[(Short) colormap.get((String) htcolors.get(sword[2]))]++;
-						}
-
-					}
-				}
-
-			}
-			br.close();
-
-			System.out.println(nV);
-
-			// set up global matrices
-			matrix = new int[nV][nV];
-
-			// initialize the matrix
-			for (int i = 0; i < nV; i++)
-			{
-				for (int j = 0; j < nV; j++)
-					matrix[i][j] = 0;
-			}
-
-			br = new BufferedReader(new FileReader(filename2));
-			fw = new BufferedWriter(new FileWriter(filename + ".in"));
-			int n1, n2;
-			Short[] colors = new Short[nV];
-
-			while ((line = br.readLine()) != null)
-			{
-				if (line.indexOf("linked") != -1)
-				{
-					sword = line.split("\t");
-					if (ht.containsKey(sword[0]) && ht.containsKey(sword[2]))
-					{
-						n1 = (Integer.valueOf((String) ht.get(sword[0]))).intValue();
-						n2 = (Integer.valueOf((String) ht.get(sword[2]))).intValue();
-
-						matrix[n1][n2] = 1;
-						matrix[n2][n1] = 1;
-						colors[n1] = (Short) colormap.get((String) htcolors.get(sword[0]));
-						colors[n2] = (Short) colormap.get((String) htcolors.get(sword[2]));
-						fw.write(sword[0] + " " + sword[2] + "\n");
-					}
-				}
-
-			}
-			br.close();
-			fw.flush();
-			fw.close();
+			//			Hashtable ht = new Hashtable(600);
+			//			Hashtable htcolors = new Hashtable(100);
+			//			//			Hashtable htmotifs = new Hashtable(1000);
+			//			Hashtable colormap = new Hashtable(500);
+			//
+			//			br = new BufferedReader(new FileReader(args[0] + ".col"));
+			//			fw = new BufferedWriter(new FileWriter(args[0] + ".incol"));
+			//			String filtered = new String();
+			//			int index = 0;
+			//			short colnum = 0;
+			//			while ((line = br.readLine()) != null)
+			//			{
+			//				sword = line.split("\t");
+			//				index = 0;
+			//
+			//				if (!sword[6].equals("NA"))
+			//				{
+			//					for (int i = 0; i < thre; i++)
+			//					{
+			//						index = sword[6].indexOf(".", index + 1);
+			//					}
+			//					if (index != -1)
+			//					{
+			//						filtered = sword[6].substring(0, index);
+			//					}
+			//					else
+			//					{
+			//						filtered = sword[6];
+			//					}
+			//					if (filtered.indexOf("-") == -1)
+			//					{
+			//						htcolors.put(sword[0], filtered);
+			//						//System.out.println(sword[0]+" "+filtered+" "+filtered.indexOf("-"));
+			//						//System.in.read();
+			//						fw.write(sword[0] + " " + filtered + "\n");
+			//
+			//						if (!colormap.containsKey(filtered))
+			//						{
+			//							colormap.put(filtered, new Short(colnum));
+			//							colnum++;
+			//						}
+			//
+			//					}
+			//				}
+			//			}
+			//			br.close();
+			//			fw.flush();
+			//			fw.close();
+			//			System.out.println("color num " + colnum);
+			//
+			//			String[] inverseColorMap = new String[colnum];
+			//			Enumeration e = colormap.keys();
+			//			String s;
+			//			Short code;
+			//			while (e.hasMoreElements())
+			//			{
+			//				s = (String) e.nextElement();
+			//				code = (Short) colormap.get(s);
+			//				inverseColorMap[code.intValue()] = s;
+			//			}
+			//
+			//			br = new BufferedReader(new FileReader(filename2));
+			//
+			//			short[] colorQtty = new short[colnum];
+			//			nV = 0;
+			//			while ((line = br.readLine()) != null)
+			//			{
+			//				sword = line.split("\t");
+			//				if (line.indexOf("linked") != -1)
+			//				{
+			//					if (htcolors.containsKey(sword[0]) && htcolors.containsKey(sword[2]))
+			//					{
+			//						if (ht.containsKey(sword[0]) == false)
+			//						{
+			//							ht.put(sword[0], String.valueOf(nV));
+			//							nV++;
+			//							colorQtty[(Short) colormap.get((String) htcolors.get(sword[0]))]++;
+			//						}
+			//						if (ht.containsKey(sword[2]) == false)
+			//						{
+			//							ht.put(sword[2], String.valueOf(nV));
+			//							nV++;
+			//							colorQtty[(Short) colormap.get((String) htcolors.get(sword[2]))]++;
+			//						}
+			//					}
+			//				}
+			//			}
+			//			br.close();
+			//
+			//			System.out.println(nV);
+			//
+			//			// set up global matrices
+			//			matrix = new int[nV][nV];
+			//
+			//			// initialize the matrix
+			//			for (int i = 0; i < nV; i++)
+			//			{
+			//				for (int j = 0; j < nV; j++)
+			//					matrix[i][j] = 0;
+			//			}
+			//
+			//			br = new BufferedReader(new FileReader(filename2));
+			//			fw = new BufferedWriter(new FileWriter(filename + ".in"));
+			//			int n1, n2;
+			//			Short[] colors = new Short[nV];
+			//
+			//			while ((line = br.readLine()) != null)
+			//			{
+			//				if (line.indexOf("linked") != -1)
+			//				{
+			//					sword = line.split("\t");
+			//					if (ht.containsKey(sword[0]) && ht.containsKey(sword[2]))
+			//					{
+			//						n1 = (Integer.valueOf((String) ht.get(sword[0]))).intValue();
+			//						n2 = (Integer.valueOf((String) ht.get(sword[2]))).intValue();
+			//
+			//						matrix[n1][n2] = 1;
+			//						matrix[n2][n1] = 1;
+			//						colors[n1] = (Short) colormap.get((String) htcolors.get(sword[0]));
+			//						colors[n2] = (Short) colormap.get((String) htcolors.get(sword[2]));
+			//						fw.write(sword[0] + " " + sword[2] + "\n");
+			//					}
+			//				}
+			//			}
+			//			br.close();
+			//			fw.flush();
+			//			fw.close();
 
 			/** ****************************************************************************************************************************** */
 
@@ -247,7 +233,7 @@ public class motif_inference_v7
 			ptime = d2.getTime();
 
 			// check which vertexes are connected to at least k-1 other vertexes at distance <k
-			ok = new int[nV];
+			int[] ok = new int[nV];
 
 			/***********************************************************************************************************
 			 * sort the matrix
@@ -270,126 +256,127 @@ public class motif_inference_v7
 				c5[i] = 0;
 				c6[i] = 0;
 			}
-			if (sort != 0)
+			//			if (sort != 0)
+			//			{
+			// check which vertexes are connected to at least k-1 other vertexes at distance <k
+			// and also which vertexes have one color in the motif to search
+			int sum;
+			for (int i = 0; i < nV; i++)
 			{
-				// check which vertexes are connected to at least k-1 other vertexes at distance <k
-				// and also which vertexes have one color in the motif to search
-				for (int i = 0; i < nV; i++)
+				sum = 0;
+				for (int j = i + 1; j < nV; j++)
 				{
-					sum = 0;
-
-					for (int j = i + 1; j < nV; j++)
-					{
-						if (matrix[i][j] < k)
-							sum++;
-					}
-					c2[i] = sum; // c2 holds the number of elements at distance less than k above the diagonal
-
-					somma = 0;
-					for (int j = 0; j < nV; j++)
-					{
-						if (matrix[i][j] < k)
-							somma++;
-					}
-					c1[i] = somma; //  c1 holds the number of elements at distance less than k
-
-					c3[i] = c1[i];
-					c4[i] = i;
-					//System.out.println("node "+i+" = "+sum);
-					if (sum >= k - 1)
-						ok[i] = 1;
-					else
-						ok[i] = 0;
+					if (matrix[i][j] < k)
+						sum++;
 				}
+				c2[i] = sum; // c2 holds the number of elements at distance less than k above the diagonal
 
-				// c3 contains the number of neighbors for each row i
-				// c4 contains the indexes corresponding to c3
-				int[] bighelp = new int[nV];
-				Short colhelp;
-				for (int j = 0; j < nV - 1; j++)
+				somma = 0;
+				for (int j = 0; j < nV; j++)
 				{
-					min = j;
-					// find the row in the not yet sorted matrix such that the neighbors are the least
-					for (int t = j + 1; t < nV; t++)
-					{
-						if (c3[t] < c3[min])
-						{
-							min = t;
-						}
-					}
-					// help contains the number of neighbors of row j to be swapped
-					help = c3[j];
-					colhelp = colors[j];
-					// bighelp contains row j
-					for (int t = 0; t < nV; t++)
-					{
-						bighelp[t] = matrix[j][t];
-					}
-
-					// assign to c3[j] the value of the neighbors of row min
-					c3[j] = c3[min];
-					colors[j] = colors[min];
-					// copy row min in row j
-					for (int t = 0; t < nV; t++)
-					{
-						matrix[j][t] = matrix[min][t];
-					}
-					// c3[min] now hold the number of neighbors of row j
-					c3[min] = help;
-					colors[min] = colhelp;
-					//help has now the index of the row at position j
-					help = c4[j];
-					//c4[j] hold the index of the row that is set there
-					c4[j] = min;
-					//c4[min] has now the index of the row at position j
-					c4[min] = help;
-
-					// copy row j in row min
-					for (int t = 0; t < nV; t++)
-					{
-						matrix[min][t] = bighelp[t];
-					}
-					//copy column j in bighelp
-					for (int t = 0; t < nV; t++)
-					{
-						bighelp[t] = matrix[t][j];
-					}
-					//copy column  min in column j
-					for (int t = 0; t < nV; t++)
-					{
-						matrix[t][j] = matrix[t][min];
-					}
-					// copy column j in column min
-					for (int t = 0; t < nV; t++)
-					{
-						matrix[t][min] = bighelp[t];
-					}
-
-					if (sort == 2)
-					{
-						for (int t = j + 1; t < nV; t++)
-						{
-							if (matrix[t][j] < k)
-							{
-								c3[t]--;
-							}
-						}
-					}
+					if (matrix[i][j] < k)
+						somma++;
 				}
+				c1[i] = somma; //  c1 holds the number of elements at distance less than k
 
-				// write computed apsp
-				fw = new BufferedWriter(new FileWriter(filename + ".dat.apsp2"));
-
-				for (int i = 0; i < nV; i++)
-				{
-					//System.out.println("color["+i+"]="+colors[i]);
-					for (int j = 0; j < nV; j++)
-						fw.write(matrix[i][j] + "\t");
-					fw.newLine();
-				}
-				fw.flush();
-				fw.close();
+				c3[i] = c1[i];
+				c4[i] = i;
+				//System.out.println("node "+i+" = "+sum);
+				if (sum >= k - 1)
+					ok[i] = 1;
+				else
+					ok[i] = 0;
 			}
+
+			// c3 contains the number of neighbors for each row i
+			// c4 contains the indexes corresponding to c3
+			int[] bighelp = new int[nV];
+			Short colhelp;
+			int min, help;
+			for (int j = 0; j < nV - 1; j++)
+			{
+				min = j;
+				// find the row in the not yet sorted matrix such that the neighbors are the least
+				for (int t = j + 1; t < nV; t++)
+				{
+					if (c3[t] < c3[min])
+					{
+						min = t;
+					}
+				}
+				// help contains the number of neighbors of row j to be swapped
+				help = c3[j];
+				colhelp = colors[j];
+				// bighelp contains row j
+				for (int t = 0; t < nV; t++)
+				{
+					bighelp[t] = matrix[j][t];
+				}
+
+				// assign to c3[j] the value of the neighbors of row min
+				c3[j] = c3[min];
+				colors[j] = colors[min];
+				// copy row min in row j
+				for (int t = 0; t < nV; t++)
+				{
+					matrix[j][t] = matrix[min][t];
+				}
+				// c3[min] now hold the number of neighbors of row j
+				c3[min] = help;
+				colors[min] = colhelp;
+				//help has now the index of the row at position j
+				help = c4[j];
+				//c4[j] hold the index of the row that is set there
+				c4[j] = min;
+				//c4[min] has now the index of the row at position j
+				c4[min] = help;
+
+				// copy row j in row min
+				for (int t = 0; t < nV; t++)
+				{
+					matrix[min][t] = bighelp[t];
+				}
+				//copy column j in bighelp
+				for (int t = 0; t < nV; t++)
+				{
+					bighelp[t] = matrix[t][j];
+				}
+				//copy column  min in column j
+				for (int t = 0; t < nV; t++)
+				{
+					matrix[t][j] = matrix[t][min];
+				}
+				// copy column j in column min
+				for (int t = 0; t < nV; t++)
+				{
+					matrix[t][min] = bighelp[t];
+				}
+
+				//					if (sort == 2)
+				//					{
+				//						for (int t = j + 1; t < nV; t++)
+				//						{
+				//							if (matrix[t][j] < k)
+				//							{
+				//								c3[t]--;
+				//							}
+				//						}
+				//					}
+			}
+
+			//				// write computed apsp
+			//				fw = new BufferedWriter(new FileWriter(filename + ".dat.apsp2"));
+			//
+			//				for (int i = 0; i < nV; i++)
+			//				{
+			//					//System.out.println("color["+i+"]="+colors[i]);
+			//					for (int j = 0; j < nV; j++)
+			//						fw.write(matrix[i][j] + "\t");
+			//					fw.newLine();
+			//				}
+			//				fw.flush();
+			//				fw.close();
+			//			}
 
 			/***********************************************************************************************************
 			 * end sort the matrix
@@ -428,18 +415,18 @@ public class motif_inference_v7
 				}
 			}
 
-			fw = new BufferedWriter(new FileWriter("summary"));
-			fw.write("tot \t diag \t sort\t sort2 \t sdiag \n");
-			for (int i = 0; i < nV; i++)
-			{
-				fw.write(c1[i] + "\t" + c2[i] + "\t" + c3[i] + "\t" + c5[i] + "\t" + c6[i] + "\n");
-			}
-
-			fw.flush();
-			fw.close();
+			//			fw = new BufferedWriter(new FileWriter("summary"));
+			//			fw.write("tot \t diag \t sort\t sort2 \t sdiag \n");
+			//			for (int i = 0; i < nV; i++)
+			//			{
+			//				fw.write(c1[i] + "\t" + c2[i] + "\t" + c3[i] + "\t" + c5[i] + "\t" + c6[i] + "\n");
+			//			}
+			//
+			//			fw.flush();
+			//			fw.close();
 
 			int[] candidates = new int[nV];
-			line = new String();
+			//			line = new String();
 
 			int q_index;
 
@@ -448,24 +435,24 @@ public class motif_inference_v7
 
 			//int[] lookahed = new int[nV];
 
-			fw = new BufferedWriter(new FileWriter("v7output_" + k + ".out"));
+			//			fw = new BufferedWriter(new FileWriter("v7output_" + k + ".out"));
 
 			long motcount = 0;
 			//			int gc = 0;
 
 			int start, stop;
-			start = (step - 1) * 100;
-			stop = step * 100;
-			if (stop > nV - k + 1)
-			{
-				stop = nV - k + 1;
-			}
-
-			if (step == -1)
-			{
-				start = 0;
-				stop = nV;
-			}
+			//			start = (step - 1) * 100;
+			//			stop = step * 100;
+			//			if (stop > nV - k + 1)
+			//			{
+			//				stop = nV - k + 1;
+			//			}
+			//
+			//			if (step == -1)
+			//			{
+			start = 0;
+			stop = nV;
+			//			}
 
 			int pcount = 0;
 
@@ -488,6 +475,7 @@ public class motif_inference_v7
 			}
 
 			MotifTrie trie = new MotifTrie(maxSizeTrie);
+			int count;
 
 			for (int i = start; i < stop; i++)
 			{
@@ -563,7 +551,7 @@ public class motif_inference_v7
 					pointers[0] = 0;
 					queue[0] = i;
 					firstfree = 0; // point to the last inserted node in the queue. need to be incremented to put a new node
-					index = 0; // keep track of the last pointer set up, when equal to k-1 I have a motif to report
+					int index = 0; // keep track of the last pointer set up, when equal to k-1 I have a motif to report
 					q_index = 0; // index of last marked node
 
 					for (int j = i + 1; j < nV; j++)

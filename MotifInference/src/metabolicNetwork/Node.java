@@ -17,7 +17,7 @@ public class Node extends Subgraph implements Comparable<Node>
 	static int			targetMotifSize;
 	static SubgraphSet	TargetMotifs;
 
-	private Node(Reaction reaction, Node parent, boolean connected)
+	private Node(ReactionTrie reaction, Node parent, boolean connected)
 	{
 		super(parent, reaction);
 		if (parent == null)
@@ -50,7 +50,7 @@ public class Node extends Subgraph implements Comparable<Node>
 		}
 	}
 
-	public Node(Reaction reaction, boolean connected)
+	public Node(ReactionTrie reaction, boolean connected)
 	{
 		this(reaction, null, connected);
 	}
@@ -94,7 +94,7 @@ public class Node extends Subgraph implements Comparable<Node>
 		}
 	*/
 
-	public Node getChild(Reaction r)
+	public Node getChild(ReactionTrie r)
 	{
 		if (children != null)
 		{
@@ -109,7 +109,7 @@ public class Node extends Subgraph implements Comparable<Node>
 		return null;
 	}
 
-	public Node createChild(Reaction r, boolean connected)
+	public Node createChild(ReactionTrie r, boolean connected)
 	{
 		if (height < targetMotifSize - 1 || ((height == targetMotifSize - 1) && connected))
 		{
@@ -122,7 +122,7 @@ public class Node extends Subgraph implements Comparable<Node>
 	}
 
 	// Se o nó encontrado é terminal então despreza o parâmetro connected
-	public Node getOrCreateUniqueChild(Reaction r, boolean connected)
+	public Node getOrCreateUniqueChild(ReactionTrie r, boolean connected)
 	{
 		Node nRes;
 		if (reaction == r)
