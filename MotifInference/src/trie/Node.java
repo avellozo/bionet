@@ -1,11 +1,12 @@
 /*
  * Created on 31/01/2008
  */
-package metabolicNetwork;
+package trie;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Node extends Subgraph implements Comparable<Node>
 {

@@ -1,9 +1,9 @@
 /*
  * Created on 25/02/2008
  */
-package metabolicNetwork;
+package general;
 
-public class Color implements Comparable<Color>
+public class Color
 {
 	short	id;
 
@@ -15,11 +15,6 @@ public class Color implements Comparable<Color>
 	public short getId()
 	{
 		return id;
-	}
-
-	public int compareTo(Color o)
-	{
-		return id - o.getId();
 	}
 
 	public String toString()

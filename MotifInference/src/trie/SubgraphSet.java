@@ -1,4 +1,4 @@
-package metabolicNetwork;
+package trie;
 
 import java.io.PrintStream;
 

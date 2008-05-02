@@ -1,7 +1,7 @@
 /*
  * Created on 27/02/2008
  */
-package metabolicNetwork;
+package trie;
 
 public class TrieInternalNodeMotifShort implements TrieNodeMotifShort
 {

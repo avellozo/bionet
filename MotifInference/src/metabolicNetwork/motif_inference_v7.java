@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import trie.MotifTrie;
+
 public class motif_inference_v7
 {
 
@@ -727,7 +729,7 @@ public class motif_inference_v7
 				if (repeats[j] != 0)
 					System.out.println(j + " " + repeats[j]);
 			}
-			trie.print(System.out, inverseColorMap, colorQtty, k, nV, motcount);
+			//			trie.print(System.out, inverseColorMap, k, colorQtty, nV, motcount);
 		}
 		catch (Exception e)
 		{

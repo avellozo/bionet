@@ -1,7 +1,7 @@
 /*
  * Created on 26/02/2008
  */
-package metabolicNetwork;
+package trie;
 
 public interface TrieNodeComparator<O>
 {

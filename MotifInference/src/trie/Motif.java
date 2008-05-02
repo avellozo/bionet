@@ -1,7 +1,10 @@
 /*
  * Created on 25/02/2008
  */
-package metabolicNetwork;
+package trie;
+
+import general.Color;
+
 
 public class Motif extends LinkedListReverse<Color>
 {

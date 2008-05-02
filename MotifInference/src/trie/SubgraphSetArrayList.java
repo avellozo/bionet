@@ -1,7 +1,7 @@
 /*
  * Created on 06/02/2008
  */
-package metabolicNetwork;
+package trie;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

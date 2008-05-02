@@ -1,19 +1,19 @@
 /*
  * Created on 03/03/2008
  */
-package metabolicNetwork;
+package trie;
 
 import java.io.PrintStream;
 
 public class MotifTrie
 {
 
-	short[]	a, a1;
+	short[]			a, a1;
 	//	int		sizeAlphabet;
-	int		nextFree		= 0;
-	int		totalLeafs		= 0;
-	int		totalInternals	= 0;
-	int[]	repeats			= new int[Short.MAX_VALUE];
+	int				nextFree		= 0;
+	int				totalLeafs		= 0;
+	int				totalInternals	= 0;
+	public int[]	repeats			= new int[Short.MAX_VALUE];
 
 	//	int		bitsColor;
 
@@ -185,7 +185,7 @@ public class MotifTrie
 		return pos;
 	}
 
-	public void print(PrintStream p, String[] colorStr, short[] colorQtty, int k, int nv, long motcount)
+	public void print(PrintStream p, String[] colorStr, int k, short[] colorQtty, int nv, long motcount)
 	{
 		print(p, getChild(0), new short[k], 0, colorStr, colorQtty, nv, motcount);
 	}

@@ -1,7 +1,7 @@
 /*
  * Created on 02/04/2008
  */
-package metabolicNetwork;
+package general;
 
 public class EC
 {
@@ -21,4 +21,5 @@ public class EC
 	{
 		return getId();
 	}
+
 }

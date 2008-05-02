@@ -8,6 +8,11 @@ import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
+import trie.Node;
+import trie.ReactionTrie;
+import trie.SubgraphSet;
+import trie.SubgraphSetArrayList;
+
 public class MotifSearcher
 {
 

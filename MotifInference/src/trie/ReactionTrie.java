@@ -1,7 +1,8 @@
-package metabolicNetwork;
+package trie;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class ReactionTrie implements Comparable<ReactionTrie>
 {

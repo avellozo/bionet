@@ -1,4 +1,5 @@
-package metabolicNetwork;
+package trie;
+
 
 public class Subgraph extends LinkedListReverse<ReactionTrie>
 {
