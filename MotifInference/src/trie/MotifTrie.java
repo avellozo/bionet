@@ -197,7 +197,7 @@ public class MotifTrie
 		if (isLeaf(pos))
 		{
 			int counter = getCounter(pos) + 1;
-			int k = i + 1;
+			int k = motif.length;
 			short[] colorQttyMotif = new short[colorQtty.length];
 			String str = "";
 			int j;
@@ -215,7 +215,7 @@ public class MotifTrie
 			{
 				pAle = pAle * comb(colorQtty[j], colorQttyMotif[j]);
 			}
-			pAle = pAle * counter / (comb(nv, k) * motcount);
+			pAle = (pAle * motcount) / (comb(nv, k) * counter);
 
 			p.println(str + " " + counter + " " + pAle);
 		}

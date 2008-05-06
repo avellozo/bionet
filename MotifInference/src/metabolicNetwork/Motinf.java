@@ -20,19 +20,30 @@ import org.xml.sax.SAXException;
 
 import trie.MotifTrie;
 
-public class motif_inference_v8
+public class Motinf
 {
-	static int	motCount;
+	static long	motCount;
 
-	//file.col, k, threshold
+	//file.col/file.xml, k, threshold {L,V,l,v} {y,n}
+	//args[3] = {L,V,l,v} Method neighbors.
+	// L consider only neighbors reactions that share compouns as substract and procuct
+	// V consider subst-subst and prod-prod also
+	//args[4] = {y,n} Print details? Default is false
 	public static void main(String args[])
 	{
 
 		long time = System.currentTimeMillis();
 
+		if (args.length < 5)
+		{
+			System.out.println("usage:  java -jar motinf.jar [file.col,file.xml] k threshold {L,V,l,v} {y,n}");
+			return;
+		}
 		String fileName = args[0];
 		int k = (Integer.valueOf(args[1])).intValue();
 		int thre = (Integer.valueOf(args[2])).intValue();
+		boolean considerSubsSubs = (args[3].toLowerCase().equals("v"));
+		boolean printDetails = args.length > 4 && args[4].equals("y");
 
 		List<Reaction> reactions;
 
@@ -40,7 +51,7 @@ public class motif_inference_v8
 		{
 			try
 			{
-				reactions = Reaction.getReationsFromFileTab(fileName);
+				reactions = Reaction.getReationsFromFileTab(fileName, considerSubsSubs, considerSubsSubs);
 			}
 			catch (IOException e)
 			{
@@ -52,7 +63,7 @@ public class motif_inference_v8
 		{
 			try
 			{
-				reactions = Reaction.getReationsFromFileSBML(fileName);
+				reactions = Reaction.getReationsFromFileSBML(fileName, considerSubsSubs, considerSubsSubs);
 			}
 			catch (ParserConfigurationException e)
 			{
@@ -77,17 +88,17 @@ public class motif_inference_v8
 		{
 			maxSizeTrie = Integer.MAX_VALUE - 1;
 		}
-		System.out.println("Array size " + maxSizeTrie);
+		//		System.out.println("Array size " + maxSizeTrie);
 		MotifTrie trie = new MotifTrie(maxSizeTrie);
 
-		System.out.println("Time to create structures " + (System.currentTimeMillis() - time));
+		//		System.out.println("Time to create structures " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
 
 		short[] colorQtty = new short[mapColorEC.length];
 		int n = 0;
 		motCount = 0;
 		Reaction[] motifPrefix = new Reaction[k];
-		motif_inference_v8 m = new motif_inference_v8();
+		Motinf m = new Motinf();
 		for (Reaction r : reactions)
 		{
 			if (r.isValid())
@@ -100,31 +111,35 @@ public class motif_inference_v8
 			}
 		}
 
-		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time));
-		System.out.println("Reactions: " + n);
-		System.out.println("Colors with threshold " + thre + ": " + mapColorEC.length);
-		for (int j = 0; j < mapColorEC.length; j++)
-		{
-			System.out.println(mapColorEC[j] + "\t" + colorQtty[j]);
-		}
-
-		System.out.println("Motifs: ");
-		if (args.length > 3 && args[3].equals("y"))
-		{
-			trie.print(System.out, mapColorEC, k, colorQtty, n, motCount);
-		}
+		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + "ms");
 		System.out.println("Total motifs of size " + k + ": " + motCount);
 		System.out.println();
-		int repeats[] = trie.repeats;
+		System.out.println("Reactions: " + n);
+		if (considerSubsSubs)
+		{
+			System.out.println("Considering the edges substract-substract and product-product.");
+		}
+		System.out.println("Colors with threshold " + thre + ": " + mapColorEC.length);
+		if (printDetails)
+		{
+			for (int j = 0; j < mapColorEC.length; j++)
+			{
+				System.out.println(mapColorEC[j] + "\t" + colorQtty[j]);
+			}
+			System.out.println("Motifs: ");
+			trie.print(System.out, mapColorEC, k, colorQtty, n, motCount);
+			//			System.out.println("Occurrences:");
+			//			int repeats[] = trie.repeats;
+			//			for (int j = 0; j < repeats.length; j++)
+			//			{
+			//				if (repeats[j] != 0)
+			//					System.out.println((j + 1) + " " + repeats[j]);
+			//			}
+		}
+
 		//			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
 		//			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);
 		//			int repeats[] = TrieLeafMotifShort.repeats;
-		System.out.println("Occurrences:");
-		for (int j = 0; j < repeats.length; j++)
-		{
-			if (repeats[j] != 0)
-				System.out.println((j + 1) + " " + repeats[j]);
-		}
 
 	}
 

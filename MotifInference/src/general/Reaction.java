@@ -67,32 +67,12 @@ public class Reaction
 	{
 		substrates.add(c);
 		c.addAsSubstrate(this);
-		for (Reaction r : c.getReactionsAsProduct())
-		{
-			this.addNeighbor(r);
-			r.addNeighbor(this);
-		}
-		for (Reaction r : c.getReactionsAsSubstrate())
-		{
-			this.addNeighbor(r);
-			r.addNeighbor(this);
-		}
 	}
 
 	public void addProduct(Compound c)
 	{
 		products.add(c);
 		c.addAsProduct(this);
-		for (Reaction r : c.getReactionsAsSubstrate())
-		{
-			this.addNeighbor(r);
-			r.addNeighbor(this);
-		}
-		for (Reaction r : c.getReactionsAsProduct())
-		{
-			this.addNeighbor(r);
-			r.addNeighbor(this);
-		}
 	}
 
 	public HashSet<Compound> getSubstrates()
@@ -154,7 +134,8 @@ public class Reaction
 		return neighbors;
 	}
 
-	public static List<Reaction> getReationsFromFileTab(String fileName) throws IOException
+	public static List<Reaction> getReationsFromFileTab(String fileName, boolean considerSubstSubst,
+			boolean considerProdProd) throws IOException
 	{
 		ArrayList<Reaction> reactions = new ArrayList<Reaction>(1000);
 		Hashtable<String, Integer> idReactions = new Hashtable<String, Integer>(1000);
@@ -210,10 +191,36 @@ public class Reaction
 					if (typeComp.toLowerCase().equals("substrate"))
 					{
 						reaction.addSubstrate(comp);
+						for (Reaction r : comp.getReactionsAsProduct())
+						{
+							reaction.addNeighbor(r);
+							r.addNeighbor(reaction);
+						}
+						if (considerSubstSubst)
+						{
+							for (Reaction r : comp.getReactionsAsSubstrate())
+							{
+								reaction.addNeighbor(r);
+								r.addNeighbor(reaction);
+							}
+						}
 					}
 					else if (typeComp.toLowerCase().equals("product"))
 					{
 						reaction.addProduct(comp);
+						for (Reaction r : comp.getReactionsAsSubstrate())
+						{
+							reaction.addNeighbor(r);
+							r.addNeighbor(reaction);
+						}
+						if (considerProdProd)
+						{
+							for (Reaction r : comp.getReactionsAsProduct())
+							{
+								reaction.addNeighbor(r);
+								r.addNeighbor(reaction);
+							}
+						}
 					}
 
 				}
@@ -224,8 +231,10 @@ public class Reaction
 		return reactions;
 	}
 
-	public static List<Reaction> getReationsFromFileSBML(String fileName)
-			throws ParserConfigurationException, SAXException, IOException
+	//modeNeighborhood = L, only substract to products are neighbors
+	//modeNeighborhood = V, subst-prod, subst-subst and prod-prod are neighbors
+	public static List<Reaction> getReationsFromFileSBML(String fileName, boolean considerSubstSubst,
+			boolean considerProdProd) throws ParserConfigurationException, SAXException, IOException
 	{
 		ArrayList<Reaction> reactions = new ArrayList<Reaction>(1000);
 		Hashtable<String, EC> ecs = new Hashtable<String, EC>(1000);
@@ -282,6 +291,19 @@ public class Reaction
 						compounds.put(idComp, comp);
 					}
 					reaction.addSubstrate(comp);
+					for (Reaction r : comp.getReactionsAsProduct())
+					{
+						reaction.addNeighbor(r);
+						r.addNeighbor(reaction);
+					}
+					if (considerSubstSubst)
+					{
+						for (Reaction r : comp.getReactionsAsSubstrate())
+						{
+							reaction.addNeighbor(r);
+							r.addNeighbor(reaction);
+						}
+					}
 				}
 				listProducts = ((Element) eReaction.getElementsByTagName("listOfProducts").item(0)).getElementsByTagName("speciesReference");
 				for (int j = 0; j < listProducts.getLength(); j++)
@@ -295,6 +317,19 @@ public class Reaction
 						compounds.put(idComp, comp);
 					}
 					reaction.addProduct(comp);
+					for (Reaction r : comp.getReactionsAsSubstrate())
+					{
+						reaction.addNeighbor(r);
+						r.addNeighbor(reaction);
+					}
+					if (considerProdProd)
+					{
+						for (Reaction r : comp.getReactionsAsProduct())
+						{
+							reaction.addNeighbor(r);
+							r.addNeighbor(reaction);
+						}
+					}
 				}
 			}
 		}
