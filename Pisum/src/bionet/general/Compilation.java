@@ -3,7 +3,14 @@
  */
 package bionet.general;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.List;
+
+import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.SequenceIterator;
+import org.biojavax.bio.seq.RichSequence.IOTools;
 
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
@@ -63,6 +70,17 @@ public class Compilation
 		{
 			throw new RuntimeException("More than one Compilation with the same ID and organism.");
 		}
+	}
+
+	public static SequenceIterator loadEsts(String fileName, Organism org) throws FileNotFoundException
+	{
+		SequenceIterator stream = IOTools.readFastaDNA(new BufferedReader(new FileReader(fileName)), null);
+		while (stream.hasNext())
+		{
+			Sequence seq = stream.nextSequence();
+			// do something with the sequence.
+		}
+		return stream;
 	}
 
 }

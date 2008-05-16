@@ -22,7 +22,7 @@ public class Gene
 	String		name;
 	Compilation	comp;
 
-	byte[]		sequence;
+	byte[]		dnaSequence;
 
 	public Gene(String id, Compilation comp)
 	{
@@ -50,23 +50,23 @@ public class Gene
 		return comp;
 	}
 
-	public byte[] getSequence()
+	public byte[] getDNASequence()
 	{
-		return sequence;
+		return dnaSequence;
 	}
 
-	public void setSequence(byte[] sequence)
+	public void setDNASequence(byte[] sequence)
 	{
-		this.sequence = sequence;
+		this.dnaSequence = sequence;
 	}
 
-	public void setSequence(String sequenceStr)
+	public void setDNASequence(String sequenceStr)
 	{
 		int seqSize = sequenceStr.length();
-		sequence = new byte[seqSize];
+		dnaSequence = new byte[seqSize];
 		for (int i = 0; i < seqSize; i++)
 		{
-			sequence[i] = (byte) sequenceStr.charAt(i);
+			dnaSequence[i] = (byte) sequenceStr.charAt(i);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class Gene
 			{
 				if (gene != null && sequenceStr != null)
 				{
-					gene.setSequence(sequenceStr.toString());
+					gene.setDNASequence(sequenceStr.toString());
 					db.set(gene);
 				}
 				gene = getOrCreate(line.substring(1), comp, db);
@@ -134,7 +134,7 @@ public class Gene
 		}
 		if (gene != null && sequenceStr != null)
 		{
-			gene.setSequence(sequenceStr.toString());
+			gene.setDNASequence(sequenceStr.toString());
 			db.set(gene);
 		}
 		file.close();
