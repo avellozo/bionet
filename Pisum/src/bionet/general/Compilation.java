@@ -72,7 +72,7 @@ public class Compilation
 		}
 	}
 
-	public static SequenceIterator loadEsts(String fileName, Organism org) throws FileNotFoundException
+	public Sequence loadSequenceFromESTFile(String fileName) throws FileNotFoundException
 	{
 		SequenceIterator stream = IOTools.readFastaDNA(new BufferedReader(new FileReader(fileName)), null);
 		while (stream.hasNext())
