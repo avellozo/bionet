@@ -9,43 +9,36 @@ public class ProgressPrintInterval extends ProgressPrintStream
 {
 	int	interval;
 
-	public ProgressPrintInterval(PrintStream out, int interval)
-	{
+	public ProgressPrintInterval(PrintStream out, int interval) {
 		super(out);
 		this.interval = interval;
 	}
 
-	public ProgressPrintInterval(PrintStream out, int inicialStep, int interval)
-	{
+	public ProgressPrintInterval(PrintStream out, int inicialStep, int interval) {
 		super(out, inicialStep);
 		this.interval = interval;
 	}
 
-	public ProgressPrintInterval(PrintStream out, int interval, String initialMessage)
-	{
+	public ProgressPrintInterval(PrintStream out, int interval, String initialMessage) {
 		super(out, initialMessage);
 		this.interval = interval;
 	}
 
-	public ProgressPrintInterval(PrintStream out, int inicialStep, int interval, String initialMessage)
-	{
+	public ProgressPrintInterval(PrintStream out, int inicialStep, int interval, String initialMessage) {
 		super(out, inicialStep, initialMessage);
 		this.interval = interval;
 	}
 
 	@Override
-	public void completeStep()
-	{
-		if (steps % interval == 0)
-		{
-			steps++;
+	public void completeStep() {
+		steps++;
+		if (steps % interval == 0) {
 			printStep();
 		}
 	}
 
 	@Override
-	public void finish()
-	{
+	public void finish() {
 		printStep();
 		super.finish();
 	}
