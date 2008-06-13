@@ -43,4 +43,9 @@ public class ProgressPrintInterval extends ProgressPrintStream
 		super.finish();
 	}
 
+	public void finish(String msg) {
+		printStep();
+		super.finish(msg);
+	}
+
 }

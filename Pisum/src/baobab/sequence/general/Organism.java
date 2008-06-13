@@ -69,4 +69,8 @@ public class Organism
 		return taxon;
 	}
 
+	public Sequence getSequence(String seqName) {
+		return BioSql.getSequence(this, seqName);
+	}
+
 }

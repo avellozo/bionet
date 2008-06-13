@@ -69,7 +69,6 @@ public class LoadESTs
 						organism = new Organism(ncbiTaxonNumber);
 					}
 					catch (DBObjectNotFound ex) {
-						organism = null;
 					}
 				}
 			}

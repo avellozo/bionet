@@ -4,10 +4,14 @@
 package baobab.sequence.general;
 
 import java.util.List;
+import java.util.Set;
 
 import org.biojavax.Namespace;
 import org.biojavax.RichObjectFactory;
+import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.taxa.NCBITaxon;
+import org.biojavax.ontology.ComparableOntology;
+import org.biojavax.ontology.ComparableTerm;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -35,6 +39,29 @@ public class BioSql
 		return (NCBITaxon) taxons.get(0);
 	}
 
+	public static Sequence getSequence(Organism organism, String seqName) {
+		Query query = session.createQuery("from Sequence where name=:seqName and taxon=:taxonId");
+		query.setString("seqName", seqName);
+		query.setParameter("taxonId", organism.getTaxon());
+		List seqs = query.list();
+		if (seqs.size() != 1) {
+			return null;
+		}
+		RichSequence seq = (RichSequence) seqs.get(0);
+		return new Sequence(seq, getCompilation(organism, seq.getSeqVersion()));
+	}
+
+	private static Compilation getCompilation(Organism organism, Double seqVersion) {
+		ComparableOntology ont = TermsAndOntologies.getCompilationOnt(organism);
+		Set<ComparableTerm> comps = ont.getTerms();
+		for (ComparableTerm comp : comps) {
+			if (Double.parseDouble(comp.getDescription()) == seqVersion) {
+				return new Compilation(organism, comp.getName(), seqVersion);
+			}
+		}
+		return null;
+	}
+
 	public static Transaction beginTransaction() {
 		return session.beginTransaction();
 	}
@@ -43,8 +70,12 @@ public class BioSql
 		return RichObjectFactory.getDefaultNamespace();
 	}
 
-	public static void saveEst(EST est) {
+	public static void save(EST est) {
 		session.saveOrUpdate("Sequence", est.getSequence());
+	}
+
+	public static void save(Sequence seq) {
+		session.saveOrUpdate("Sequence", seq.getSequence());
 	}
 
 	public static void restartTransaction() {

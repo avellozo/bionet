@@ -15,4 +15,5 @@ public interface Progress
 
 	public void finish();
 
+	public void finish(String msg);
 }

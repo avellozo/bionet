@@ -53,7 +53,11 @@ public class ProgressPrintStream implements Progress
 	}
 
 	public void finish() {
-		out.println("Finished.");
+		finish("Finished.");
+	}
+
+	public void finish(String msg) {
+		out.println(msg);
 	}
 
 }

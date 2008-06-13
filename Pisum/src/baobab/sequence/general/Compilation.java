@@ -52,7 +52,7 @@ public class Compilation
 		RichSequenceIterator seqs = RichSequence.IOTools.readFastaDNA(fastaFileReader, BioSql.getDefaultNamespace());
 		while (seqs.hasNext()) {
 			EST est = new EST(seqs.nextRichSequence(), this);
-			BioSql.saveEst(est);
+			BioSql.save(est);
 			if (progress != null) {
 				progress.completeStep();
 			}

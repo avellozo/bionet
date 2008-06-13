@@ -10,29 +10,28 @@ public class ProgressBar implements Progress
 	JProgressBar	progressBar;
 	int				steps	= 0;
 
-	public void completeStep()
-	{
+	public void completeStep() {
 		progressBar.setValue(steps++);
 	}
 
-	public void setTotalSteps(int totalSteps)
-	{
+	public void setTotalSteps(int totalSteps) {
 		progressBar.setMaximum(totalSteps);
 	}
 
-	public void setInitialStep(int initialStep)
-	{
+	public void setInitialStep(int initialStep) {
 		progressBar.setMinimum(initialStep);
 	}
 
-	public void init()
-	{
+	public void init() {
 		progressBar.setVisible(true);
 	}
 
-	public void finish()
-	{
+	public void finish() {
 		progressBar.setValue(progressBar.getMaximum());
+	}
+
+	public void finish(String msg) {
+
 	}
 
 }

@@ -3,6 +3,8 @@
  */
 package baobab.sequence.general;
 
+import java.util.Set;
+
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Feature;
 import org.biojava.utils.ChangeVetoException;
@@ -54,4 +56,15 @@ public class Sequence
 		return seq.length();
 	}
 
+	public Gene getGene(String geneName) {
+
+		Aqui tem um problema!!!!!!
+		Set<SimpleRichFeature> features = seq.getFeatureSet();
+		for (SimpleRichFeature feature : features) {
+			if (feature.getTypeTerm() == TermsAndOntologies.TERM_GENE && feature.getName().equals(geneName)) {
+				return new Gene(this, feature);
+			}
+		}
+		return null;
+	}
 }
