@@ -49,7 +49,7 @@ public class Sequence
 		SimpleRichFeature feature = (SimpleRichFeature) seq.createFeature(ft);
 		feature.setName(name);
 		feature.setRank(0);
-		return new Gene(this, feature);
+		return new Gene(feature);
 	}
 
 	public int getlength() {
@@ -58,13 +58,20 @@ public class Sequence
 
 	public Gene getGene(String geneName) {
 
-		Aqui tem um problema!!!!!!
 		Set<SimpleRichFeature> features = seq.getFeatureSet();
 		for (SimpleRichFeature feature : features) {
 			if (feature.getTypeTerm() == TermsAndOntologies.TERM_GENE && feature.getName().equals(geneName)) {
-				return new Gene(this, feature);
+				return new Gene(feature);
 			}
 		}
+		//		System.out.println("Seq name: " + getName() + " gene name: " + geneName);
+		//		for (SimpleRichFeature feature : features) {
+		//			if (feature.getTypeTerm() == TermsAndOntologies.TERM_GENE && feature.getName().equals(geneName)) {
+		//				System.out.println("	feature term name: " + feature.getTypeTerm().getName() + " term gene name: "
+		//					+ TermsAndOntologies.TERM_GENE.getName());
+		//				System.out.println("	feature name: " + feature.getName() + " gene name: " + geneName);
+		//			}
+		//		}
 		return null;
 	}
 }

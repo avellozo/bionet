@@ -9,9 +9,11 @@ import java.util.Set;
 import org.biojavax.Namespace;
 import org.biojavax.RichObjectFactory;
 import org.biojavax.bio.seq.RichSequence;
+import org.biojavax.bio.seq.SimpleRichFeature;
 import org.biojavax.bio.taxa.NCBITaxon;
 import org.biojavax.ontology.ComparableOntology;
 import org.biojavax.ontology.ComparableTerm;
+import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,6 +29,8 @@ public class BioSql
 	static {
 		RichObjectFactory.connectToBioSQL(session);
 		RichObjectFactory.setDefaultNamespaceName(Messages.getString("nameSpaceDefault"));
+		//		RichObjectFactory.setDefaultRichSequenceHandler(new BioSQLRichSequenceHandler(session));
+		session.setFlushMode(FlushMode.ALWAYS);
 	}
 
 	public static NCBITaxon getTaxon(int ncbiTaxonNumber) {
@@ -62,8 +66,17 @@ public class BioSql
 		return null;
 	}
 
-	public static Transaction beginTransaction() {
-		return session.beginTransaction();
+	public static Gene getGene(String geneName, Organism organism) {
+		Query query = session.createQuery("from Feature as f where f.name=:geneName and f.parent.taxon=:taxonId and typeTerm=:geneTerm");
+		query.setString("geneName", geneName);
+		query.setParameter("taxonId", organism.getTaxon());
+		query.setParameter("geneTerm", TermsAndOntologies.TERM_GENE);
+		List features = query.list();
+		if (features.size() != 1) {
+			return null;
+		}
+		SimpleRichFeature feature = (SimpleRichFeature) features.get(0);
+		return new Gene(feature);
 	}
 
 	public static Namespace getDefaultNamespace() {
@@ -78,11 +91,24 @@ public class BioSql
 		session.saveOrUpdate("Sequence", seq.getSequence());
 	}
 
+	public static void save(Gene gene) {
+		session.saveOrUpdate("Feature", gene.getFeature());
+	}
+
 	public static void restartTransaction() {
+		restartTransaction(getTransaction());
+	}
+
+	public static void restartTransaction(Transaction tx) {
 		session.flush();
 		session.clear();
-		commit();
-		beginTransaction();
+		tx.commit();
+		tx.begin();
+		RichObjectFactory.clearLRUCache();
+	}
+
+	public static Transaction beginTransaction() {
+		return session.beginTransaction();
 	}
 
 	public static Transaction getTransaction() {
@@ -90,21 +116,39 @@ public class BioSql
 	}
 
 	public static void commit() {
-		getTransaction().commit();
+		commit(getTransaction());
+	}
+
+	public static void commit(Transaction tx) {
+		tx.commit();
 	}
 
 	public static void rollback() {
-		getTransaction().rollback();
+		rollback(getTransaction());
+	}
+
+	public static void rollback(Transaction tx) {
+		tx.rollback();
 	}
 
 	public static void endTransactionOK() {
+		endTransactionOK(getTransaction());
+	}
+
+	public static void endTransactionOK(Transaction tx) {
 		session.flush();
 		session.clear();
-		commit();
+		tx.commit();
 	}
 
 	public static void finish() {
-		rollback();
+		finish(getTransaction());
+	}
+
+	public static void finish(Transaction tx) {
+		if (tx.isActive()) {
+			tx.rollback();
+		}
 		session.close();
 	}
 

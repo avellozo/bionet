@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 
 import org.biojava.bio.BioException;
 import org.biojavax.ontology.ComparableTerm;
+import org.hibernate.Transaction;
 
 import baobab.sequence.dbExternal.KO;
 import baobab.sequence.exception.DBObjectNotFound;
@@ -33,7 +34,7 @@ public class LoadEstToKo
 	 * @param args args[0] =
 	 */
 	public static void main(String[] args) {
-		BioSql.beginTransaction();
+		Transaction tx = BioSql.beginTransaction();
 		try {
 			//file .ko
 			File fileEstKo;
@@ -97,14 +98,14 @@ public class LoadEstToKo
 				method = TermsAndOntologies.ONT_LINK_GENE2KO.getOrCreateTerm(args[2]);
 			}
 
-			String seqName, koId;
+			String estName, koId;
 			BufferedReader br = new BufferedReader(new FileReader(fileEstKo));
 			String line;
 			String[] splits;
 			Sequence seq;
 			Gene gene;
 			KO ko;
-			int linkCounter = 0, linkErrorSeq = 0, linkErrorGene = 0;
+			int linkCounter = 0, linkErrorGene = 0;
 			Progress progress = new ProgressPrintInterval(System.out,
 				Integer.parseInt(Messages.getString("LoadEstToKo.printEstKo")),
 				Messages.getString("LoadEstToKo.initialMessage") + fileEstKo.getPath());
@@ -114,33 +115,27 @@ public class LoadEstToKo
 					progress.completeStep();
 					splits = line.split("\t");
 					if (splits.length == 2) {
-						seqName = splits[0];
+						estName = splits[0];
 						koId = splits[1];
-						seq = organism.getSequence(seqName);
-						if (seq == null) {
-							linkErrorSeq++;
+						gene = BioSql.getGene(estName, organism);
+						ko = new KO(koId);
+						if (gene == null) {
+							linkErrorGene++;
+							System.out.println("Gene not found:" + estName);
 						}
 						else {
-							gene = seq.getGene(seqName);
-							ko = new KO(koId);
-							if (gene == null) {
-								linkErrorGene++;
-							}
-							else {
-								gene.link2KO(ko, method);
-								BioSql.save(seq);
-								linkCounter++;
-								if (linkCounter % 1000 == 0) {
-									BioSql.restartTransaction();
-								}
+							gene.link2KO(ko, method);
+							BioSql.save(gene);
+							linkCounter++;
+							if (linkCounter % 1000 == 0) {
+								BioSql.restartTransaction(tx);
 							}
 						}
 					}
 				}
 			}
-			BioSql.endTransactionOK();
-			progress.finish(linkCounter + Messages.getString("LoadEstToKo.finalMessage") + linkErrorSeq + ", gene:"
-				+ linkErrorGene);
+			BioSql.endTransactionOK(tx);
+			progress.finish(linkCounter + Messages.getString("LoadEstToKo.finalMessage") + ", gene:" + linkErrorGene);
 		}
 		catch (DBObjectNotFound e) {
 			e.printStackTrace();
@@ -155,7 +150,7 @@ public class LoadEstToKo
 			e.printStackTrace();
 		}
 		finally {
-			BioSql.finish();
+			BioSql.finish(tx);
 		}
 	}
 }

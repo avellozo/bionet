@@ -14,12 +14,17 @@ import baobab.sequence.dbExternal.KO;
 
 public class Gene
 {
-	Sequence			sequence;
 	SimpleRichFeature	feature;
 
-	public Gene(Sequence sequence, SimpleRichFeature feature) {
-		this.sequence = sequence;
+	public Gene(SimpleRichFeature feature) {
 		this.feature = feature;
+		if (feature.getTypeTerm() != TermsAndOntologies.TERM_GENE) {
+			throw new InvalidFeature(feature);
+		}
+	}
+
+	public SimpleRichFeature getFeature() {
+		return feature;
 	}
 
 	public SimpleRichFeature link2KO(KO ko, ComparableTerm method) throws BioException {
@@ -32,5 +37,16 @@ public class Gene
 		newFeature.setName(ko.getId());
 		newFeature.setRank(0);
 		return newFeature;
+	}
+
+	public class InvalidFeature extends RuntimeException
+	{
+		Feature	feature;
+
+		public InvalidFeature(SimpleRichFeature feature) {
+			super(feature.toString());
+			this.feature = feature;
+		}
+
 	}
 }
