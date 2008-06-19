@@ -29,7 +29,7 @@ public class Gene
 
 	public SimpleRichFeature link2KO(KO ko, ComparableTerm method) throws BioException {
 		Feature.Template ft = new RichFeature.Template();
-		ft.location = feature.getLocation();
+		ft.location = feature.getLocation().translate(0);
 		ft.sourceTerm = ko.getTerm();
 		ft.typeTerm = method;
 		ft.annotation = new SimpleRichAnnotation();

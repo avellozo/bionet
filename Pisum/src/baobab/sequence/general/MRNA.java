@@ -3,7 +3,7 @@
  */
 package baobab.sequence.general;
 
-public class Orf
+public class MRNA
 {
 
 }

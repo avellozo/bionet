@@ -13,7 +13,6 @@ import org.biojavax.bio.seq.SimpleRichFeature;
 import org.biojavax.bio.taxa.NCBITaxon;
 import org.biojavax.ontology.ComparableOntology;
 import org.biojavax.ontology.ComparableTerm;
-import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,7 +29,7 @@ public class BioSql
 		RichObjectFactory.connectToBioSQL(session);
 		RichObjectFactory.setDefaultNamespaceName(Messages.getString("nameSpaceDefault"));
 		//		RichObjectFactory.setDefaultRichSequenceHandler(new BioSQLRichSequenceHandler(session));
-		session.setFlushMode(FlushMode.ALWAYS);
+		//		session.setFlushMode(FlushMode.ALWAYS);
 	}
 
 	public static NCBITaxon getTaxon(int ncbiTaxonNumber) {
@@ -67,7 +66,8 @@ public class BioSql
 	}
 
 	public static Gene getGene(String geneName, Organism organism) {
-		Query query = session.createQuery("from Feature as f where f.name=:geneName and f.parent.taxon=:taxonId and typeTerm=:geneTerm");
+		Query query = session.createQuery("select f from Feature as f join f.parent as bioentry where "
+			+ "f.name=:geneName and f.typeTerm=:geneTerm and bioentry.taxon=:taxonId ");
 		query.setString("geneName", geneName);
 		query.setParameter("taxonId", organism.getTaxon());
 		query.setParameter("geneTerm", TermsAndOntologies.TERM_GENE);
@@ -76,6 +76,7 @@ public class BioSql
 			return null;
 		}
 		SimpleRichFeature feature = (SimpleRichFeature) features.get(0);
+		feature.toString();
 		return new Gene(feature);
 	}
 
@@ -92,6 +93,7 @@ public class BioSql
 	}
 
 	public static void save(Gene gene) {
+		session.saveOrUpdate("Sequence", gene.getFeature().getSequence());
 		session.saveOrUpdate("Feature", gene.getFeature());
 	}
 
@@ -105,6 +107,7 @@ public class BioSql
 		tx.commit();
 		tx.begin();
 		RichObjectFactory.clearLRUCache();
+		TermsAndOntologies.init();
 	}
 
 	public static Transaction beginTransaction() {
