@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-import baobab.sequence.general.EST;
+import baobab.sequence.general.Gene;
 
 public class PFFile
 {
@@ -25,7 +25,8 @@ public class PFFile
 		this(new PrintStream(new File(fileOutName)));
 	}
 
-	public void write(EST est) {
+	public void write(Gene gene) {
+
 		out.flush();
 	}
 }

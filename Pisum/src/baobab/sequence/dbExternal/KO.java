@@ -3,17 +3,20 @@
  */
 package baobab.sequence.dbExternal;
 
+import org.biojavax.RichObjectFactory;
 import org.biojavax.ontology.ComparableTerm;
 import org.biojavax.ontology.ComparableTriple;
+import org.biojavax.ontology.SimpleComparableOntology;
 
-import baobab.sequence.general.TermsAndOntologies;
+import baobab.sequence.general.Messages;
 
 public class KO
 {
 	ComparableTerm	term;
 
 	public KO(String id) {
-		term = TermsAndOntologies.KO_ONTOLOGY.getOrCreateTerm(id);
+		term = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("KO.ontology")})).getOrCreateTerm(id);
 	}
 
 	public KO(ComparableTerm term) {
@@ -29,13 +32,19 @@ public class KO
 	}
 
 	public ComparableTriple link2Ec(EC ec) {
-		return TermsAndOntologies.ONTOLOGY2LINKS_KO_TO_EC.getOrCreateTriple(getTerm(), ec.getTerm(),
-			TermsAndOntologies.TERM2LINK_KO_TO_EC);
+		SimpleComparableOntology ont = (SimpleComparableOntology) RichObjectFactory.getObject(
+			SimpleComparableOntology.class, new Object[] {Messages.getString("KO.ontologyToEc")});
+		ComparableTerm term = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("ontologyGeneral")})).getOrCreateTerm(Messages.getString("KO.termToEc"));
+		return ont.getOrCreateTriple(getTerm(), ec.getTerm(), term);
 	}
 
 	public ComparableTriple link2Go(GO go) {
-		return TermsAndOntologies.ONTOLOGY2LINKS_KO_TO_GO.getOrCreateTriple(getTerm(), go.getTerm(),
-			TermsAndOntologies.TERM2LINK_KO_TO_GO);
+		SimpleComparableOntology ont = (SimpleComparableOntology) RichObjectFactory.getObject(
+			SimpleComparableOntology.class, new Object[] {Messages.getString("KO.ontologyToGo")});
+		ComparableTerm term = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("ontologyGeneral")})).getOrCreateTerm(Messages.getString("KO.termToGo"));
+		return ont.getOrCreateTriple(getTerm(), go.getTerm(), term);
 	}
 
 	public String getDefinition() {

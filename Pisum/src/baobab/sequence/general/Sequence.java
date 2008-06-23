@@ -8,12 +8,14 @@ import java.util.Set;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Feature;
 import org.biojava.utils.ChangeVetoException;
+import org.biojavax.RichObjectFactory;
 import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.SimpleRichFeature;
 import org.biojavax.bio.seq.SimpleRichLocation;
 import org.biojavax.ontology.ComparableTerm;
+import org.biojavax.ontology.SimpleComparableOntology;
 
 public class Sequence
 {
@@ -44,7 +46,8 @@ public class Sequence
 		Feature.Template ft = new RichFeature.Template();
 		ft.location = location;
 		ft.sourceTerm = sourceTerm;
-		ft.typeTerm = TermsAndOntologies.TERM_GENE;
+		ft.typeTerm = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene"));
 		ft.annotation = new SimpleRichAnnotation();
 		SimpleRichFeature feature = (SimpleRichFeature) seq.createFeature(ft);
 		feature.setName(name);
@@ -60,7 +63,9 @@ public class Sequence
 
 		Set<SimpleRichFeature> features = seq.getFeatureSet();
 		for (SimpleRichFeature feature : features) {
-			if (feature.getTypeTerm() == TermsAndOntologies.TERM_GENE && feature.getName().equals(geneName)) {
+			if (feature.getTypeTerm() == ((SimpleComparableOntology) RichObjectFactory.getObject(
+				SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene"))
+				&& feature.getName().equals(geneName)) {
 				return new Gene(feature);
 			}
 		}

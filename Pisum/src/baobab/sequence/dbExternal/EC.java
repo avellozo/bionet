@@ -3,9 +3,11 @@
  */
 package baobab.sequence.dbExternal;
 
+import org.biojavax.RichObjectFactory;
 import org.biojavax.ontology.ComparableTerm;
+import org.biojavax.ontology.SimpleComparableOntology;
 
-import baobab.sequence.general.TermsAndOntologies;
+import baobab.sequence.general.Messages;
 
 public class EC
 {
@@ -14,7 +16,8 @@ public class EC
 
 	public EC(String id) {
 		this.id = id;
-		term = TermsAndOntologies.EC_ONTOLOGY.getOrCreateTerm(getId());
+		term = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("EC.ontology")})).getOrCreateTerm(getId());
 	}
 
 	public String getId() {

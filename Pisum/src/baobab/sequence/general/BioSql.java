@@ -13,6 +13,7 @@ import org.biojavax.bio.seq.SimpleRichFeature;
 import org.biojavax.bio.taxa.NCBITaxon;
 import org.biojavax.ontology.ComparableOntology;
 import org.biojavax.ontology.ComparableTerm;
+import org.biojavax.ontology.SimpleComparableOntology;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,10 +23,14 @@ import org.hibernate.cfg.Configuration;
 public class BioSql
 {
 	public static SessionFactory	sessionFactory	= new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
-	public static Session			session			= sessionFactory.openSession();
-
-	//	public static void init() {
+	public static Session			session;
 	static {
+		init();
+	}
+
+	public static void init() {
+		//		session = sessionFactory.openStatelessSession();
+		session = sessionFactory.openSession();
 		RichObjectFactory.connectToBioSQL(session);
 		RichObjectFactory.setDefaultNamespaceName(Messages.getString("nameSpaceDefault"));
 		//		RichObjectFactory.setDefaultRichSequenceHandler(new BioSQLRichSequenceHandler(session));
@@ -66,11 +71,13 @@ public class BioSql
 	}
 
 	public static Gene getGene(String geneName, Organism organism) {
-		Query query = session.createQuery("select f from Feature as f join f.parent as bioentry where "
-			+ "f.name=:geneName and f.typeTerm=:geneTerm and bioentry.taxon=:taxonId ");
+		Query query = session.createQuery("select f from Feature as f join f.parent as b where "
+			+ "f.name=:geneName and f.typeTerm=:geneTerm and b.taxon=:taxonId ");
 		query.setString("geneName", geneName);
 		query.setParameter("taxonId", organism.getTaxon());
-		query.setParameter("geneTerm", TermsAndOntologies.TERM_GENE);
+		query.setParameter("geneTerm",
+			((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+				new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene")));
 		List features = query.list();
 		if (features.size() != 1) {
 			return null;
@@ -101,13 +108,16 @@ public class BioSql
 		restartTransaction(getTransaction());
 	}
 
-	public static void restartTransaction(Transaction tx) {
+	public static Transaction restartTransaction(Transaction tx) {
+		tx.commit();
 		session.flush();
 		session.clear();
-		tx.commit();
-		tx.begin();
+		session.close();
 		RichObjectFactory.clearLRUCache();
-		TermsAndOntologies.init();
+		//		sessionFactory.close();
+		//		sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+		init();
+		return beginTransaction();
 	}
 
 	public static Transaction beginTransaction() {

@@ -88,9 +88,12 @@ public class loadKoDefinition
 			}
 			if (strs.length > 1) {
 				koDef = strs[1];
-				ko = new KO(koId);
-				ko.setDefinition(koDef);
 			}
+			else {
+				koDef = "";
+			}
+			ko = new KO(koId);
+			ko.setDefinition(koDef);
 		}
 	}
 

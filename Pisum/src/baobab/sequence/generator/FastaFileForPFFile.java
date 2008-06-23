@@ -10,20 +10,20 @@ import java.io.PrintStream;
 import baobab.sequence.general.EST;
 import baobab.sequence.general.Messages;
 
-public class FastaFileToPFFile
+public class FastaFileForPFFile
 {
 	PrintStream	out;
 
-	public FastaFileToPFFile(PrintStream out) {
+	public FastaFileForPFFile(PrintStream out) {
 		this.out = out;
-		out.println(Messages.getString("FastaFileToPFFile.header"));
+		out.println(Messages.getString("FastaFileForPFFile.header"));
 	}
 
-	public FastaFileToPFFile(File fileOut) throws FileNotFoundException {
+	public FastaFileForPFFile(File fileOut) throws FileNotFoundException {
 		this(new PrintStream(fileOut));
 	}
 
-	public FastaFileToPFFile(String fileOutName) throws FileNotFoundException {
+	public FastaFileForPFFile(String fileOutName) throws FileNotFoundException {
 		this(new PrintStream(new File(fileOutName)));
 	}
 

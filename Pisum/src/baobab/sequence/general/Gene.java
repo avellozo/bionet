@@ -5,10 +5,12 @@ package baobab.sequence.general;
 
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Feature;
+import org.biojavax.RichObjectFactory;
 import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.bio.seq.SimpleRichFeature;
 import org.biojavax.ontology.ComparableTerm;
+import org.biojavax.ontology.SimpleComparableOntology;
 
 import baobab.sequence.dbExternal.KO;
 
@@ -18,7 +20,8 @@ public class Gene
 
 	public Gene(SimpleRichFeature feature) {
 		this.feature = feature;
-		if (feature.getTypeTerm() != TermsAndOntologies.TERM_GENE) {
+		if (feature.getTypeTerm() != ((SimpleComparableOntology) RichObjectFactory.getObject(
+			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene"))) {
 			throw new InvalidFeature(feature);
 		}
 	}
