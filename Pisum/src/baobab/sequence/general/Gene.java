@@ -3,16 +3,17 @@
  */
 package baobab.sequence.general;
 
+import java.util.TreeSet;
+
 import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Feature;
-import org.biojavax.RichObjectFactory;
 import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.bio.seq.SimpleRichFeature;
+import org.biojavax.bio.seq.SimpleRichLocation;
 import org.biojavax.ontology.ComparableTerm;
-import org.biojavax.ontology.SimpleComparableOntology;
 
 import baobab.sequence.dbExternal.KO;
+import baobab.sequence.exception.InvalidFeature;
 
 public class Gene
 {
@@ -20,8 +21,7 @@ public class Gene
 
 	public Gene(SimpleRichFeature feature) {
 		this.feature = feature;
-		if (feature.getTypeTerm() != ((SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene"))) {
+		if (feature.getTypeTerm() != TermsAndOntologies.getTermGene()) {
 			throw new InvalidFeature(feature);
 		}
 	}
@@ -31,25 +31,31 @@ public class Gene
 	}
 
 	public SimpleRichFeature link2KO(KO ko, ComparableTerm method) throws BioException {
-		Feature.Template ft = new RichFeature.Template();
+		RichFeature.Template ft = new RichFeature.Template();
 		ft.location = feature.getLocation().translate(0);
 		ft.sourceTerm = ko.getTerm();
 		ft.typeTerm = method;
 		ft.annotation = new SimpleRichAnnotation();
+		ft.featureRelationshipSet = new TreeSet();
+		ft.rankedCrossRefs = new TreeSet();
 		SimpleRichFeature newFeature = (SimpleRichFeature) feature.createFeature(ft);
 		newFeature.setName(ko.getId());
 		newFeature.setRank(0);
 		return newFeature;
 	}
 
-	public class InvalidFeature extends RuntimeException
-	{
-		Feature	feature;
-
-		public InvalidFeature(SimpleRichFeature feature) {
-			super(feature.toString());
-			this.feature = feature;
-		}
-
+	public MRNA createMRNA(String name, SimpleRichLocation location, ComparableTerm sourceTerm) throws BioException {
+		RichFeature.Template ft = new RichFeature.Template();
+		ft.location = location;
+		ft.sourceTerm = sourceTerm;
+		ft.typeTerm = TermsAndOntologies.getTermMRNA();
+		ft.annotation = new SimpleRichAnnotation();
+		ft.featureRelationshipSet = new TreeSet();
+		ft.rankedCrossRefs = new TreeSet();
+		SimpleRichFeature featureMRNA = (SimpleRichFeature) feature.createFeature(ft);
+		featureMRNA.setName(name);
+		featureMRNA.setRank(0);
+		return new MRNA(featureMRNA);
 	}
+
 }

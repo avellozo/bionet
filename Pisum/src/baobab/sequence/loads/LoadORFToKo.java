@@ -22,14 +22,14 @@ import baobab.sequence.dbExternal.KO;
 import baobab.sequence.exception.DBObjectNotFound;
 import baobab.sequence.general.BioSql;
 import baobab.sequence.general.Compilation;
-import baobab.sequence.general.Gene;
 import baobab.sequence.general.Messages;
+import baobab.sequence.general.ORF;
 import baobab.sequence.general.Organism;
 import baobab.sequence.general.TermsAndOntologies;
 import baobab.sequence.ui.Progress;
 import baobab.sequence.ui.ProgressPrintInterval;
 
-public class LoadEstToKo
+public class LoadORFToKo
 {
 
 	/**
@@ -39,18 +39,18 @@ public class LoadEstToKo
 		Transaction tx = BioSql.beginTransaction();
 		try {
 			//file .ko
-			File fileEstKo;
+			File fileORFKo;
 			if (args.length > 0) {
-				fileEstKo = new File(args[0]);
+				fileORFKo = new File(args[0]);
 			}
 			else {
 				JFileChooser fc = new JFileChooser();
-				fc.setDialogTitle("Choose EST2KO file (.ko)");
+				fc.setDialogTitle("Choose ORF2KO file (.ko)");
 				int returnVal = fc.showOpenDialog(null);
 				if (returnVal != JFileChooser.APPROVE_OPTION) {
 					return;
 				}
-				fileEstKo = fc.getSelectedFile();
+				fileORFKo = fc.getSelectedFile();
 			}
 
 			// the ncbiTaxon of organism
@@ -58,7 +58,7 @@ public class LoadEstToKo
 			String respDialog;
 			if (args.length < 2) {
 				respDialog = JOptionPane.showInputDialog("Please input the NCBI_Taxon_ID:",
-					Messages.getString("LoadESTToKo.ncbiTaxonNumberDefault"));
+					Messages.getString("LoadORFToKo.ncbiTaxonNumberDefault"));
 				if (respDialog == null) {
 					return;
 				}
@@ -94,48 +94,47 @@ public class LoadEstToKo
 				if (respDialog == null) {
 					return;
 				}
-				method = TermsAndOntologies.getOntologyToLinkGeneToKO().getOrCreateTerm(respDialog);
+				method = TermsAndOntologies.getOntologyToLinkORFToKO().getOrCreateTerm(respDialog);
 			}
 			else {
-				method = TermsAndOntologies.getOntologyToLinkGeneToKO().getOrCreateTerm(args[2]);
+				method = TermsAndOntologies.getOntologyToLinkORFToKO().getOrCreateTerm(args[2]);
 			}
 
-			String estName, koId;
-			BufferedReader br = new BufferedReader(new FileReader(fileEstKo));
+			String orfName, koId;
+			BufferedReader br = new BufferedReader(new FileReader(fileORFKo));
 			String line;
 			String[] splits;
-			Gene gene;
+			ORF orf;
 			KO ko;
 			Compilation comp = null;
-			int linkCounter = 0, linkErrorGene = 0;
-			int stepEST = Integer.parseInt(Messages.getString("LoadEstToKo.printEstKo"));
-			Progress progress = new ProgressPrintInterval(System.out, stepEST,
-				Messages.getString("LoadEstToKo.initialMessage") + fileEstKo.getPath());
+			int linkCounter = 0, linkErrorORf = 0;
+			int stepORF = Integer.parseInt(Messages.getString("LoadORFToKo.printORFKo"));
+			Progress progress = new ProgressPrintInterval(System.out, stepORF,
+				Messages.getString("LoadORFToKo.initialMessage") + fileORFKo.getPath());
 			progress.init();
 			while ((line = br.readLine()) != null) {
 				if (!line.startsWith("#")) {
 					splits = line.split("\t");
 					if (splits.length == 2) {
-						estName = splits[0];
+						orfName = splits[0];
 						koId = splits[1];
-						gene = BioSql.getGene(estName, organism);
+						orf = BioSql.getORF(orfName, organism);
 						ko = new KO(koId);
-						if (gene == null) {
-							linkErrorGene++;
-							System.out.println("Gene not found:" + estName);
+						if (orf == null) {
+							linkErrorORf++;
+							System.out.println("ORF not found:" + orfName);
 						}
 						else {
-							gene.link2KO(ko, method);
-							//							BioSql.save(gene);
+							orf.link2KO(ko, method);
 							if (comp == null) {
 								comp = BioSql.getCompilation(organism,
-									((RichSequence) gene.getFeature().getSequence()).getSeqVersion());
+									((RichSequence) orf.getFeature().getSequence()).getSeqVersion());
 								(TermsAndOntologies.getOntologyGeneral()).getOrCreateTriple(method, comp.getTerm(),
 									TermsAndOntologies.getMethodCompTerm());
 							}
 							progress.completeStep();
 							linkCounter++;
-							if (linkCounter % stepEST == 0) {
+							if (linkCounter % stepORF == 0) {
 								BioSql.restartTransaction();
 								//								System.out.println("OK restart");
 							}
@@ -144,8 +143,8 @@ public class LoadEstToKo
 				}
 			}
 			BioSql.endTransactionOK();
-			Object[] a = {linkCounter, linkErrorGene};
-			progress.finish(MessageFormat.format(Messages.getString("LoadEstToKo.finalMessage"), a));
+			Object[] a = {linkCounter, linkErrorORf};
+			progress.finish(MessageFormat.format(Messages.getString("LoadORFToKo.finalMessage"), a));
 		}
 		catch (DBObjectNotFound e) {
 			e.printStackTrace();

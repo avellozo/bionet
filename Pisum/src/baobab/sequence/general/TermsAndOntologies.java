@@ -49,45 +49,87 @@ public class TermsAndOntologies extends BioSql
 	//																		SimpleComparableOntology.class,
 	//																		new Object[] {Messages.getString("EC.ontology")});
 	//
-	private void init1() {
-		SimpleComparableOntology ONTOLOGY_GENERAL = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyGeneral")});
+	public static SimpleComparableOntology getOntologyGeneral() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("ontologyGeneral")});
+	}
 
-		SimpleComparableOntology ONT_FEATURES = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyFeatures")});
-		ComparableTerm TERM_GENE = ((SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene"));
-		ComparableTerm TERM_EST = ((SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termEst"));
+	public static SimpleComparableOntology getOntologyFeatures() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("ontologyFeatures")});
+	}
 
-		SimpleComparableOntology KO_ONTOLOGY = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("KO.ontology")});
+	public static SimpleComparableOntology getOntologyKO() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("KO.ontology")});
+	}
 
-		SimpleComparableOntology ONTOLOGY2LINKS_KO_TO_EC = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("KO.ontologyToEc")});
-		SimpleComparableOntology ONT_LINK_GENE2KO = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("Gene.ontologyToKo")});
-		//triple predicate to associate KO to EC
-		ComparableTerm TERM2LINK_KO_TO_EC = ((SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyGeneral")})).getOrCreateTerm(Messages.getString("KO.termToEc"));
+	public static SimpleComparableOntology getOntologyToLinksKOToEC() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("KO.ontologyToEc")});
+	}
 
-		SimpleComparableOntology ONTOLOGY2LINKS_KO_TO_GO = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("KO.ontologyToGo")});
-		//triple predicate to associate KO to GO
-		ComparableTerm TERM2LINK_KO_TO_GO = ((SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyGeneral")})).getOrCreateTerm(Messages.getString("KO.termToGo"));
+	public static SimpleComparableOntology getOntologyToLinkGeneToKO() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("Gene.ontologyToKo")});
+	}
 
-		SimpleComparableOntology GO_ONTOLOGY = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("GO.ontology")});
+	public static SimpleComparableOntology getOntologyToLinkORFToKO() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("ORF.ontologyToKo")});
+	}
 
-		SimpleComparableOntology EC_ONTOLOGY = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("EC.ontology")});
+	public static SimpleComparableOntology getOntologyMRNAToORF() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("ontologyMRNAToORF")});
+	}
 
+	public static SimpleComparableOntology getOntologyToLinksKOToGO() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("KO.ontologyToGo")});
+	}
+
+	public static SimpleComparableOntology getOntologyGO() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("GO.ontology")});
+	}
+
+	public static SimpleComparableOntology getOntologyEC() {
+		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
+			new Object[] {Messages.getString("EC.ontology")});
 	}
 
 	public static ComparableOntology getCompilationOnt(Organism org) {
 		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
 			new Object[] {Messages.getString("Compilation.ontologyPrefix") + org.getTaxon().getNCBITaxID()});
+	}
+
+	public static ComparableTerm getTermToLinkKOToEC() {
+		return getOntologyGeneral().getOrCreateTerm(Messages.getString("KO.termToEc"));
+	}
+
+	public static ComparableTerm getTermToLinkKOToGO() {
+		return getOntologyGeneral().getOrCreateTerm(Messages.getString("KO.termToGo"));
+	}
+
+	public static ComparableTerm getTermGene() {
+		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termGene"));
+	}
+
+	public static ComparableTerm getTermEST() {
+		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termEst"));
+	}
+
+	public static ComparableTerm getTermMRNA() {
+		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termMRNA"));
+	}
+
+	public static ComparableTerm getTermORF() {
+		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termORF"));
+	}
+
+	public static ComparableTerm getTermVR() {
+		return getOntologyMRNAToORF().getOrCreateTerm(Messages.getString("termVR"));
 	}
 
 	public static ComparableTerm getLastCompilationTerm(Organism org) {
@@ -107,6 +149,10 @@ public class TermsAndOntologies extends BioSql
 	public static Set<ComparableTerm> getAllKosTerms() {
 		return ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
 			new Object[] {Messages.getString("KO.ontology")})).getTerms();
+	}
+
+	public static ComparableTerm getMethodCompTerm() {
+		return getOntologyGeneral().getOrCreateTerm(Messages.getString("termMethodComp"));
 	}
 
 }

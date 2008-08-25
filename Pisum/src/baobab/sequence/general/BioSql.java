@@ -10,10 +10,10 @@ import org.biojavax.Namespace;
 import org.biojavax.RichObjectFactory;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.SimpleRichFeature;
+import org.biojavax.bio.seq.SimpleRichFeatureRelationship;
 import org.biojavax.bio.taxa.NCBITaxon;
 import org.biojavax.ontology.ComparableOntology;
 import org.biojavax.ontology.ComparableTerm;
-import org.biojavax.ontology.SimpleComparableOntology;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -59,12 +59,12 @@ public class BioSql
 		return new Sequence(seq, getCompilation(organism, seq.getSeqVersion()));
 	}
 
-	private static Compilation getCompilation(Organism organism, Double seqVersion) {
+	public static Compilation getCompilation(Organism organism, Double seqVersion) {
 		ComparableOntology ont = TermsAndOntologies.getCompilationOnt(organism);
 		Set<ComparableTerm> comps = ont.getTerms();
 		for (ComparableTerm comp : comps) {
 			if (Double.parseDouble(comp.getDescription()) == seqVersion) {
-				return new Compilation(organism, comp.getName(), seqVersion);
+				return new Compilation(organism, comp);
 			}
 		}
 		return null;
@@ -75,9 +75,7 @@ public class BioSql
 			+ "f.name=:geneName and f.typeTerm=:geneTerm and b.taxon=:taxonId ");
 		query.setString("geneName", geneName);
 		query.setParameter("taxonId", organism.getTaxon());
-		query.setParameter("geneTerm",
-			((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
-				new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene")));
+		query.setParameter("geneTerm", TermsAndOntologies.getTermGene());
 		List features = query.list();
 		if (features.size() != 1) {
 			return null;
@@ -85,6 +83,21 @@ public class BioSql
 		SimpleRichFeature feature = (SimpleRichFeature) features.get(0);
 		feature.toString();
 		return new Gene(feature);
+	}
+
+	public static ORF getORF(String orfName, Organism organism) {
+		Query query = session.createQuery("select f from Feature as f join f.parent as b where "
+			+ "f.name=:orfName and f.typeTerm=:orfTerm and b.taxon=:taxonId ");
+		query.setString("orfName", orfName);
+		query.setParameter("taxonId", organism.getTaxon());
+		query.setParameter("orfTerm", TermsAndOntologies.getTermORF());
+		List features = query.list();
+		if (features.size() != 1) {
+			return null;
+		}
+		SimpleRichFeature feature = (SimpleRichFeature) features.get(0);
+		feature.toString();
+		return new ORF(feature);
 	}
 
 	public static Namespace getDefaultNamespace() {
@@ -114,6 +127,8 @@ public class BioSql
 		session.clear();
 		session.close();
 		RichObjectFactory.clearLRUCache();
+		SimpleRichFeatureRelationship.clear();
+		//		System.gc();
 		//		sessionFactory.close();
 		//		sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
 		init();

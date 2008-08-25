@@ -4,18 +4,15 @@
 package baobab.sequence.general;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Feature;
-import org.biojava.utils.ChangeVetoException;
-import org.biojavax.RichObjectFactory;
 import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.SimpleRichFeature;
 import org.biojavax.bio.seq.SimpleRichLocation;
 import org.biojavax.ontology.ComparableTerm;
-import org.biojavax.ontology.SimpleComparableOntology;
 
 public class Sequence
 {
@@ -41,14 +38,14 @@ public class Sequence
 		return seq.getName();
 	}
 
-	public Gene createGene(String name, SimpleRichLocation location, ComparableTerm sourceTerm)
-			throws ChangeVetoException, BioException {
-		Feature.Template ft = new RichFeature.Template();
+	public Gene createGene(String name, SimpleRichLocation location, ComparableTerm sourceTerm) throws BioException {
+		RichFeature.Template ft = new RichFeature.Template();
 		ft.location = location;
 		ft.sourceTerm = sourceTerm;
-		ft.typeTerm = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
-			new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene"));
+		ft.typeTerm = TermsAndOntologies.getTermGene();
 		ft.annotation = new SimpleRichAnnotation();
+		ft.featureRelationshipSet = new TreeSet();
+		ft.rankedCrossRefs = new TreeSet();
 		SimpleRichFeature feature = (SimpleRichFeature) seq.createFeature(ft);
 		feature.setName(name);
 		feature.setRank(0);
@@ -63,9 +60,7 @@ public class Sequence
 
 		Set<SimpleRichFeature> features = seq.getFeatureSet();
 		for (SimpleRichFeature feature : features) {
-			if (feature.getTypeTerm() == ((SimpleComparableOntology) RichObjectFactory.getObject(
-				SimpleComparableOntology.class, new Object[] {Messages.getString("ontologyFeatures")})).getOrCreateTerm(Messages.getString("termGene"))
-				&& feature.getName().equals(geneName)) {
+			if (feature.getTypeTerm() == TermsAndOntologies.getTermGene() && feature.getName().equals(geneName)) {
 				return new Gene(feature);
 			}
 		}

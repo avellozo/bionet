@@ -9,12 +9,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Feature;
 import org.biojavax.RichObjectFactory;
 import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
@@ -239,11 +239,13 @@ public class Test
 
 	public static SimpleRichFeature link2KO(SimpleRichFeature gene, ComparableTerm ko, ComparableTerm method)
 			throws BioException {
-		Feature.Template ft = new RichFeature.Template();
+		RichFeature.Template ft = new RichFeature.Template();
 		ft.location = gene.getLocation().translate(0);
 		ft.sourceTerm = ko;
 		ft.typeTerm = method;
 		ft.annotation = new SimpleRichAnnotation();
+		ft.featureRelationshipSet = new TreeSet();
+		ft.rankedCrossRefs = new TreeSet();
 		SimpleRichFeature newFeature = (SimpleRichFeature) gene.createFeature(ft);
 		newFeature.setName(ko.getName());
 		newFeature.setRank(0);

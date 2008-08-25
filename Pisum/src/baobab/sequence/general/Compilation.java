@@ -10,34 +10,38 @@ import java.io.FileReader;
 import org.biojava.bio.BioException;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
+import org.biojavax.ontology.ComparableTerm;
 
 import baobab.sequence.ui.Progress;
 
 public class Compilation
 {
-	Organism	organism;
-	String		name;
-	double		version;
+	Organism				organism;
+	private ComparableTerm	term;
+
+	public ComparableTerm getTerm() {
+		return term;
+	}
 
 	public Organism getOrganism() {
 		return organism;
 	}
 
 	public String getName() {
-		return name;
+		return term.getName();
 	}
 
 	public double getVersion() {
-		return version;
+		return new Double(term.getDescription());
 	}
 
-	protected Compilation(Organism organism, String name, double version) {
+	protected Compilation(Organism organism, ComparableTerm term) {
 		this.organism = organism;
-		this.name = name;
-		this.version = version;
+		this.term = term;
 	}
 
-	public void LoadESTs(String fileFastaName, Progress progress) throws FileNotFoundException, BioException {
+	public void LoadESTs(String fileFastaName, Progress progress, int stepToSave)
+			throws FileNotFoundException, BioException {
 		// an input FASTA file
 		BufferedReader fastaFileReader = new BufferedReader(new FileReader(fileFastaName));
 
@@ -57,7 +61,7 @@ public class Compilation
 				progress.completeStep();
 			}
 			i++;
-			if (i % 1000 == 0) {
+			if (i % stepToSave == 0) {
 				BioSql.restartTransaction();
 			}
 		}

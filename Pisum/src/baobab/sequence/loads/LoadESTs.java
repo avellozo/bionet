@@ -115,9 +115,9 @@ public class LoadESTs
 				comp = organism.createCompilation(args[2]);
 			}
 
-			comp.LoadESTs(fileFastaName, new ProgressPrintInterval(System.out,
-				Integer.parseInt(Messages.getString("LoadESTs.printESTs")),
-				Messages.getString("LoadESTs.initialMessage") + fileFastaName));
+			int stepEST = Integer.parseInt(Messages.getString("LoadESTs.printESTs"));
+			comp.LoadESTs(fileFastaName, new ProgressPrintInterval(System.out, stepEST,
+				Messages.getString("LoadESTs.initialMessage") + fileFastaName), stepEST);
 
 		}
 		catch (NoSuchElementException e) {

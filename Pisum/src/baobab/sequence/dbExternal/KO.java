@@ -3,20 +3,18 @@
  */
 package baobab.sequence.dbExternal;
 
-import org.biojavax.RichObjectFactory;
 import org.biojavax.ontology.ComparableTerm;
 import org.biojavax.ontology.ComparableTriple;
 import org.biojavax.ontology.SimpleComparableOntology;
 
-import baobab.sequence.general.Messages;
+import baobab.sequence.general.TermsAndOntologies;
 
 public class KO
 {
 	ComparableTerm	term;
 
 	public KO(String id) {
-		term = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
-			new Object[] {Messages.getString("KO.ontology")})).getOrCreateTerm(id);
+		term = TermsAndOntologies.getOntologyKO().getOrCreateTerm(id);
 	}
 
 	public KO(ComparableTerm term) {
@@ -32,18 +30,14 @@ public class KO
 	}
 
 	public ComparableTriple link2Ec(EC ec) {
-		SimpleComparableOntology ont = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("KO.ontologyToEc")});
-		ComparableTerm term = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
-			new Object[] {Messages.getString("ontologyGeneral")})).getOrCreateTerm(Messages.getString("KO.termToEc"));
+		SimpleComparableOntology ont = TermsAndOntologies.getOntologyToLinksKOToEC();
+		ComparableTerm term = TermsAndOntologies.getTermToLinkKOToEC();
 		return ont.getOrCreateTriple(getTerm(), ec.getTerm(), term);
 	}
 
 	public ComparableTriple link2Go(GO go) {
-		SimpleComparableOntology ont = (SimpleComparableOntology) RichObjectFactory.getObject(
-			SimpleComparableOntology.class, new Object[] {Messages.getString("KO.ontologyToGo")});
-		ComparableTerm term = ((SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
-			new Object[] {Messages.getString("ontologyGeneral")})).getOrCreateTerm(Messages.getString("KO.termToGo"));
+		SimpleComparableOntology ont = TermsAndOntologies.getOntologyToLinksKOToGO();
+		ComparableTerm term = TermsAndOntologies.getTermToLinkKOToGO();
 		return ont.getOrCreateTriple(getTerm(), go.getTerm(), term);
 	}
 
