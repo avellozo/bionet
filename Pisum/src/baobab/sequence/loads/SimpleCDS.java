@@ -10,34 +10,34 @@ import org.biojavax.bio.seq.RichLocation.Strand;
 import org.biojavax.ontology.ComparableTerm;
 
 import baobab.sequence.general.BioSql;
+import baobab.sequence.general.CDS;
 import baobab.sequence.general.Gene;
 import baobab.sequence.general.MRNA;
-import baobab.sequence.general.ORF;
 import baobab.sequence.general.Organism;
 import baobab.sequence.general.TermsAndOntologies;
 
-public class SimpleORF
+public class SimpleCDS
 {
-	String			geneName, orfName;
+	String			geneName, cdsName;
 	Strand			strand;
 	Position		beginLocation	= null, endLocation = null;
-	ORF				orf;
+	CDS				cds;
 	Organism		organism;
 	ComparableTerm	method;
 
-	public SimpleORF(Organism organism, String geneName, String orfName, ComparableTerm method) {
+	public SimpleCDS(Organism organism, String geneName, String cdsName, ComparableTerm method) {
 		this.geneName = geneName;
-		this.orfName = orfName;
+		this.cdsName = cdsName;
 		this.organism = organism;
 		this.method = method;
 	}
 
-	public ORF save() throws BioException {
+	public CDS save() throws BioException {
 		if (beginLocation != null && endLocation != null) {
 			Gene gene = BioSql.getGene(getGeneName(), organism);
 			MRNA mrna = gene.createMRNA(getGeneName(),
 				(SimpleRichLocation) gene.getFeature().getLocation().translate(0), TermsAndOntologies.getTermVR());
-			return orf = mrna.createORF(getOrfName(), new SimpleRichLocation(beginLocation, endLocation, 0, strand),
+			return cds = mrna.createCDS(getCDSName(), new SimpleRichLocation(beginLocation, endLocation, 0, strand),
 				method);
 		}
 		return null;
@@ -64,8 +64,8 @@ public class SimpleORF
 		return geneName;
 	}
 
-	public String getOrfName() {
-		return orfName;
+	public String getCDSName() {
+		return cdsName;
 	}
 
 	public Position getBeginLocation() {
@@ -85,9 +85,9 @@ public class SimpleORF
 	}
 
 	public void print() {
-		System.out.println("ORF:" + orfName);
+		System.out.println("CDS:" + cdsName);
 		System.out.println("Strand:" + strand);
-		System.out.println("Sequence:" + orf.getSequenceStr());
+		System.out.println("Sequence:" + cds.getSequenceStr());
 	}
 
 }

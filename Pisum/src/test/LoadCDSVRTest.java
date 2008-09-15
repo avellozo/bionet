@@ -1,7 +1,7 @@
 /*
  * Created on 05/06/2008
  */
-package baobab.sequence.loads;
+package test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,6 @@ import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.bio.seq.SimplePosition;
 import org.biojavax.bio.seq.SimpleRichFeature;
-import org.biojavax.bio.seq.SimpleRichFeatureRelationship;
 import org.biojavax.bio.seq.SimpleRichLocation;
 import org.biojavax.bio.seq.RichLocation.Strand;
 import org.biojavax.bio.taxa.NCBITaxon;
@@ -26,7 +25,7 @@ import org.hibernate.cfg.Configuration;
 
 import baobab.sequence.general.Messages;
 
-public class LoadORFVRTest
+public class LoadCDSVRTest
 {
 	public static void main(String[] args) {
 		SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
@@ -36,28 +35,28 @@ public class LoadORFVRTest
 		RichObjectFactory.setDefaultNamespaceName(Messages.getString("nameSpaceDefault"));
 		Transaction tx = session.beginTransaction();
 		try {
-			//file orfs
-			File fileOrfs;
-			fileOrfs = new File(args[0]);
+			//file CDSs
+			File fileCDSs;
+			fileCDSs = new File(args[0]);
 
-			String orfName, geneName = "";
-			BufferedReader br = new BufferedReader(new FileReader(fileOrfs));
+			String cdsName, geneName = "";
+			BufferedReader br = new BufferedReader(new FileReader(fileCDSs));
 			String line, line2, line3, lineAmino;
-			int countOrfs = 0;
+			int countCDSs = 0;
 			int beginPos = -1, endPos = -1, nextPos = -1;
 			int strand = 0;
-			int stepORF = Integer.parseInt(Messages.getString("LoadORFVR.printORF"));
+			int stepCDS = Integer.parseInt(Messages.getString("LoadCDSVR.printCDS"));
 			while ((line = br.readLine()) != null) {
 				if (line.length() > 0) {
-					if (line.startsWith(">")) { //ORF heading
-						//new ORF
-						//save last ORF
+					if (line.startsWith(">")) { //CDS heading
+						//new CDS
+						//save last CDS
 						if (strand != 0) {
-							saveORF(session, strand, beginPos, endPos, nextPos - 1, geneName, Integer.parseInt(args[1]));
-							countOrfs++;
+							saveCDS(session, strand, beginPos, endPos, nextPos - 1, geneName, Integer.parseInt(args[1]));
+							countCDSs++;
 						}
-						if (countOrfs % stepORF == 0) {
-							System.out.println(countOrfs);
+						if (countCDSs % stepCDS == 0) {
+							System.out.println(countCDSs);
 							session.flush();
 							tx.commit();
 							RichObjectFactory.clearLRUCache();
@@ -65,7 +64,6 @@ public class LoadORFVRTest
 							RichObjectFactory.clearLRUCache();
 							session.close();
 							RichObjectFactory.clearLRUCache();
-							SimpleRichFeatureRelationship.CONTAINS_TERM = null;
 							//							sessionFactory.close();
 							//							sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
 							session = sessionFactory.openSession();
@@ -76,8 +74,8 @@ public class LoadORFVRTest
 							RichObjectFactory.setDefaultNamespaceName(Messages.getString("nameSpaceDefault"));
 							tx = session.beginTransaction();
 						}
-						orfName = line.substring(1);
-						geneName = orfName.substring(0, orfName.indexOf("_"));
+						cdsName = line.substring(1);
+						geneName = cdsName.substring(0, cdsName.indexOf("_"));
 						line = br.readLine();
 
 						if (line.startsWith("Reading frame: ")) {
@@ -97,7 +95,7 @@ public class LoadORFVRTest
 						}
 						br.readLine(); // empty line
 					}
-					else if (strand != 0) { //ORF sequence
+					else if (strand != 0) { //CDS sequence
 						line2 = br.readLine();
 						line3 = br.readLine();
 						br.readLine(); // empty line
@@ -119,7 +117,7 @@ public class LoadORFVRTest
 				}
 			}
 			if (strand != 0) {
-				saveORF(session, strand, beginPos, endPos, nextPos - 1, geneName, Integer.parseInt(args[1]));
+				saveCDS(session, strand, beginPos, endPos, nextPos - 1, geneName, Integer.parseInt(args[1]));
 			}
 			session.flush();
 			tx.commit();
@@ -137,7 +135,7 @@ public class LoadORFVRTest
 
 	}
 
-	public static void saveORF(Session session, int strand, int beginPos, int endPos, int lastPos, String geneName,
+	public static void saveCDS(Session session, int strand, int beginPos, int endPos, int lastPos, String geneName,
 			int ncbiTaxonId) throws BioException {
 		SimplePosition beginPosition, endPosition;
 		if (strand < 0 && beginPos < 4) {
@@ -186,13 +184,13 @@ public class LoadORFVRTest
 			ft.location = new SimpleRichLocation(beginPosition, endPosition, 0, Strand.POSITIVE_STRAND);
 		}
 		ft.sourceTerm = ontGeneral.getOrCreateTerm(Messages.getString("termVR"));
-		ft.typeTerm = ontFeatures.getOrCreateTerm(Messages.getString("termORF"));
+		ft.typeTerm = ontFeatures.getOrCreateTerm(Messages.getString("termCDS"));
 		ft.annotation = new SimpleRichAnnotation();
 		ft.featureRelationshipSet = new TreeSet();
 		ft.rankedCrossRefs = new TreeSet();
-		SimpleRichFeature featureORF = (SimpleRichFeature) featureMRNA.createFeature(ft);
-		featureORF.setName(geneName);
-		//		session.save("Feature", featureORF);
+		SimpleRichFeature featureCDS = (SimpleRichFeature) featureMRNA.createFeature(ft);
+		featureCDS.setName(geneName);
+		//		session.save("Feature", featureCDS);
 	}
 
 	public static int firstPosNotSpace(String str) {

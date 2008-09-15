@@ -3,12 +3,20 @@
  */
 package baobab.sequence.general;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.biojava.bio.BioException;
 import org.biojavax.Namespace;
 import org.biojavax.RichObjectFactory;
+import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.bio.seq.RichSequence;
+import org.biojavax.bio.seq.RichSequenceIterator;
 import org.biojavax.bio.seq.SimpleRichFeature;
 import org.biojavax.bio.seq.SimpleRichFeatureRelationship;
 import org.biojavax.bio.taxa.NCBITaxon;
@@ -19,6 +27,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
+import baobab.sequence.ui.Progress;
 
 public class BioSql
 {
@@ -56,12 +66,25 @@ public class BioSql
 			return null;
 		}
 		RichSequence seq = (RichSequence) seqs.get(0);
-		return new Sequence(seq, getCompilation(organism, seq.getSeqVersion()));
+		return new Sequence(seq, getCompilation(organism, seq.getVersion()));
 	}
 
-	public static Compilation getCompilation(Organism organism, Double seqVersion) {
+	public static Collection<Integer> getSequencesId(Organism organism, int version) {
+		Query query = session.createQuery("select id from ThinSequence where version=:version and taxon=:taxonId");
+		query.setInteger("version", version);
+		query.setParameter("taxonId", organism.getTaxon());
+		return (Collection<Integer>) query.list();
+	}
+
+	public static RichSequence getSequence(Integer id) {
+		Query query = session.createQuery("from ThinSequence where id=:id");
+		query.setInteger("id", id);
+		return (RichSequence) query.uniqueResult();
+	}
+
+	public static Compilation getCompilation(Organism organism, int seqVersion) {
 		ComparableOntology ont = TermsAndOntologies.getCompilationOnt(organism);
-		Set<ComparableTerm> comps = ont.getTerms();
+		Set<ComparableTerm> comps = ont.getTermSet();
 		for (ComparableTerm comp : comps) {
 			if (Double.parseDouble(comp.getDescription()) == seqVersion) {
 				return new Compilation(organism, comp);
@@ -85,19 +108,102 @@ public class BioSql
 		return new Gene(feature);
 	}
 
-	public static ORF getORF(String orfName, Organism organism) {
+	public static CDS getCDS(String cdsName, Organism organism) {
 		Query query = session.createQuery("select f from Feature as f join f.parent as b where "
-			+ "f.name=:orfName and f.typeTerm=:orfTerm and b.taxon=:taxonId ");
-		query.setString("orfName", orfName);
+			+ "f.name=:cdsName and f.typeTerm=:cdsTerm and b.taxon=:taxonId ");
+		query.setString("cdsName", cdsName);
 		query.setParameter("taxonId", organism.getTaxon());
-		query.setParameter("orfTerm", TermsAndOntologies.getTermORF());
+		query.setParameter("cdsTerm", TermsAndOntologies.getTermCDS());
 		List features = query.list();
 		if (features.size() != 1) {
 			return null;
 		}
 		SimpleRichFeature feature = (SimpleRichFeature) features.get(0);
 		feature.toString();
-		return new ORF(feature);
+		return new CDS(feature);
+	}
+
+	public static CDS getCDSByProtID(String protName, Organism organism) {
+		Query query = session.createQuery("select f from Feature as f join f.parent as b join f.noteSet as prop "
+			+ "where f.typeTerm=:cdsTerm and b.taxon=:taxonId and "
+			+ "prop.term=:termProteinID and prop.value=:protName");
+		query.setString("protName", protName);
+		query.setParameter("taxonId", organism.getTaxon());
+		query.setParameter("cdsTerm", TermsAndOntologies.getTermCDS());
+		query.setParameter("termProteinID", TermsAndOntologies.getTermProteinID());
+		List features = query.list();
+		if (features.size() != 1) {
+			return null;
+		}
+		SimpleRichFeature feature = (SimpleRichFeature) features.get(0);
+		feature.toString();
+		return new CDS(feature);
+	}
+
+	public static void LoadScaffolds(String fileName, Progress progress, int stepToSave)
+			throws FileNotFoundException, BioException {
+		// an input FASTA file
+		BufferedReader fileReader = new BufferedReader(new FileReader(fileName));
+
+		if (progress != null) {
+			progress.init();
+		}
+
+		int i = 0;
+
+		BioSql.beginTransaction();
+		RichSequenceIterator seqs;
+		// we are reading DNA sequences
+		if (fileName.endsWith("gbk")) {
+			seqs = RichSequence.IOTools.readGenbankDNA(fileReader, BioSql.getDefaultNamespace());
+		}
+		else {
+			seqs = RichSequence.IOTools.readFastaDNA(fileReader, BioSql.getDefaultNamespace());
+		}
+		while (seqs.hasNext()) {
+			RichSequence seq = seqs.nextRichSequence();
+			Set<RichFeature> features = seq.getFeatureSet();
+			ArrayList<RichFeature> genes = new ArrayList<RichFeature>();
+			ArrayList<RichFeature> mRNAs = new ArrayList<RichFeature>();
+			ArrayList<RichFeature> cDSs = new ArrayList<RichFeature>();
+			for (RichFeature feature : features) {
+				if (feature.getType().equalsIgnoreCase("gene")) {
+					genes.add(feature);
+				}
+				else if (feature.getType().equalsIgnoreCase("mRNA")) {
+					mRNAs.add(feature);
+				}
+				else if (feature.getType().equalsIgnoreCase("CDS")) {
+					cDSs.add(feature);
+				}
+			}
+			for (RichFeature gene : genes) {
+				for (RichFeature mRNA : mRNAs) {
+					for (RichFeature cDS : cDSs) {
+						if (mRNA.getLocation().contains(cDS.getLocation())) {
+							mRNA.addFeatureRelationship(new SimpleRichFeatureRelationship(mRNA, cDS,
+								SimpleRichFeatureRelationship.getContainsTerm(), 0));
+						}
+					}
+					if (gene.getLocation().contains(mRNA.getLocation())) {
+						gene.addFeatureRelationship(new SimpleRichFeatureRelationship(gene, mRNA,
+							SimpleRichFeatureRelationship.getContainsTerm(), 0));
+					}
+				}
+			}
+			session.saveOrUpdate("Sequence", seq);
+			if (progress != null) {
+				progress.completeStep();
+			}
+			i++;
+			if (i % stepToSave == 0) {
+				BioSql.restartTransaction();
+			}
+		}
+		BioSql.endTransactionOK();
+		if (progress != null) {
+			progress.finish();
+		}
 	}
 
 	public static Namespace getDefaultNamespace() {
@@ -127,10 +233,6 @@ public class BioSql
 		session.clear();
 		session.close();
 		RichObjectFactory.clearLRUCache();
-		SimpleRichFeatureRelationship.clear();
-		//		System.gc();
-		//		sessionFactory.close();
-		//		sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
 		init();
 		return beginTransaction();
 	}

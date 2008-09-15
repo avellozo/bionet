@@ -14,13 +14,13 @@ import org.biojavax.ontology.ComparableTerm;
 import baobab.sequence.dbExternal.KO;
 import baobab.sequence.exception.InvalidFeature;
 
-public class ORF
+public class CDS
 {
 	SimpleRichFeature	feature;
 
-	public ORF(SimpleRichFeature feature) {
+	public CDS(SimpleRichFeature feature) {
 		this.feature = feature;
-		if (feature.getTypeTerm() != TermsAndOntologies.getTermORF()) {
+		if (feature.getTypeTerm() != TermsAndOntologies.getTermCDS()) {
 			throw new InvalidFeature(feature);
 		}
 	}
@@ -43,8 +43,10 @@ public class ORF
 		ft.rankedCrossRefs = new TreeSet();
 		SimpleRichFeature newFeature = (SimpleRichFeature) feature.createFeature(ft);
 		newFeature.setName(ko.getId());
-		newFeature.setRank(0);
 		return newFeature;
 	}
 
+	public void link2KO(String ko, ComparableTerm method) {
+		feature.getAnnotation().setProperty(method, ko);
+	}
 }

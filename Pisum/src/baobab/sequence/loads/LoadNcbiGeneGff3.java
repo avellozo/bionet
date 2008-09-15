@@ -1,29 +1,51 @@
 /*
- * Created on 05/06/2008
+ * Created on 08/09/2008
  */
 package baobab.sequence.loads;
 
-import java.io.FileNotFoundException;
-import java.util.NoSuchElementException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.biojava.bio.BioException;
+import org.biojava.bio.program.gff3.GFF3DocumentHandler;
+import org.biojava.bio.program.gff3.GFF3Parser;
+import org.biojava.bio.program.gff3.GFF3Record;
 
 import baobab.sequence.exception.DBObjectAlreadyExists;
 import baobab.sequence.exception.DBObjectNotFound;
 import baobab.sequence.general.BioSql;
+import baobab.sequence.general.CDS;
 import baobab.sequence.general.Compilation;
+import baobab.sequence.general.Gene;
+import baobab.sequence.general.MRNA;
 import baobab.sequence.general.Messages;
 import baobab.sequence.general.Organism;
+import baobab.sequence.general.Sequence;
+import baobab.sequence.general.TermsAndOntologies;
+import baobab.sequence.ui.Progress;
 import baobab.sequence.ui.ProgressPrintInterval;
 
-public class LoadESTs
+public class LoadNcbiGeneGff3 implements GFF3DocumentHandler
 {
+	int			step;
+	Progress	progress;
+	Compilation	comp;
+
+	Sequence	seq		= null;
+	Gene		gene	= null;
+	MRNA		mrna	= null;
+	CDS			cds		= null;
+
+	public LoadNcbiGeneGff3(int step, Progress progress, Compilation comp) {
+		this.step = step;
+		this.progress = progress;
+		this.comp = comp;
+	}
 
 	/**
-	 * @param args args[0] =
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		try {
@@ -115,31 +137,34 @@ public class LoadESTs
 				comp = organism.createCompilation(args[2]);
 			}
 
-			int stepEST = Integer.parseInt(Messages.getString("LoadESTs.printESTs"));
-			comp.LoadESTs(fileFastaName, new ProgressPrintInterval(System.out, stepEST,
-				Messages.getString("LoadESTs.initialMessage") + fileFastaName), stepEST);
+			int step = Integer.parseInt(Messages.getString("LoadNcbiGeneGff3.printStep"));
+			LoadNcbiGeneGff3 loadNcbiGeneGff3 = new LoadNcbiGeneGff3(step, new ProgressPrintInterval(System.out, step,
+				Messages.getString("LoadNcbiGeneGff3.initialMessage") + fileFastaName), comp);
+			(new GFF3Parser()).parse(new BufferedReader(new FileReader(fileFastaName)), loadNcbiGeneGff3,
+				TermsAndOntologies.getOntologyFeatures(), fileFastaName);
 
 		}
-		catch (NoSuchElementException e) {
+		catch (Exception e) {
 			e.printStackTrace();
-		}
-		catch (DBObjectAlreadyExists e) {
-			e.printStackTrace();
-		}
-		catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-		catch (DBObjectNotFound e) {
-			e.printStackTrace();
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch (BioException e) {
-			e.printStackTrace();
-		}
-		finally {
 			BioSql.finish();
 		}
 	}
+
+	public void commentLine(String comment) {
+
+	}
+
+	public void endDocument() {
+		BioSql.finish();
+	}
+
+	public void recordLine(GFF3Record record) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void startDocument(String locator) {
+		BioSql.beginTransaction();
+	}
+
 }

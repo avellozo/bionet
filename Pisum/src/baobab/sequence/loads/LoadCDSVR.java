@@ -26,7 +26,7 @@ import baobab.sequence.general.TermsAndOntologies;
 import baobab.sequence.ui.Progress;
 import baobab.sequence.ui.ProgressPrintInterval;
 
-public class LoadORFVR
+public class LoadCDSVR
 {
 	/**
 	 * @param args args[0] =
@@ -35,19 +35,19 @@ public class LoadORFVR
 		Organism organism;
 		Transaction tx = BioSql.beginTransaction();
 		try {
-			//file orfs
-			File fileOrfs;
+			//file cdss
+			File fileCDSs;
 			if (args.length > 0) {
-				fileOrfs = new File(args[0]);
+				fileCDSs = new File(args[0]);
 			}
 			else {
 				JFileChooser fc = new JFileChooser();
-				fc.setDialogTitle("Choose ORF file ");
+				fc.setDialogTitle("Choose CDS file ");
 				int returnVal = fc.showOpenDialog(null);
 				if (returnVal != JFileChooser.APPROVE_OPTION) {
 					return;
 				}
-				fileOrfs = fc.getSelectedFile();
+				fileCDSs = fc.getSelectedFile();
 			}
 
 			// the ncbiTaxon of organism
@@ -84,50 +84,50 @@ public class LoadORFVR
 				organism = new Organism(Integer.parseInt(args[1]));
 			}
 
-			String orfName, geneName;
-			BufferedReader br = new BufferedReader(new FileReader(fileOrfs));
+			String cdsName, geneName;
+			BufferedReader br = new BufferedReader(new FileReader(fileCDSs));
 			String line, line2, line3, lineAmino;
 			//			String lineDNA, lineCodes;
-			SimpleORF sOrf = null;
-			int countOrfs = 0;
+			SimpleCDS sCDS = null;
+			int countCDSs = 0;
 			int beginPos = -1, endPos = -1, nextPos = -1;
 			int strand = 0;
-			int countOrfsNotFound = 0;
-			Object[] a = {fileOrfs.getPath()};
-			String msgInitial = MessageFormat.format(Messages.getString("LoadORFVR.initialMessage"), a);
-			int stepORF = Integer.parseInt(Messages.getString("LoadORFVR.printORF"));
-			Progress progress = new ProgressPrintInterval(System.out, stepORF, msgInitial);
+			int countCDSsNotFound = 0;
+			Object[] a = {fileCDSs.getPath()};
+			String msgInitial = MessageFormat.format(Messages.getString("LoadCDSVR.initialMessage"), a);
+			int stepCDS = Integer.parseInt(Messages.getString("LoadCDSVR.printCDS"));
+			Progress progress = new ProgressPrintInterval(System.out, stepCDS, msgInitial);
 			progress.init();
 			System.out.print("Start time:");
 			System.out.println(new Date());
 
 			while ((line = br.readLine()) != null) {
 				if (line.length() > 0) {
-					if (line.startsWith(">")) { //ORF heading
-						//new ORF
-						//save last ORF
+					if (line.startsWith(">")) { //CDS heading
+						//new CDS
+						//save last CDS
 						if (strand != 0) {
 							if (strand < 0 && beginPos < 4) {
-								sOrf.setBeginLocation(new SimplePosition(true, false, beginPos));
+								sCDS.setBeginLocation(new SimplePosition(true, false, beginPos));
 							}
 							else {
-								sOrf.setBeginLocation(new SimplePosition(beginPos));
+								sCDS.setBeginLocation(new SimplePosition(beginPos));
 							}
 							if (strand > 0 && (endPos == (nextPos - 1))) {
-								sOrf.setEndLocation(new SimplePosition(false, true, endPos));
+								sCDS.setEndLocation(new SimplePosition(false, true, endPos));
 							}
 							else {
-								sOrf.setEndLocation(new SimplePosition(endPos));
+								sCDS.setEndLocation(new SimplePosition(endPos));
 							}
-							sOrf.save();
+							sCDS.save();
 							progress.completeStep();
-							countOrfs++;
+							countCDSs++;
 						}
-						if (countOrfs % stepORF == 0) {
+						if (countCDSs % stepCDS == 0) {
 							BioSql.restartTransaction();
 						}
-						orfName = line.substring(1);
-						geneName = orfName.substring(0, orfName.indexOf("_"));
+						cdsName = line.substring(1);
+						geneName = cdsName.substring(0, cdsName.indexOf("_"));
 						line = br.readLine();
 
 						if (line.startsWith("Reading frame: ")) {
@@ -139,8 +139,8 @@ public class LoadORFVR
 								nextPos = 1;
 								beginPos = -1;
 								endPos = -1;
-								sOrf = new SimpleORF(organism, geneName, orfName, TermsAndOntologies.getTermVR());
-								sOrf.setStrand(strand);
+								sCDS = new SimpleCDS(organism, geneName, cdsName, TermsAndOntologies.getTermVR());
+								sCDS.setStrand(strand);
 							}
 						}
 						else {
@@ -149,35 +149,35 @@ public class LoadORFVR
 						}
 						br.readLine(); // empty line
 					}
-					else if (line.startsWith("NO ORF FOUND")) {
+					else if (line.startsWith("NO CDS FOUND")) {
 						if (strand != 0) {
 							if (strand < 0 && beginPos < 4) {
-								sOrf.setBeginLocation(new SimplePosition(true, false, beginPos));
+								sCDS.setBeginLocation(new SimplePosition(true, false, beginPos));
 							}
 							else {
-								sOrf.setBeginLocation(new SimplePosition(beginPos));
+								sCDS.setBeginLocation(new SimplePosition(beginPos));
 							}
 							if (strand > 0 && (endPos == (nextPos - 1))) {
-								sOrf.setEndLocation(new SimplePosition(false, true, endPos));
+								sCDS.setEndLocation(new SimplePosition(false, true, endPos));
 							}
 							else {
-								sOrf.setEndLocation(new SimplePosition(endPos));
+								sCDS.setEndLocation(new SimplePosition(endPos));
 							}
-							sOrf.save();
+							sCDS.save();
 							progress.completeStep();
-							countOrfs++;
+							countCDSs++;
 						}
-						if (countOrfs % stepORF == 0) {
+						if (countCDSs % stepCDS == 0) {
 							BioSql.restartTransaction();
 						}
-						countOrfsNotFound++;
+						countCDSsNotFound++;
 						strand = 0;
 						br.readLine();
 						br.readLine();
 						br.readLine();
 						br.readLine();
 					}
-					else if (strand != 0) { //ORF sequence
+					else if (strand != 0) { //CDS sequence
 						line2 = br.readLine();
 						line3 = br.readLine();
 						br.readLine(); // empty line
@@ -200,24 +200,24 @@ public class LoadORFVR
 			}
 			if (strand != 0) {
 				if (strand < 0 && beginPos < 4) {
-					sOrf.setBeginLocation(new SimplePosition(true, false, beginPos));
+					sCDS.setBeginLocation(new SimplePosition(true, false, beginPos));
 				}
 				else {
-					sOrf.setBeginLocation(new SimplePosition(beginPos));
+					sCDS.setBeginLocation(new SimplePosition(beginPos));
 				}
 				if (strand > 0 && (endPos == (nextPos - 1))) {
-					sOrf.setEndLocation(new SimplePosition(false, true, endPos));
+					sCDS.setEndLocation(new SimplePosition(false, true, endPos));
 				}
 				else {
-					sOrf.setEndLocation(new SimplePosition(endPos));
+					sCDS.setEndLocation(new SimplePosition(endPos));
 				}
-				sOrf.save();
+				sCDS.save();
 				progress.completeStep();
-				countOrfs++;
+				countCDSs++;
 			}
 			BioSql.endTransactionOK();
-			Object[] a1 = {countOrfs, countOrfsNotFound};
-			progress.finish(MessageFormat.format(Messages.getString("LoadORFVR.finalMessage"), a1));
+			Object[] a1 = {countCDSs, countCDSsNotFound};
+			progress.finish(MessageFormat.format(Messages.getString("LoadCDSVR.finalMessage"), a1));
 			System.out.print("End time:");
 			System.out.println(new Date());
 		}

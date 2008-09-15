@@ -26,18 +26,18 @@ public class MRNA
 		}
 	}
 
-	public ORF createORF(String name, SimpleRichLocation location, ComparableTerm sourceTerm) throws BioException {
+	public CDS createCDS(String name, SimpleRichLocation location, ComparableTerm sourceTerm) throws BioException {
 		RichFeature.Template ft = new RichFeature.Template();
 		ft.location = location;
 		ft.sourceTerm = sourceTerm;
-		ft.typeTerm = TermsAndOntologies.getTermORF();
+		ft.typeTerm = TermsAndOntologies.getTermCDS();
 		ft.annotation = new SimpleRichAnnotation();
 		ft.featureRelationshipSet = new TreeSet();
 		ft.rankedCrossRefs = new TreeSet();
-		SimpleRichFeature featureORF = (SimpleRichFeature) feature.createFeature(ft);
-		featureORF.setName(name);
-		featureORF.setRank(0);
-		return new ORF(featureORF);
+		SimpleRichFeature featureCDS = (SimpleRichFeature) feature.createFeature(ft);
+		featureCDS.setName(name);
+		featureCDS.setRank(0);
+		return new CDS(featureCDS);
 	}
 
 }

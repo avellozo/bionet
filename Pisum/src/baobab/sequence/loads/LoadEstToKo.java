@@ -58,7 +58,7 @@ public class LoadEstToKo
 			String respDialog;
 			if (args.length < 2) {
 				respDialog = JOptionPane.showInputDialog("Please input the NCBI_Taxon_ID:",
-					Messages.getString("LoadESTToKo.ncbiTaxonNumberDefault"));
+					Messages.getString("ncbiTaxonNumberDefault"));
 				if (respDialog == null) {
 					return;
 				}

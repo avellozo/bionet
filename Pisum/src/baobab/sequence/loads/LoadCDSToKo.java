@@ -9,11 +9,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Date;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.biojava.bio.BioException;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.ontology.ComparableTerm;
 import org.hibernate.Transaction;
@@ -21,15 +21,15 @@ import org.hibernate.Transaction;
 import baobab.sequence.dbExternal.KO;
 import baobab.sequence.exception.DBObjectNotFound;
 import baobab.sequence.general.BioSql;
+import baobab.sequence.general.CDS;
 import baobab.sequence.general.Compilation;
 import baobab.sequence.general.Messages;
-import baobab.sequence.general.ORF;
 import baobab.sequence.general.Organism;
 import baobab.sequence.general.TermsAndOntologies;
 import baobab.sequence.ui.Progress;
 import baobab.sequence.ui.ProgressPrintInterval;
 
-public class LoadORFToKo
+public class LoadCDSToKo
 {
 
 	/**
@@ -39,18 +39,18 @@ public class LoadORFToKo
 		Transaction tx = BioSql.beginTransaction();
 		try {
 			//file .ko
-			File fileORFKo;
+			File fileCDSKo;
 			if (args.length > 0) {
-				fileORFKo = new File(args[0]);
+				fileCDSKo = new File(args[0]);
 			}
 			else {
 				JFileChooser fc = new JFileChooser();
-				fc.setDialogTitle("Choose ORF2KO file (.ko)");
+				fc.setDialogTitle("Choose CDS2KO file (.ko)");
 				int returnVal = fc.showOpenDialog(null);
 				if (returnVal != JFileChooser.APPROVE_OPTION) {
 					return;
 				}
-				fileORFKo = fc.getSelectedFile();
+				fileCDSKo = fc.getSelectedFile();
 			}
 
 			// the ncbiTaxon of organism
@@ -58,7 +58,7 @@ public class LoadORFToKo
 			String respDialog;
 			if (args.length < 2) {
 				respDialog = JOptionPane.showInputDialog("Please input the NCBI_Taxon_ID:",
-					Messages.getString("LoadORFToKo.ncbiTaxonNumberDefault"));
+					Messages.getString("ncbiTaxonNumberDefault"));
 				if (respDialog == null) {
 					return;
 				}
@@ -94,57 +94,62 @@ public class LoadORFToKo
 				if (respDialog == null) {
 					return;
 				}
-				method = TermsAndOntologies.getOntologyToLinkORFToKO().getOrCreateTerm(respDialog);
+				method = TermsAndOntologies.getOntologyToLinkCDSToKO().getOrCreateTerm(respDialog);
 			}
 			else {
-				method = TermsAndOntologies.getOntologyToLinkORFToKO().getOrCreateTerm(args[2]);
+				method = TermsAndOntologies.getOntologyToLinkCDSToKO().getOrCreateTerm(args[2]);
 			}
+			Object[] a = {method.getName()};
+			method.setDescription(MessageFormat.format(Messages.getString("LoadCDSToKo.propertyDescription"), a));
 
-			String orfName, koId;
-			BufferedReader br = new BufferedReader(new FileReader(fileORFKo));
+			String protName, koId;
+			BufferedReader br = new BufferedReader(new FileReader(fileCDSKo));
 			String line;
 			String[] splits;
-			ORF orf;
+			CDS cds;
 			KO ko;
 			Compilation comp = null;
-			int linkCounter = 0, linkErrorORf = 0;
-			int stepORF = Integer.parseInt(Messages.getString("LoadORFToKo.printORFKo"));
-			Progress progress = new ProgressPrintInterval(System.out, stepORF,
-				Messages.getString("LoadORFToKo.initialMessage") + fileORFKo.getPath());
+			int linkCounter = 0, linkErrorCDS = 0;
+			int stepCDS = Integer.parseInt(Messages.getString("LoadCDSToKo.printCDSKo"));
+			System.out.print("Start time:");
+			System.out.println(new Date());
+			Progress progress = new ProgressPrintInterval(System.out, stepCDS,
+				Messages.getString("LoadCDSToKo.initialMessage") + fileCDSKo.getPath());
 			progress.init();
 			while ((line = br.readLine()) != null) {
 				if (!line.startsWith("#")) {
 					splits = line.split("\t");
 					if (splits.length == 2) {
-						orfName = splits[0];
+						protName = splits[0].split("\\|")[3];
 						koId = splits[1];
-						orf = BioSql.getORF(orfName, organism);
-						ko = new KO(koId);
-						if (orf == null) {
-							linkErrorORf++;
-							System.out.println("ORF not found:" + orfName);
+						cds = BioSql.getCDSByProtID(protName, organism);
+						if (cds == null) {
+							linkErrorCDS++;
+							System.out.println("CDS not found:" + protName);
 						}
 						else {
-							orf.link2KO(ko, method);
+							//							ko = new KO(koId);
+							//							cds.link2KO(ko, method);
+							cds.link2KO(koId, method);
 							if (comp == null) {
-								comp = BioSql.getCompilation(organism,
-									((RichSequence) orf.getFeature().getSequence()).getSeqVersion());
+								comp = organism.getOrCreateCompilation(((RichSequence) cds.getFeature().getSequence()).getVersion());
 								(TermsAndOntologies.getOntologyGeneral()).getOrCreateTriple(method, comp.getTerm(),
 									TermsAndOntologies.getMethodCompTerm());
 							}
 							progress.completeStep();
 							linkCounter++;
-							if (linkCounter % stepORF == 0) {
+							if (linkCounter % stepCDS == 0) {
 								BioSql.restartTransaction();
-								//								System.out.println("OK restart");
 							}
 						}
 					}
 				}
 			}
 			BioSql.endTransactionOK();
-			Object[] a = {linkCounter, linkErrorORf};
-			progress.finish(MessageFormat.format(Messages.getString("LoadORFToKo.finalMessage"), a));
+			Object[] a1 = {linkCounter, linkErrorCDS};
+			progress.finish(MessageFormat.format(Messages.getString("LoadCDSToKo.finalMessage"), a1));
+			System.out.print("End time:");
+			System.out.println(new Date());
 		}
 		catch (DBObjectNotFound e) {
 			e.printStackTrace();
@@ -153,9 +158,6 @@ public class LoadORFToKo
 			e.printStackTrace();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
-		}
-		catch (BioException e) {
 			e.printStackTrace();
 		}
 		finally {

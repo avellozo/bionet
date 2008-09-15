@@ -74,14 +74,14 @@ public class TermsAndOntologies extends BioSql
 			new Object[] {Messages.getString("Gene.ontologyToKo")});
 	}
 
-	public static SimpleComparableOntology getOntologyToLinkORFToKO() {
+	public static SimpleComparableOntology getOntologyToLinkCDSToKO() {
 		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
-			new Object[] {Messages.getString("ORF.ontologyToKo")});
+			new Object[] {Messages.getString("CDS.ontologyToKo")});
 	}
 
-	public static SimpleComparableOntology getOntologyMRNAToORF() {
+	public static SimpleComparableOntology getOntologyMRNAToCDS() {
 		return (SimpleComparableOntology) RichObjectFactory.getObject(SimpleComparableOntology.class,
-			new Object[] {Messages.getString("ontologyMRNAToORF")});
+			new Object[] {Messages.getString("ontologyMRNAToCDS")});
 	}
 
 	public static SimpleComparableOntology getOntologyToLinksKOToGO() {
@@ -113,23 +113,35 @@ public class TermsAndOntologies extends BioSql
 	}
 
 	public static ComparableTerm getTermGene() {
-		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termGene"));
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termGene"));
 	}
 
 	public static ComparableTerm getTermEST() {
-		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termEst"));
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termEst"));
 	}
 
 	public static ComparableTerm getTermMRNA() {
-		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termMRNA"));
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termMRNA"));
 	}
 
-	public static ComparableTerm getTermORF() {
-		return getOntologyFeatures().getOrCreateTerm(Messages.getString("termORF"));
+	public static ComparableTerm getTermCDS() {
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termCDS"));
 	}
 
 	public static ComparableTerm getTermVR() {
-		return getOntologyMRNAToORF().getOrCreateTerm(Messages.getString("termVR"));
+		return getOntologyMRNAToCDS().getOrCreateTerm(Messages.getString("termVR"));
+	}
+
+	public static ComparableTerm getTermProteinID() {
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termProteinID"));
+	}
+
+	public static ComparableTerm getTermMRNAID() {
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termMRNAID"));
+	}
+
+	public static ComparableTerm getTermCDSName() {
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termCDSName"));
 	}
 
 	public static ComparableTerm getLastCompilationTerm(Organism org) {

@@ -3,12 +3,12 @@
  */
 package baobab.sequence.general;
 
-import org.biojava.ontology.AlreadyExistsException;
+import java.text.MessageFormat;
+
 import org.biojavax.bio.taxa.NCBITaxon;
 import org.biojavax.ontology.ComparableOntology;
 import org.biojavax.ontology.ComparableTerm;
 
-import baobab.sequence.exception.DBObjectAlreadyExists;
 import baobab.sequence.exception.DBObjectNotFound;
 
 public class Organism
@@ -26,38 +26,47 @@ public class Organism
 		}
 	}
 
-	public Compilation getLastCompilation() {
-		ComparableTerm term = TermsAndOntologies.getLastCompilationTerm(this);
-		if (term != null) {
-			return new Compilation(this, term);
-		}
-		else {
-			return null;
-		}
-	}
+	//	public Compilation getLastCompilation() {
+	//		ComparableTerm term = TermsAndOntologies.getLastCompilationTerm(this);
+	//		if (term != null) {
+	//			return new Compilation(this, term);
+	//		}
+	//		else {
+	//			return null;
+	//		}
+	//	}
+	//
+	//	public Compilation getCompilation(String name) {
+	//		ComparableTerm term = (ComparableTerm) TermsAndOntologies.getCompilationOnt(this).getTerm(name);
+	//		if (term != null) {
+	//			return new Compilation(this, term);
+	//		}
+	//		return null;
+	//	}
+	//
+	//	public Compilation createCompilation(String name) throws DBObjectAlreadyExists {
+	//		ComparableOntology ont = TermsAndOntologies.getCompilationOnt(this);
+	//		String version = "1.0";
+	//		ComparableTerm term;
+	//		if (ont.getDescription() != null && ont.getDescription().length() != 0) {
+	//			version = ont.getDescription();
+	//		}
+	//		try {
+	//			term = (ComparableTerm) ont.createTerm(name, version);
+	//			ont.setDescription("" + (new Double(version) + 1));
+	//		}
+	//		catch (AlreadyExistsException e) {
+	//			throw new DBObjectAlreadyExists(new Object[] {ont, name});
+	//		}
+	//		return new Compilation(this, term);
+	//	}
+	//
 
-	public Compilation getCompilation(String name) {
-		ComparableTerm term = (ComparableTerm) TermsAndOntologies.getCompilationOnt(this).getTerm(name);
-		if (term != null) {
-			return new Compilation(this, term);
-		}
-		return null;
-	}
-
-	public Compilation createCompilation(String name) throws DBObjectAlreadyExists {
+	public Compilation getOrCreateCompilation(int version) {
 		ComparableOntology ont = TermsAndOntologies.getCompilationOnt(this);
-		String version = "1.0";
-		ComparableTerm term;
-		if (ont.getDescription() != null && ont.getDescription().length() != 0) {
-			version = ont.getDescription();
-		}
-		try {
-			term = (ComparableTerm) ont.createTerm(name, version);
-			ont.setDescription("" + (new Double(version) + 1));
-		}
-		catch (AlreadyExistsException e) {
-			throw new DBObjectAlreadyExists(new Object[] {ont, name});
-		}
+		ComparableTerm term = ont.getOrCreateTerm("" + version);
+		Object[] a = {version};
+		term.setDescription(MessageFormat.format(Messages.getString("Compilation.description"), a));
 		return new Compilation(this, term);
 	}
 
