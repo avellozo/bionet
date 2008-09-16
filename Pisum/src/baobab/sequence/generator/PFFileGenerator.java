@@ -22,8 +22,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.biojava.ontology.Term;
 import org.biojavax.ontology.ComparableOntology;
-import org.biojavax.ontology.ComparableTerm;
 
 import baobab.sequence.exception.DBObjectNotFound;
 import baobab.sequence.general.Messages;
@@ -43,10 +43,10 @@ public class PFFileGenerator extends JPanel
 		super(new BorderLayout());
 
 		ComparableOntology ont = TermsAndOntologies.getCompilationOnt(organism);
-		Set<ComparableTerm> comps = ont.getTerms();
+		Set<Term> comps = ont.getTerms();
 		String[] listData = new String[comps.size()];
 		int i = 0;
-		for (ComparableTerm comp : comps) {
+		for (Term comp : comps) {
 			listData[i++] = comp.getName();
 		}
 
@@ -115,7 +115,7 @@ public class PFFileGenerator extends JPanel
 	public static void main(String[] args) {
 		// the ncbiTaxon of organism
 		String respDialog;
-		if (args.length < 2) {
+		if (args.length < 1) {
 			respDialog = JOptionPane.showInputDialog("Please input the NCBI_Taxon_ID:",
 				Messages.getString("ncbiTaxonNumberDefault"));
 			if (respDialog == null) {
@@ -144,7 +144,7 @@ public class PFFileGenerator extends JPanel
 		}
 		else {
 			try {
-				organism = new Organism(Integer.parseInt(args[1]));
+				organism = new Organism(Integer.parseInt(args[0]));
 			}
 			catch (Exception e) {
 				e.printStackTrace();

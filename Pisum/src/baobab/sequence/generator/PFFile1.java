@@ -30,7 +30,7 @@ import baobab.sequence.general.TermsAndOntologies;
 import baobab.sequence.ui.Progress;
 import baobab.sequence.ui.ProgressPrintInterval;
 
-public class CDSFile
+public class PFFile1
 {
 
 	/**

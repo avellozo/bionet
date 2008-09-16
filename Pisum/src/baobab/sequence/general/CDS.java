@@ -46,7 +46,7 @@ public class CDS
 		return newFeature;
 	}
 
-	public void link2KO(String ko, ComparableTerm method) {
+	public void link2KO(ComparableTerm method, String ko) {
 		feature.getAnnotation().setProperty(method, ko);
 	}
 }

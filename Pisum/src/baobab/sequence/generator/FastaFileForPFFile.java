@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-import baobab.sequence.general.EST;
+import org.biojava.bio.seq.Sequence;
+
 import baobab.sequence.general.Messages;
 
 public class FastaFileForPFFile
@@ -27,8 +28,14 @@ public class FastaFileForPFFile
 		this(new PrintStream(new File(fileOutName)));
 	}
 
-	public void write(EST est) {
-		out.println(est.getSequence().getInternalSymbolList().seqString());
+	public void write(Sequence seq) {
+		int length = seq.length();
+		int lineWidth = Integer.parseInt(Messages.getString("FastaFileForPFFile.lineWidth"));
+
+		for (int pos = 1; pos <= length; pos += lineWidth) {
+			int end = Math.min(pos + lineWidth - 1, length);
+			out.println(seq.subStr(pos, end));
+		}
 		out.flush();
 	}
 }

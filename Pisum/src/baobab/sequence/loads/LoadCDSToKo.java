@@ -130,7 +130,7 @@ public class LoadCDSToKo
 						else {
 							//							ko = new KO(koId);
 							//							cds.link2KO(ko, method);
-							cds.link2KO(koId, method);
+							cds.link2KO(method, koId);
 							if (comp == null) {
 								comp = organism.getOrCreateCompilation(((RichSequence) cds.getFeature().getSequence()).getVersion());
 								(TermsAndOntologies.getOntologyGeneral()).getOrCreateTriple(method, comp.getTerm(),
