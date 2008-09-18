@@ -128,6 +128,14 @@ public class TermsAndOntologies extends BioSql
 		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termCDS"));
 	}
 
+	public static ComparableTerm getTermTRNA() {
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termTRNA"));
+	}
+
+	public static ComparableTerm getTermMiscRNA() {
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termMiscRNA"));
+	}
+
 	public static ComparableTerm getTermVR() {
 		return getOntologyMRNAToCDS().getOrCreateTerm(Messages.getString("termVR"));
 	}

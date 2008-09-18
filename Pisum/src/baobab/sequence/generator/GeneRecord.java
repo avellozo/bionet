@@ -8,28 +8,31 @@ import java.util.Collection;
 public interface GeneRecord
 {
 
-	boolean isValid();
+	public boolean isValid();
 
-	String getId();
+	public String getId();
 
-	String getName();
+	public String getName();
 
-	int getStartBase();
+	public int getStartBase();
 
-	int getEndBase();
+	public int getEndBase();
 
-	String getType();
+	public String getType();
 
-	String getComment();
+	public String getComment();
 
-	String getProductID();
+	public String getProductID();
 
-	String[] getSynonyms();
+	public Collection<String> getSynonyms();
 
-	Collection<DBLink> getDBLinks();
+	public Collection<DBLink> getDBLinks();
 
-	Collection<Function> getFunctions();
+	public Collection<Function> getFunctions();
 
-	String[] getECs();
+	public Collection<String> getECs();
 
+	public Collection<Intron> getIntrons();
+
+	public void shiftLocation(int shiftQtty);
 }

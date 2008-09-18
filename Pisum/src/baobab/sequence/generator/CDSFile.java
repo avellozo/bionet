@@ -120,16 +120,16 @@ public class CDSFile
 							RichFeature mRNA = (RichFeature) geneFeatures.next();
 							if (mRNA.getTypeTerm() == TermsAndOntologies.getTermMRNA()) {
 								for (Iterator mRNAFeatures = mRNA.features(); mRNAFeatures.hasNext();) {
-									RichFeature CDS = (RichFeature) mRNAFeatures.next();
-									if (CDS.getTypeTerm() == TermsAndOntologies.getTermCDS()) {
+									RichFeature cDS = (RichFeature) mRNAFeatures.next();
+									if (cDS.getTypeTerm() == TermsAndOntologies.getTermCDS()) {
 										wr.println();
-										wr.print(CDS.getAnnotation().getProperty(TermsAndOntologies.getTermProteinID())
+										wr.print(cDS.getAnnotation().getProperty(TermsAndOntologies.getTermProteinID())
 											+ "\t");
 										wr.print(mRNA.getAnnotation().getProperty(TermsAndOntologies.getTermMRNAID())
 											+ "\t");
-										wr.print(CDS.getAnnotation().getProperty(TermsAndOntologies.getTermGene())
+										wr.print(cDS.getAnnotation().getProperty(TermsAndOntologies.getTermGene())
 											+ "\t");
-										wr.print(CDS.getAnnotation().getProperty(TermsAndOntologies.getTermCDSName())
+										wr.print(cDS.getAnnotation().getProperty(TermsAndOntologies.getTermCDSName())
 											+ "\t");
 										wr.print(seq.getAccession() + "\t");
 										i++;

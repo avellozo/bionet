@@ -9,16 +9,18 @@ import baobab.sequence.general.TermsAndOntologies;
 
 public class EC
 {
-	String			id;
 	ComparableTerm	term;
 
 	public EC(String id) {
-		this.id = id;
-		term = TermsAndOntologies.getOntologyEC().getOrCreateTerm(getId());
+		term = TermsAndOntologies.getOntologyEC().getOrCreateTerm(id);
+	}
+
+	public EC(ComparableTerm term) {
+		this.term = term;
 	}
 
 	public String getId() {
-		return id;
+		return term.getName();
 	}
 
 	public ComparableTerm getTerm() {

@@ -24,7 +24,11 @@ public class PFFileStream
 		this(new PrintStream(new File(fileOutName)));
 	}
 
-	public void write(GeneRecord geneRecord) throws GeneRecordInvalidException {
+	public void println(String str) {
+		out.println(str);
+	}
+
+	public void print(GeneRecord geneRecord) throws GeneRecordInvalidException {
 		if (geneRecord == null || !geneRecord.isValid()) {
 			throw new GeneRecordInvalidException(geneRecord);
 		}
@@ -41,7 +45,7 @@ public class PFFileStream
 		if (productID != null && productID.length() != 0) {
 			out.println("PRODUCT-ID" + "\t" + productID);
 		}
-		String[] synonyms = geneRecord.getSynonyms();
+		Collection<String> synonyms = geneRecord.getSynonyms();
 		if (synonyms != null) {
 			for (String syn : synonyms) {
 				if (syn != null && syn.length() > 0) {
@@ -71,7 +75,7 @@ public class PFFileStream
 			}
 		}
 
-		String[] ecs = geneRecord.getECs();
+		Collection<String> ecs = geneRecord.getECs();
 		if (ecs != null) {
 			for (String ec : ecs) {
 				if (ec != null && ec.length() > 0) {
@@ -79,9 +83,20 @@ public class PFFileStream
 				}
 			}
 		}
+		Collection<Intron> introns = geneRecord.getIntrons();
+		if (introns != null) {
+			for (Intron intron : introns) {
+				out.println("INTRON" + "\t\t" + intron.getBegin() + "-" + intron.getEnd());
+			}
+		}
+
 		out.println("//");
 		out.println();
 
+		out.flush();
+	}
+
+	public void flush() {
 		out.flush();
 	}
 }

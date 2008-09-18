@@ -3,76 +3,262 @@
  */
 package baobab.sequence.generator;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
-public class SimpleGeneRecord implements GeneRecord
+import org.biojava.bio.symbol.Location;
+import org.biojavax.Note;
+import org.biojavax.RankedCrossRef;
+import org.biojavax.RichAnnotation;
+import org.biojavax.bio.seq.RichFeature;
+import org.biojavax.bio.seq.RichSequence;
+import org.biojavax.ontology.ComparableTerm;
+
+import baobab.sequence.dbExternal.EC;
+import baobab.sequence.dbExternal.KO;
+import baobab.sequence.general.Messages;
+
+public abstract class SimpleGeneRecord implements GeneRecord
 {
-	String	id, name, type;
+	String					id, name, type;
+	String					comment		= "", productID;
+	Collection<DBLink>		dbLinks		= new ArrayList<DBLink>();
+	Collection<String>		ecs			= new ArrayList<String>(1);
+	int						endBase, startBase;
+	Collection<Function>	functions	= new ArrayList<Function>(1);
+	Collection<String>		synonyms	= new ArrayList<String>();
+	Collection<Intron>		introns		= new ArrayList<Intron>();
+	RichFeature				feature;
 
-	public SimpleGeneRecord(String id, String name, String type) {
-		this.id = id;
-		this.name = name;
-		this.type = type;
+	public SimpleGeneRecord(RichFeature geneProduct) throws Exception {
+		this.feature = geneProduct;
+		Location loc = geneProduct.getLocation();
+		setStartBase(loc.getMin());
+		setEndBase(loc.getMax());
+		if (!loc.isContiguous()) {
+			Iterator it = loc.blockIterator();
+			Location loc1 = (Location) it.next();
+			while (it.hasNext()) {
+				Location loc2 = (Location) it.next();
+				if (loc1.getMax() < loc2.getMin()) {
+					addIntron(new Intron(loc1.getMax() + 1, loc2.getMin() - 1));
+				}
+				else if (loc2.getMax() < loc1.getMin()) {
+					addIntron(new Intron(loc2.getMax() + 1, loc1.getMin() - 1));
+				}
+			}
+		}
+		RichAnnotation annotation = (RichAnnotation) geneProduct.getAnnotation();
+		RichFeature featureParent = null;
+		RichAnnotation annotationParent = null;
+		if (geneProduct.getParent() instanceof RichFeature) {
+			featureParent = (RichFeature) geneProduct.getParent();
+			annotationParent = (RichAnnotation) featureParent.getAnnotation();
+		}
+		Note[] notes;
+		notes = annotation.getProperties("product");
+		for (Note note : notes) {
+			addFunction(new Function(note.getValue(), "Assigned by GenBank.", null));
+			setName(note.getValue());
+		}
+		notes = annotation.getProperties(getProductIdTerm());
+		for (Note note : notes) {
+			setProductID(note.getValue());
+		}
+		notes = annotation.getProperties("note");
+		if (notes.length == 0 && annotationParent != null) {
+			notes = annotationParent.getProperties("note");
+		}
+		for (Note note : notes) {
+			addComment(note.getValue());
+		}
+		notes = annotation.getProperties("anticodon");
+		for (Note note : notes) {
+			addComment("anticodon=" + note.getValue());
+		}
+		notes = annotation.getProperties("codon_start");
+		for (Note note : notes) {
+			addComment("codon_start=" + note.getValue());
+		}
+		notes = annotation.getProperties("exception");
+		for (Note note : notes) {
+			addComment("exception=" + note.getValue());
+		}
+		notes = annotation.getProperties("pseudo");
+		if (notes.length > 0) {
+			addComment("pseudo");
+		}
+		notes = annotation.getProperties("function");
+		for (Note note : notes) {
+			addComment("function=" + note.getValue());
+		}
+		notes = annotation.getProperties("transl_except");
+		for (Note note : notes) {
+			addComment("transl_except=" + note.getValue());
+		}
+		notes = annotation.getProperties("gene");
+		for (Note note : notes) {
+			addSynonym("GenBank loc: " + note.getValue());
+		}
+		Set<RankedCrossRef> refs = geneProduct.getRankedCrossRefs();
+		boolean canSetId = true;
+		for (RankedCrossRef ref : refs) {
+			addDBLink(ref.getCrossRef().getDbname(), ref.getCrossRef().getAccession());
+			if (ref.getCrossRef().getDbname().equals("GI")) {
+				setId(ref.getCrossRef().getAccession());
+				canSetId = false;
+			}
+			if (ref.getCrossRef().getDbname().equals("GeneID") && canSetId) {
+				setId(ref.getCrossRef().getAccession());
+			}
+		}
+		addDBLink(Messages.getString("DBLink.DB.SequenceProductId"),
+			((RichSequence) geneProduct.getSequence()).getAccession());
+
+		Collection<ComparableTerm> methodsKO = getMethodsToLinkToKO();
+		for (ComparableTerm methodKO : methodsKO) {
+			//termKo need to be String because BIOJAVA
+			notes = annotation.getProperties(methodKO.getName());
+			for (Note note : notes) {
+				KO ko = new KO(note.getValue());
+				Collection<EC> ecs = ko.getECs();
+				for (EC ec : ecs) {
+					addEC(ec);
+				}
+				addDBLink(Messages.getString("DBLink.DB.KO"), ko.getId());
+				String function = ko.getDefinition();
+				if (function != null && function.length() > 0) {
+					addFunction(new Function(function, methodKO.getDescription(), null));
+				}
+			}
+		}
+	}
+
+	public abstract Collection<ComparableTerm> getMethodsToLinkToKO();
+
+	public abstract String getProductIdTerm();
+
+	public boolean isValid() {
+		return (id != null && id.length() > 0 && name != null && name.length() > 0 && functions.size() > 0
+			&& getType() != null && getType().length() > 0);
+	}
+
+	public void shiftLocation(int shiftQtty) {
+		setStartBase(getStartBase() + shiftQtty);
+		setEndBase(getEndBase() + shiftQtty);
+		Collection<Intron> introns = getIntrons();
+		for (Intron intron : introns) {
+			intron.shift(shiftQtty);
+		}
+	}
+
+	public boolean addDBLink(DBLink dbLink) {
+		return dbLinks.add(dbLink);
+	}
+
+	public boolean addDBLink(String db, String acession) throws Exception {
+		return addDBLink(new DBLink(db, acession));
+	}
+
+	public boolean addEC(String ec) {
+		return ecs.add(ec);
+	}
+
+	public boolean addEC(EC ec) {
+		return ecs.add(ec.getId());
+	}
+
+	public boolean addSynonym(String synonym) {
+		return synonyms.add(synonym);
+	}
+
+	public boolean addFunction(Function function) {
+		return functions.add(function);
+	}
+
+	public boolean addIntron(Intron intron) {
+		return introns.add(intron);
 	}
 
 	public String getComment() {
-		// TODO Auto-generated method stub
-		return null;
+		return comment;
 	}
 
 	public Collection<DBLink> getDBLinks() {
-		// TODO Auto-generated method stub
-		return null;
+		return dbLinks;
 	}
 
-	public String[] getECs() {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<String> getECs() {
+		return ecs;
 	}
 
 	public int getEndBase() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public Collection<Function> getFunctions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getProductID() {
-		// TODO Auto-generated method stub
-		return null;
+		return endBase;
 	}
 
 	public int getStartBase() {
-		// TODO Auto-generated method stub
-		return 0;
+		return startBase;
 	}
 
-	public String[] getSynonyms() {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Function> getFunctions() {
+		return functions;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getProductID() {
+		return productID;
+	}
+
+	public Collection<String> getSynonyms() {
+		return synonyms;
 	}
 
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
-	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void addComment(String comment) {
+		if (this.comment.length() > 0) {
+			this.comment += System.getProperty("line.separator");
+		}
+		this.comment += comment;
+	}
+
+	public void setProductID(String productID) {
+		this.productID = productID;
+	}
+
+	public void setEndBase(int endBase) {
+		this.endBase = endBase;
+	}
+
+	public void setStartBase(int startBase) {
+		this.startBase = startBase;
+	}
+
+	public Collection<Intron> getIntrons() {
+		return introns;
 	}
 
 }

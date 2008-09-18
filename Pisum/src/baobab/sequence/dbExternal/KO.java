@@ -3,6 +3,10 @@
  */
 package baobab.sequence.dbExternal;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.biojavax.ontology.ComparableTerm;
 import org.biojavax.ontology.ComparableTriple;
 import org.biojavax.ontology.SimpleComparableOntology;
@@ -33,6 +37,17 @@ public class KO
 		SimpleComparableOntology ont = TermsAndOntologies.getOntologyToLinksKOToEC();
 		ComparableTerm term = TermsAndOntologies.getTermToLinkKOToEC();
 		return ont.getOrCreateTriple(getTerm(), ec.getTerm(), term);
+	}
+
+	public Collection<EC> getECs() {
+		SimpleComparableOntology ont = TermsAndOntologies.getOntologyToLinksKOToEC();
+		ComparableTerm term = TermsAndOntologies.getTermToLinkKOToEC();
+		Set<ComparableTriple> triples = ont.getTriples(getTerm(), null, term);
+		Set<EC> ecs = new TreeSet<EC>();
+		for (ComparableTriple triple : triples) {
+			ecs.add(new EC((ComparableTerm) triple.getObject()));
+		}
+		return ecs;
 	}
 
 	public ComparableTriple link2Go(GO go) {
