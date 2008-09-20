@@ -3,29 +3,28 @@
  */
 package baobab.sequence.generator;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 
 public class PFFileStream
 {
 	PrintStream	out;
-
-	public PFFileStream(PrintStream out) {
-		this.out = out;
-	}
-
-	public PFFileStream(File fileOut) throws FileNotFoundException {
-		this(new PrintStream(fileOut));
-	}
+	String		fileName;
 
 	public PFFileStream(String fileOutName) throws FileNotFoundException {
-		this(new PrintStream(new File(fileOutName)));
+		out = new PrintStream(new FileOutputStream(fileOutName, false));
+		fileName = fileOutName;
 	}
 
 	public void println(String str) {
 		out.println(str);
+	}
+
+	public void restart() throws FileNotFoundException {
+		out.close();
+		out = new PrintStream(new FileOutputStream(fileName, true));
 	}
 
 	public void print(GeneRecord geneRecord) throws GeneRecordInvalidException {
@@ -34,38 +33,17 @@ public class PFFileStream
 		}
 		out.println("ID" + "\t\t" + geneRecord.getId());
 		out.println("NAME" + "\t\t" + geneRecord.getName());
-		out.println("STARTBASE" + "\t" + geneRecord.getStartBase());
-		out.println("ENDBASE" + "\t\t" + geneRecord.getEndBase());
 		out.println("PRODUCT-TYPE" + "\t" + geneRecord.getType());
-		String comment = geneRecord.getComment();
-		if (comment != null && comment.length() != 0) {
-			out.println("GENE-COMMENT" + "\t" + comment);
-		}
 		String productID = geneRecord.getProductID();
 		if (productID != null && productID.length() != 0) {
 			out.println("PRODUCT-ID" + "\t" + productID);
-		}
-		Collection<String> synonyms = geneRecord.getSynonyms();
-		if (synonyms != null) {
-			for (String syn : synonyms) {
-				if (syn != null && syn.length() > 0) {
-					out.println("SYNONYM" + "\t\t" + syn);
-				}
-			}
-		}
-
-		Collection<DBLink> dbLinks = geneRecord.getDBLinks();
-		if (dbLinks != null) {
-			for (DBLink dbLink : dbLinks) {
-				out.println("DBLINK" + "\t\t" + dbLink.getType() + ":" + dbLink.getValue());
-			}
 		}
 
 		Collection<Function> functions = geneRecord.getFunctions();
 		String synonym;
 		for (Function function : functions) {
 			out.println("FUNCTION" + "\t" + function.getName());
-			comment = function.getComment();
+			String comment = function.getComment();
 			if (comment != null && comment.length() > 0) {
 				out.println("FUNCTION-COMMENT" + "\t" + comment);
 			}
@@ -83,6 +61,16 @@ public class PFFileStream
 				}
 			}
 		}
+
+		Collection<DBLink> dbLinks = geneRecord.getDBLinks();
+		if (dbLinks != null) {
+			for (DBLink dbLink : dbLinks) {
+				out.println("DBLINK" + "\t\t" + dbLink.getType() + ":" + dbLink.getValue());
+			}
+		}
+
+		out.println("STARTBASE" + "\t" + geneRecord.getStartBase());
+		out.println("ENDBASE" + "\t\t" + geneRecord.getEndBase());
 		Collection<Intron> introns = geneRecord.getIntrons();
 		if (introns != null) {
 			for (Intron intron : introns) {
@@ -90,9 +78,29 @@ public class PFFileStream
 			}
 		}
 
+		Collection<String> synonyms = geneRecord.getSynonyms();
+		if (synonyms != null) {
+			for (String syn : synonyms) {
+				if (syn != null && syn.length() > 0) {
+					out.println("SYNONYM" + "\t\t" + syn);
+				}
+			}
+		}
+
+		Collection<String> comments = geneRecord.getComment();
+		boolean first = true;
+		for (String comment : comments) {
+			if (comment != null && comment.length() > 0) {
+				if (first) {
+					out.print("GENE-COMMENT");
+					first = false;
+				}
+				out.println("\t" + comment);
+			}
+		}
+
 		out.println("//");
 		out.println();
-
 		out.flush();
 	}
 

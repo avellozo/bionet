@@ -20,7 +20,7 @@ public interface GeneRecord
 
 	public String getType();
 
-	public String getComment();
+	public Collection<String> getComment();
 
 	public String getProductID();
 

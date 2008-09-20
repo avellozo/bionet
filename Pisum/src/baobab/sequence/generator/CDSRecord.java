@@ -10,6 +10,7 @@ import org.biojavax.RichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.ontology.ComparableTerm;
 
+import baobab.sequence.general.BioSql;
 import baobab.sequence.general.Messages;
 import baobab.sequence.general.TermsAndOntologies;
 
@@ -27,7 +28,7 @@ public class CDSRecord extends SimpleGeneRecord
 	public CDSRecord(RichFeature cds) throws Exception {
 		super(cds);
 		addDBLink(Messages.getString("DBLink.DB.CDS.ProductId"), getProductID());
-		RichFeature featureParent = (RichFeature) feature.getParent();
+		RichFeature featureParent = BioSql.getParent(feature);
 		RichAnnotation annotationParent = (RichAnnotation) featureParent.getAnnotation();
 		Note[] notes;
 		notes = annotationParent.getProperties("transcript_id");

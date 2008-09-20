@@ -18,12 +18,13 @@ import org.biojavax.ontology.ComparableTerm;
 
 import baobab.sequence.dbExternal.EC;
 import baobab.sequence.dbExternal.KO;
+import baobab.sequence.general.BioSql;
 import baobab.sequence.general.Messages;
 
 public abstract class SimpleGeneRecord implements GeneRecord
 {
-	String					id, name, type;
-	String					comment		= "", productID;
+	String					id, name, type, productID;
+	Collection<String>		comment		= new ArrayList<String>();
 	Collection<DBLink>		dbLinks		= new ArrayList<DBLink>();
 	Collection<String>		ecs			= new ArrayList<String>(1);
 	int						endBase, startBase;
@@ -48,13 +49,13 @@ public abstract class SimpleGeneRecord implements GeneRecord
 				else if (loc2.getMax() < loc1.getMin()) {
 					addIntron(new Intron(loc2.getMax() + 1, loc1.getMin() - 1));
 				}
+				loc1 = loc2;
 			}
 		}
 		RichAnnotation annotation = (RichAnnotation) geneProduct.getAnnotation();
-		RichFeature featureParent = null;
+		RichFeature featureParent = BioSql.getParent(feature);
 		RichAnnotation annotationParent = null;
-		if (geneProduct.getParent() instanceof RichFeature) {
-			featureParent = (RichFeature) geneProduct.getParent();
+		if (featureParent != null) {
 			annotationParent = (RichAnnotation) featureParent.getAnnotation();
 		}
 		Note[] notes;
@@ -182,7 +183,11 @@ public abstract class SimpleGeneRecord implements GeneRecord
 		return introns.add(intron);
 	}
 
-	public String getComment() {
+	public void addComment(String comment) {
+		this.comment.add(comment);
+	}
+
+	public Collection<String> getComment() {
 		return comment;
 	}
 
@@ -236,13 +241,6 @@ public abstract class SimpleGeneRecord implements GeneRecord
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public void addComment(String comment) {
-		if (this.comment.length() > 0) {
-			this.comment += System.getProperty("line.separator");
-		}
-		this.comment += comment;
 	}
 
 	public void setProductID(String productID) {

@@ -15,6 +15,7 @@ import org.biojava.bio.BioException;
 import org.biojavax.Namespace;
 import org.biojavax.RichObjectFactory;
 import org.biojavax.bio.seq.RichFeature;
+import org.biojavax.bio.seq.RichFeatureRelationship;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.biojavax.bio.seq.SimpleRichFeature;
@@ -138,6 +139,18 @@ public class BioSql
 		SimpleRichFeature feature = (SimpleRichFeature) features.get(0);
 		feature.toString();
 		return new CDS(feature);
+	}
+
+	public static RichFeature getParent(RichFeature feature) {
+		Query query = session.createQuery("from FeatureRelationship as f "
+			+ "where f.term=:containsTerm and f.subject=:feature");
+		query.setParameter("containsTerm", SimpleRichFeatureRelationship.getContainsTerm());
+		query.setParameter("feature", feature);
+		RichFeatureRelationship featureRelationship = (RichFeatureRelationship) query.uniqueResult();
+		if (featureRelationship != null) {
+			return featureRelationship.getObject();
+		}
+		return null;
 	}
 
 	public static void LoadScaffolds(String fileName, Progress progress, int stepToSave)

@@ -3,7 +3,6 @@
  */
 package baobab.sequence.generator;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -35,9 +34,9 @@ public class PFFile
 	public static void main(String[] args) {
 		Transaction tx = BioSql.beginTransaction();
 		try {
-			File fileName;
+			String fileName;
 			if (args.length > 0) {
-				fileName = new File(args[0]);
+				fileName = args[0];
 			}
 			else {
 				JFileChooser fc = new JFileChooser();
@@ -46,7 +45,7 @@ public class PFFile
 				if (returnVal != JFileChooser.APPROVE_OPTION) {
 					return;
 				}
-				fileName = fc.getSelectedFile();
+				fileName = fc.getSelectedFile().getPath();
 			}
 
 			// the ncbiTaxon of organism
@@ -100,7 +99,8 @@ public class PFFile
 			Collection<Integer> seqs = BioSql.getSequencesId(organism, version);
 			PFFileStream wr = new PFFileStream(fileName);
 			wr.println(Messages.getString("PFFile.heading"));
-			FastaFileForPFFile fastaFile = new FastaFileForPFFile(fileName + ".fsa");
+			String fileFastaName = fileName + ".fsa";
+			FastaFileForPFFile fastaFile = new FastaFileForPFFile(fileFastaName);
 
 			System.out.print("Start time:");
 			System.out.println(new Date());
@@ -108,6 +108,7 @@ public class PFFile
 				+ fileName);
 			progress.init();
 			int cdsCounter = 0, tRNACounter = 0, miscRNACounter = 0, allCounter = 0;
+			int cdsAuxCount = 0;
 			boolean writeSeq;
 			int pos = 0;
 
@@ -123,6 +124,7 @@ public class PFFile
 									RichFeature mRNAFeature = (RichFeature) mRNAFeatures.next();
 									if (mRNAFeature.getTypeTerm() == TermsAndOntologies.getTermCDS()) {
 										try {
+											cdsAuxCount++;
 											CDSRecord record = new CDSRecord(mRNAFeature);
 											record.shiftLocation(pos);
 											wr.print(record);
@@ -130,7 +132,8 @@ public class PFFile
 											cdsCounter++;
 											allCounter++;
 											if (allCounter % step == 0) {
-												wr.flush();
+												//												wr.restart();
+												//												fastaFile.restart();
 												BioSql.restartTransaction();
 											}
 											progress.completeStep();
@@ -155,7 +158,8 @@ public class PFFile
 							tRNACounter++;
 							allCounter++;
 							if (allCounter % step == 0) {
-								wr.flush();
+								//								wr.restart();
+								//								fastaFile.restart();
 								BioSql.restartTransaction();
 							}
 							progress.completeStep();
@@ -176,7 +180,8 @@ public class PFFile
 							miscRNACounter++;
 							allCounter++;
 							if (allCounter % step == 0) {
-								wr.flush();
+								//								wr.restart();
+								//								fastaFile.restart();
 								BioSql.restartTransaction();
 							}
 							progress.completeStep();
@@ -191,10 +196,10 @@ public class PFFile
 
 				}
 				//write sequence to fasta file
-				if (writeSeq) {
-					fastaFile.write(seq);
-					pos += seq.length();
-				}
+				//				if (writeSeq) {
+				//					fastaFile.write(seq);
+				//					pos += seq.length();
+				//				}
 			}
 
 			BioSql.endTransactionOK();
@@ -202,6 +207,7 @@ public class PFFile
 			progress.finish(MessageFormat.format(Messages.getString("PFFile.finalMessage"), a));
 			System.out.print("End time:");
 			System.out.println(new Date());
+			System.out.println(cdsAuxCount);
 		}
 		catch (DBObjectNotFound e) {
 			e.printStackTrace();
