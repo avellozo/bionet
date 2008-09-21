@@ -146,7 +146,13 @@ public class BioSql
 			+ "where f.term=:containsTerm and f.subject=:feature");
 		query.setParameter("containsTerm", SimpleRichFeatureRelationship.getContainsTerm());
 		query.setParameter("feature", feature);
-		RichFeatureRelationship featureRelationship = (RichFeatureRelationship) query.uniqueResult();
+		//		RichFeatureRelationship featureRelationship = (RichFeatureRelationship) query.uniqueResult();
+
+		List features = query.list();
+		if (features.size() < 1) {
+			return null;
+		}
+		RichFeatureRelationship featureRelationship = (RichFeatureRelationship) features.get(0);
 		if (featureRelationship != null) {
 			return featureRelationship.getObject();
 		}
