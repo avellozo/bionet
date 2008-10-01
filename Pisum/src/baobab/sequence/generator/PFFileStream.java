@@ -87,13 +87,16 @@ public class PFFileStream
 			}
 		}
 
-		Collection<String> comments = geneRecord.getComment();
+		Collection<String> comments = geneRecord.getComments();
 		boolean first = true;
 		for (String comment : comments) {
 			if (comment != null && comment.length() > 0) {
 				if (first) {
 					out.print("GENE-COMMENT");
 					first = false;
+				}
+				else {
+					out.print("; ");
 				}
 				out.println("\t" + comment);
 			}

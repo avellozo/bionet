@@ -24,7 +24,7 @@ import baobab.sequence.general.Messages;
 public abstract class SimpleGeneRecord implements GeneRecord
 {
 	String					id, name, type, productID;
-	Collection<String>		comment		= new ArrayList<String>();
+	Collection<String>		comments	= new ArrayList<String>();
 	Collection<DBLink>		dbLinks		= new ArrayList<DBLink>();
 	Collection<String>		ecs			= new ArrayList<String>(1);
 	int						endBase, startBase;
@@ -101,7 +101,7 @@ public abstract class SimpleGeneRecord implements GeneRecord
 		}
 		notes = annotation.getProperties("gene");
 		for (Note note : notes) {
-			addSynonym("GenBank loc: " + note.getValue());
+			addSynonym(note.getValue());
 		}
 		Set<RankedCrossRef> refs = geneProduct.getRankedCrossRefs();
 		boolean canSetId = true;
@@ -184,11 +184,11 @@ public abstract class SimpleGeneRecord implements GeneRecord
 	}
 
 	public void addComment(String comment) {
-		this.comment.add(comment);
+		this.comments.add(comment);
 	}
 
-	public Collection<String> getComment() {
-		return comment;
+	public Collection<String> getComments() {
+		return comments;
 	}
 
 	public Collection<DBLink> getDBLinks() {

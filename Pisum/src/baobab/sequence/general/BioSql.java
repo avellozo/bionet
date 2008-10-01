@@ -70,6 +70,17 @@ public class BioSql
 		return new Sequence(seq, getCompilation(organism, seq.getVersion()));
 	}
 
+	public static Collection<Integer> getSequencesIdCDStRNAmRNA(Organism organism, int version) {
+		Query query = session.createQuery("select distinct(b.id) from Feature as f join f.parent as b where "
+			+ "b.version=:version and b.taxon=:taxonId and (f.typeTerm=:typeCDS or f.typeTerm=:typeMiscRNA or f.typeTerm=:typetRNA)");
+		query.setInteger("version", version);
+		query.setParameter("taxonId", organism.getTaxon());
+		query.setParameter("typeCDS", TermsAndOntologies.getTermCDS());
+		query.setParameter("typeMiscRNA", TermsAndOntologies.getTermMiscRNA());
+		query.setParameter("typetRNA", TermsAndOntologies.getTermTRNA());
+		return (Collection<Integer>) query.list();
+	}
+
 	public static Collection<Integer> getSequencesId(Organism organism, int version) {
 		Query query = session.createQuery("select id from ThinSequence where version=:version and taxon=:taxonId");
 		query.setInteger("version", version);
@@ -92,6 +103,30 @@ public class BioSql
 			}
 		}
 		return null;
+	}
+
+	public static List<RichFeature> getFeatures(ComparableTerm type, Organism organism, int version) {
+		Query query = session.createQuery("select f from Feature as f join f.parent as b where "
+			+ "b.version=:version and f.typeTerm=:typeTerm and b.taxon=:taxonId ");
+		query.setInteger("version", version);
+		query.setParameter("taxonId", organism.getTaxon());
+		query.setParameter("typeTerm", type);
+		return query.list();
+	}
+
+	public static List<Integer> getFeaturesId(ComparableTerm type, Organism organism, int version) {
+		Query query = session.createQuery("select f.id from Feature as f join f.parent as b where "
+			+ "b.version=:version and f.typeTerm=:typeTerm and b.taxon=:taxonId ");
+		query.setInteger("version", version);
+		query.setParameter("taxonId", organism.getTaxon());
+		query.setParameter("typeTerm", type);
+		return query.list();
+	}
+
+	public static RichFeature getFeature(Integer id) {
+		Query query = session.createQuery("from Feature where id=:id");
+		query.setInteger("id", id);
+		return (RichFeature) query.uniqueResult();
 	}
 
 	public static Gene getGene(String geneName, Organism organism) {
@@ -250,9 +285,9 @@ public class BioSql
 		tx.commit();
 		session.flush();
 		session.clear();
-		session.close();
+		//		session.close();
 		RichObjectFactory.clearLRUCache();
-		init();
+		//		init();
 		return beginTransaction();
 	}
 

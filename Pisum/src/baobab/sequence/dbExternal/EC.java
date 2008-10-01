@@ -7,7 +7,7 @@ import org.biojavax.ontology.ComparableTerm;
 
 import baobab.sequence.general.TermsAndOntologies;
 
-public class EC
+public class EC implements Comparable<EC>
 {
 	ComparableTerm	term;
 
@@ -25,6 +25,10 @@ public class EC
 
 	public ComparableTerm getTerm() {
 		return term;
+	}
+
+	public int compareTo(EC ec) {
+		return term.compareTo(ec.getTerm());
 	}
 
 }

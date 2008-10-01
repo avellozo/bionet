@@ -89,7 +89,7 @@ public class CDSFile
 
 			//Version
 			int version;
-			if (args.length < 2) {
+			if (args.length < 3) {
 				respDialog = JOptionPane.showInputDialog("Please input the version of sequences:");
 				if (respDialog == null) {
 					return;
@@ -101,7 +101,7 @@ public class CDSFile
 			version = Integer.parseInt(respDialog);
 
 			int step = Integer.parseInt(Messages.getString("CDSFile.step"));
-			Collection<Integer> seqs = BioSql.getSequencesId(organism, version);
+			Collection<Integer> seqs = BioSql.getSequencesIdCDStRNAmRNA(organism, version);
 			PrintWriter wr = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 			wr.print(Messages.getString("CDSFile.heading"));
 
@@ -134,7 +134,7 @@ public class CDSFile
 										wr.print(seq.getAccession() + "\t");
 										i++;
 										if (i % step == 0) {
-											wr.flush();
+											//											wr.flush();
 											BioSql.restartTransaction();
 										}
 										progress.completeStep();
