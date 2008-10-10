@@ -88,6 +88,12 @@ public class BioSql
 		return (Collection<Integer>) query.list();
 	}
 
+	public static String getStringSeq(Integer id) {
+		Query query = session.createQuery("select rs.stringSequence from Sequence as rs where rs.id=:id");
+		query.setInteger("id", id);
+		return (String) query.uniqueResult();
+	}
+
 	public static RichSequence getSequence(Integer id) {
 		Query query = session.createQuery("from ThinSequence where id=:id");
 		query.setInteger("id", id);
@@ -116,10 +122,32 @@ public class BioSql
 
 	public static List<Integer> getFeaturesId(ComparableTerm type, Organism organism, int version) {
 		Query query = session.createQuery("select f.id from Feature as f join f.parent as b where "
-			+ "b.version=:version and f.typeTerm=:typeTerm and b.taxon=:taxonId ");
+			+ "b.version=:version and f.typeTerm=:typeTerm and b.taxon=:taxonId order by b.id");
 		query.setInteger("version", version);
 		query.setParameter("taxonId", organism.getTaxon());
 		query.setParameter("typeTerm", type);
+		return query.list();
+	}
+
+	public static List<Integer> getCDSMiscRNATRNA(Organism organism, int version) {
+		Query query = session.createQuery("select f.id from Feature as f join f.parent as b where "
+			+ "b.version=:version and (f.typeTerm=:cdsTerm or f.typeTerm=:miscRNATerm or f.typeTerm=:tTRNATerm) "
+			+ "and b.taxon=:taxonId order by b.id");
+		query.setInteger("version", version);
+		query.setParameter("taxonId", organism.getTaxon());
+		query.setParameter("cdsTerm", TermsAndOntologies.getTermCDS());
+		query.setParameter("miscRNATerm", TermsAndOntologies.getTermMiscRNA());
+		query.setParameter("tTRNATerm", TermsAndOntologies.getTermTRNA());
+		return query.list();
+	}
+
+	public static List<Integer> getCDSMiscRNATRNABySeqId(Integer seqId) {
+		Query query = session.createQuery("select f.id from Feature as f join f.parent as b where "
+			+ "b.id=:seqId and (f.typeTerm=:cdsTerm or f.typeTerm=:miscRNATerm or f.typeTerm=:tTRNATerm) ");
+		query.setInteger("seqId", seqId);
+		query.setParameter("cdsTerm", TermsAndOntologies.getTermCDS());
+		query.setParameter("miscRNATerm", TermsAndOntologies.getTermMiscRNA());
+		query.setParameter("tTRNATerm", TermsAndOntologies.getTermTRNA());
 		return query.list();
 	}
 

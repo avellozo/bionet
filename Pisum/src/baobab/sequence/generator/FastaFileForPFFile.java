@@ -8,35 +8,44 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-import org.biojava.bio.seq.Sequence;
-
-import baobab.sequence.general.Messages;
+import baobab.sequence.general.BioSql;
 
 public class FastaFileForPFFile
 {
-	PrintStream	out;
 	String		fileName;
+	int			lineWidth;
+	//	ByteArrayOutputStream	baos	= new ByteArrayOutputStream(500000000);
+	//	PrintStream				out = new PrintStream(baos);
+	PrintStream	out;
 
-	public FastaFileForPFFile(String fileOutName) throws FileNotFoundException {
+	public FastaFileForPFFile(String fileOutName, String header, int lineWidth) throws FileNotFoundException {
 		this.out = new PrintStream(new File(fileOutName));
-		out.println(Messages.getString("FastaFileForPFFile.header"));
-		fileName = fileOutName;
+		out.print(header);
+		this.fileName = fileOutName;
+		this.lineWidth = lineWidth;
 	}
 
-	public void write(Sequence seq) {
-		int length = seq.length();
-		int lineWidth = Integer.parseInt(Messages.getString("FastaFileForPFFile.lineWidth"));
+	public int write(Integer seqId) {
+		String stringSeq = BioSql.getStringSeq(seqId);
+		int length = stringSeq.length();
 
-		for (int pos = 1; pos <= length; pos += lineWidth) {
-			int end = Math.min(pos + lineWidth - 1, length);
-			out.println(seq.subStr(pos, end));
+		for (int pos = 0; pos < length; pos++) {
+			if (pos % lineWidth == 0) {
+				out.println();
+			}
+			out.print(stringSeq.charAt(pos));
 		}
 		out.flush();
+		return length;
 	}
 
 	public void restart() throws FileNotFoundException {
 		out.close();
 		out = new PrintStream(new FileOutputStream(fileName, true));
+	}
+
+	public void flush() {
+
 	}
 
 }

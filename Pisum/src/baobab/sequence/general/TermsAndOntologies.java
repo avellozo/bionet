@@ -152,6 +152,10 @@ public class TermsAndOntologies extends BioSql
 		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termCDSName"));
 	}
 
+	public static ComparableTerm getNextBiocycId() {
+		return RichObjectFactory.getDefaultOntology().getOrCreateTerm(Messages.getString("termNextBiocycID"));
+	}
+
 	public static ComparableTerm getLastCompilationTerm(Organism org) {
 		ComparableOntology ont = getCompilationOnt(org);
 		Set<ComparableTerm> terms = ont.getTermSet();

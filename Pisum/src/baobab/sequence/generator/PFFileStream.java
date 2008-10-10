@@ -96,10 +96,13 @@ public class PFFileStream
 					first = false;
 				}
 				else {
-					out.print("; ");
+					out.println("; ");
 				}
-				out.println("\t" + comment);
+				out.print("\t" + comment);
 			}
+		}
+		if (!first) {
+			out.println();
 		}
 
 		out.println("//");
