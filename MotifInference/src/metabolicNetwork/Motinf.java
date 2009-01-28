@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -26,16 +25,14 @@ public class Motinf
 
 	//file.col/file.xml, k, threshold {L,V,l,v} {y,n}
 	//args[3] = {L,V,l,v} Method neighbors.
-	// L consider only neighbors reactions that share compouns as substract and procuct
+	// L consider only neighbors reactions that share compounds as substract and procuct
 	// V consider subst-subst and prod-prod also
 	//args[4] = {y,n} Print details? Default is false
-	public static void main(String args[])
-	{
+	public static void main(String args[]) {
 
 		long time = System.currentTimeMillis();
 
-		if (args.length < 5)
-		{
+		if (args.length < 5) {
 			System.out.println("usage:  java -jar motinf.jar [file.col,file.xml] k threshold {L,V,l,v} {y,n}");
 			return;
 		}
@@ -47,45 +44,41 @@ public class Motinf
 
 		List<Reaction> reactions;
 
-		if (fileName.endsWith(".col"))
-		{
-			try
-			{
+		if (fileName.endsWith(".col")) {
+			try {
 				reactions = Reaction.getReationsFromFileTab(fileName, considerSubsSubs, considerSubsSubs);
 			}
-			catch (IOException e)
-			{
+			catch (IOException e) {
 				e.printStackTrace();
 				return;
 			}
 		}
-		else
-		{
-			try
-			{
+		else {
+			try {
 				reactions = Reaction.getReationsFromFileSBML(fileName, considerSubsSubs, considerSubsSubs);
 			}
-			catch (ParserConfigurationException e)
-			{
+			catch (ParserConfigurationException e) {
 				e.printStackTrace();
 				return;
 			}
-			catch (SAXException e)
-			{
+			catch (SAXException e) {
 				e.printStackTrace();
 				return;
 			}
-			catch (IOException e)
-			{
+			catch (IOException e) {
 				e.printStackTrace();
 				return;
 			}
 		}
-		String[] mapColorEC = assignColors(reactions, thre);
+		Color[] colors = assignColors(reactions, thre);
+
+		Color.sortByNumReactions(colors);
+		for (short i = 0; i < colors.length; i++) {
+			colors[i].setId(i);
+		}
 
 		int maxSizeTrie = (int) (Runtime.getRuntime().maxMemory() * 2 / 3);
-		if (maxSizeTrie < 0)
-		{
+		if (maxSizeTrie < 0) {
 			maxSizeTrie = Integer.MAX_VALUE - 1;
 		}
 		//		System.out.println("Array size " + maxSizeTrie);
@@ -94,40 +87,45 @@ public class Motinf
 		//		System.out.println("Time to create structures " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
 
-		short[] colorQtty = new short[mapColorEC.length];
 		int n = 0;
 		motCount = 0;
 		Reaction[] motifPrefix = new Reaction[k];
-		Motinf m = new Motinf();
-		for (Reaction r : reactions)
-		{
-			if (r.isValid())
-			{
+		//		Motinf m = new Motinf();
+		Reaction.sortByColorId(reactions);
+		Color colorOld = null;
+		int totalLeafs = 0;
+		for (Reaction r : reactions) {
+			if (r.isValid()) {
+				if (colorOld != r.getColor()) {
+					totalLeafs += trie.totalLeafs;
+					//					System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
+					trie.clear();
+					colorOld = r.getColor();
+				}
 				n++;
-				colorQtty[r.getColor().getId()]++;
-				r.setValid(false);
+				r.setInvalid();
 				motifPrefix[0] = r;
-				m.createMotif(motifPrefix, 1, trie);
+				createMotif(motifPrefix, 1, trie);
 			}
 		}
 
+		totalLeafs += trie.totalLeafs;
+		//		System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
+		//		System.out.println();
 		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + "ms");
 		System.out.println("Total motifs of size " + k + ": " + motCount);
-		System.out.println();
 		System.out.println("Reactions: " + n);
-		if (considerSubsSubs)
-		{
+		if (considerSubsSubs) {
 			System.out.println("Considering the edges substract-substract and product-product.");
 		}
-		System.out.println("Colors with threshold " + thre + ": " + mapColorEC.length);
-		if (printDetails)
-		{
-			for (int j = 0; j < mapColorEC.length; j++)
-			{
-				System.out.println(mapColorEC[j] + "\t" + colorQtty[j]);
+		System.out.println("Colors with threshold " + thre + ": " + colors.length);
+		System.out.println("Trie with " + totalLeafs + " leafs.");
+		if (printDetails) {
+			for (Color color : colors) {
+				System.out.println(color.getDescription() + "\t" + color.getNumReactions());
 			}
-			System.out.println("Motifs: ");
-			trie.print(System.out, mapColorEC, k, colorQtty, n, motCount);
+			//			System.out.println("Motifs: ");
+			//			trie.print(System.out, colors, k, n, motCount);
 			//			System.out.println("Occurrences:");
 			//			int repeats[] = trie.repeats;
 			//			for (int j = 0; j < repeats.length; j++)
@@ -140,33 +138,27 @@ public class Motinf
 		//			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
 		//			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);
 		//			int repeats[] = TrieLeafMotifShort.repeats;
+		System.out.println();
 
 	}
 
-	private void createMotif(Reaction[] motifPrefix, int k1, MotifTrie trie)
-	{
-		if (k1 == motifPrefix.length)
-		{
+	private static void createMotif(Reaction[] motifPrefix, int k1, MotifTrie trie) {
+		if (k1 == motifPrefix.length) {
 			short[] motif = new short[motifPrefix.length];
-			for (int i = 0; i < motifPrefix.length; i++)
-			{
+			for (int i = 0; i < motifPrefix.length; i++) {
 				motif[i] = motifPrefix[i].getColor().getId();
 			}
 			Arrays.sort(motif);
 			motCount++;
 			trie.addMotif(motif);
 		}
-		else
-		{
+		else {
 			ArrayList<Reaction> returnValids = new ArrayList<Reaction>();
 			Collection<Reaction> neighborsReactionI;
-			for (int i = 0; i < k1; i++)
-			{
+			for (int i = 0; i < k1; i++) {
 				neighborsReactionI = motifPrefix[i].getNeighbors();
-				for (Reaction r : neighborsReactionI)
-				{
-					if (r.isValid())
-					{
+				for (Reaction r : neighborsReactionI) {
+					if (r.isValid()) {
 						returnValids.add(r);
 						r.setValid(false);
 						motifPrefix[k1] = r;
@@ -174,56 +166,53 @@ public class Motinf
 					}
 				}
 			}
-			for (Reaction r : returnValids)
-			{
+			for (Reaction r : returnValids) {
 				r.setValid(true);
 			}
 		}
 	}
 
 	//return in each position of String[] the EC number truncated
-	private static String[] assignColors(List<Reaction> reactions, int thre)
-	{
+	private static Color[] assignColors(List<Reaction> reactions, int thre) {
 		String[] ecs;
 		Hashtable<String, Color> mapECColor = new Hashtable<String, Color>();
+		ArrayList<Color> colors = new ArrayList<Color>();
 		String ec;
 		short nextColor = 0;
 		Color color;
-		for (Reaction r : reactions)
-		{
-			if (r.getEc() != null && (ecs = r.getEc().getId().split("\\.")).length >= thre)
-			{
+		int totalSize = reactions.size();
+		Reaction r;
+		for (int j = 0; j < totalSize; j++) {
+			r = reactions.get(j);
+			if (r.getEc() != null && (ecs = r.getEc().getId().split("\\.")).length >= thre) {
 				ec = ecs[0];
-				for (int i = 1; i < thre; i++)
-				{
+				for (int i = 1; i < thre; i++) {
 					ec = ec + "." + ecs[i];
 				}
-				if (ec.indexOf("-") == -1)
-				{
+				if (ec.indexOf("-") == -1) {
 					color = mapECColor.get(ec);
-					if (color == null)
-					{
-						color = new Color(nextColor++);
+					if (color == null) {
+						color = new Color(nextColor++, ec);
+						colors.add(color);
 						mapECColor.put(ec, color);
 					}
 					r.setColor(color);
 					r.setValid(true);
 				}
-				else
-				{
-					r.setValid(false);
+				else {
+					r.setInvalid();
+					reactions.remove(r);
+					j--;
+					totalSize--;
 				}
 			}
-			else
-			{
-				r.setValid(false);
+			else {
+				r.setInvalid();
+				reactions.remove(r);
+				j--;
+				totalSize--;
 			}
 		}
-		String[] mapColorEC = new String[nextColor];
-		for (Map.Entry<String, Color> e : mapECColor.entrySet())
-		{
-			mapColorEC[e.getValue().getId()] = e.getKey();
-		}
-		return mapColorEC;
+		return colors.toArray(new Color[colors.size()]);
 	}
 }

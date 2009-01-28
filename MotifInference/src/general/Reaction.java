@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -21,97 +25,105 @@ import org.xml.sax.SAXException;
 public class Reaction
 {
 
-	String				ID;
-	EC					ec;
+	String					ID;
+	EC						ec;
 
-	HashSet<Compound>	substrates	= new HashSet<Compound>(2);
-	HashSet<Compound>	products	= new HashSet<Compound>(2);
+	HashSet<Compound>		substrates	= new HashSet<Compound>(2);
+	HashSet<Compound>		products	= new HashSet<Compound>(2);
 
-	boolean				valid		= true;
-	Color				color;
+	boolean					valid		= true;
+	Color					color;
 
-	HashSet<Reaction>	neighbors	= new HashSet<Reaction>(3);
+	Collection<Reaction>	neighbors	= new HashSet<Reaction>(3);
 
-	public Reaction(String ID)
-	{
+	public Reaction(String ID) {
 		this.ID = ID;
 	}
 
-	public Reaction(String ID, EC ec)
-	{
+	public Reaction(String ID, EC ec) {
 		this.ID = ID;
 		this.ec = ec;
 	}
 
-	public String toString()
-	{
+	public String toString() {
 		return ID;
 	}
 
-	public EC getEc()
-	{
+	public EC getEc() {
 		return ec;
 	}
 
-	public void setEc(EC ec)
-	{
+	public void setEc(EC ec) {
 		this.ec = ec;
 	}
 
-	public String getID()
-	{
+	public String getID() {
 		return ID;
 	}
 
-	public void addSubstrate(Compound c)
-	{
+	public void addSubstrate(Compound c) {
 		substrates.add(c);
 		c.addAsSubstrate(this);
 	}
 
-	public void addProduct(Compound c)
-	{
+	public void addProduct(Compound c) {
 		products.add(c);
 		c.addAsProduct(this);
 	}
 
-	public HashSet<Compound> getSubstrates()
-	{
+	public HashSet<Compound> getSubstrates() {
 		return substrates;
 	}
 
-	public HashSet<Compound> getProducts()
-	{
+	public HashSet<Compound> getProducts() {
 		return products;
 	}
 
-	public Color getColor()
-	{
+	public Color getColor() {
 		return color;
 	}
 
-	public void setColor(Color color)
-	{
+	public void setColor(Color color) {
 		this.color = color;
+		color.incNumReactions();
 	}
 
-	public boolean isValid()
-	{
+	public boolean isValid() {
 		return valid;
 	}
 
-	public void setValid(boolean valid)
-	{
+	public void setValid(boolean valid) {
+		//		if (valid && !this.valid) {
+		//			for (Reaction r : neighbors) {
+		//				r.addNeighbor(this);
+		//			}
+		//		}
+		//		else if (!valid && this.valid) {
+		//			for (Reaction r : neighbors) {
+		//				r.removeNeighbor(this);
+		//			}
+		//		}
 		this.valid = valid;
 	}
 
-	public void addNeighbor(Reaction r)
-	{
-		neighbors.add(r);
+	public void setInvalid() {
+		for (Reaction r : neighbors) {
+			r.removeNeighbor(this);
+		}
+		this.valid = false;
 	}
 
-	public HashSet<Reaction> getNeighbors()
-	{
+	public void addNeighbor(Reaction r) {
+		if (r != this) {
+			neighbors.add(r);
+		}
+	}
+
+	public boolean removeNeighbor(Reaction r) {
+		return neighbors.remove(r);
+	}
+
+	public Collection<Reaction> getNeighbors() {
 		//		if (neighbors != null)
 		//		{
 		//			return neighbors;
@@ -135,8 +147,7 @@ public class Reaction
 	}
 
 	public static List<Reaction> getReationsFromFileTab(String fileName, boolean considerSubstSubst,
-			boolean considerProdProd) throws IOException
-	{
+			boolean considerProdProd) throws IOException {
 		ArrayList<Reaction> reactions = new ArrayList<Reaction>(1000);
 		Hashtable<String, Integer> idReactions = new Hashtable<String, Integer>(1000);
 		Hashtable<String, Compound> compounds = new Hashtable<String, Compound>(1000);
@@ -150,73 +161,57 @@ public class Reaction
 		Reaction reaction;
 		Compound comp;
 		EC ec;
-		while ((line = br.readLine()) != null)
-		{
+		while ((line = br.readLine()) != null) {
 			words = line.split("\t");
 			idReaction = words[0];
 			idComp = words[3];
 			typeComp = words[4];
 			idEC = words[6];
-			if (!idReaction.equals("NA"))
-			{
+			if (!idReaction.equals("NA")) {
 				indexReaction = idReactions.get(idReaction);
-				if (indexReaction == null)
-				{
+				if (indexReaction == null) {
 					reaction = new Reaction(idReaction);
 					idReactions.put(idReaction, reactions.size());
 					reactions.add(reaction);
 				}
-				else
-				{
+				else {
 					reaction = reactions.get(indexReaction);
 				}
-				if (!idEC.equals("NA"))
-				{
+				if (!idEC.equals("NA")) {
 					ec = ecs.get(idEC);
-					if (ec == null)
-					{
+					if (ec == null) {
 						ec = new EC(idEC);
 						ecs.put(idEC, ec);
 					}
 					reaction.setEc(ec);
 				}
-				if (!idComp.equals("NA"))
-				{
+				if (!idComp.equals("NA")) {
 					comp = compounds.get(idComp);
-					if (comp == null)
-					{
+					if (comp == null) {
 						comp = new Compound(idComp);
 						compounds.put(idComp, comp);
 					}
-					if (typeComp.toLowerCase().equals("substrate"))
-					{
+					if (typeComp.toLowerCase().equals("substrate")) {
 						reaction.addSubstrate(comp);
-						for (Reaction r : comp.getReactionsAsProduct())
-						{
+						for (Reaction r : comp.getReactionsAsProduct()) {
 							reaction.addNeighbor(r);
 							r.addNeighbor(reaction);
 						}
-						if (considerSubstSubst)
-						{
-							for (Reaction r : comp.getReactionsAsSubstrate())
-							{
+						if (considerSubstSubst) {
+							for (Reaction r : comp.getReactionsAsSubstrate()) {
 								reaction.addNeighbor(r);
 								r.addNeighbor(reaction);
 							}
 						}
 					}
-					else if (typeComp.toLowerCase().equals("product"))
-					{
+					else if (typeComp.toLowerCase().equals("product")) {
 						reaction.addProduct(comp);
-						for (Reaction r : comp.getReactionsAsSubstrate())
-						{
+						for (Reaction r : comp.getReactionsAsSubstrate()) {
 							reaction.addNeighbor(r);
 							r.addNeighbor(reaction);
 						}
-						if (considerProdProd)
-						{
-							for (Reaction r : comp.getReactionsAsProduct())
-							{
+						if (considerProdProd) {
+							for (Reaction r : comp.getReactionsAsProduct()) {
 								reaction.addNeighbor(r);
 								r.addNeighbor(reaction);
 							}
@@ -234,8 +229,7 @@ public class Reaction
 	//modeNeighborhood = L, only substract to products are neighbors
 	//modeNeighborhood = V, subst-prod, subst-subst and prod-prod are neighbors
 	public static List<Reaction> getReationsFromFileSBML(String fileName, boolean considerSubstSubst,
-			boolean considerProdProd) throws ParserConfigurationException, SAXException, IOException
-	{
+			boolean considerProdProd) throws ParserConfigurationException, SAXException, IOException {
 		ArrayList<Reaction> reactions = new ArrayList<Reaction>(1000);
 		Hashtable<String, EC> ecs = new Hashtable<String, EC>(1000);
 		Hashtable<String, Compound> compounds = new Hashtable<String, Compound>(1000);
@@ -252,27 +246,22 @@ public class Reaction
 		Document doc = db.parse(new File(fileName)); //your xml file name here
 		NodeList nl1 = doc.getElementsByTagName("reaction");
 
-		for (int i = 0; i < nl1.getLength(); i++)
-		{
+		for (int i = 0; i < nl1.getLength(); i++) {
 			eReaction = (Element) nl1.item(i);
 			reactionId = eReaction.getAttribute("id");
 			reaction = new Reaction(reactionId);
 			idEc = null;
 			listHTMLP = eReaction.getElementsByTagName("html:p");
-			for (int j = 0; j < listHTMLP.getLength(); j++)
-			{
+			for (int j = 0; j < listHTMLP.getLength(); j++) {
 				eHTMLP = (Element) listHTMLP.item(j);
 				str = eHTMLP.getTextContent();
-				if (str.startsWith("PROTEIN_CLASS:"))
-				{
+				if (str.startsWith("PROTEIN_CLASS:")) {
 					idEc = str.substring(15);
 				}
 			}
-			if (idEc != null)
-			{
+			if (idEc != null) {
 				ec = ecs.get(idEc);
-				if (ec == null)
-				{
+				if (ec == null) {
 					ec = new EC(idEc);
 					ecs.put(idEc, ec);
 				}
@@ -280,52 +269,42 @@ public class Reaction
 				reactions.add(reaction);
 
 				listReactants = ((Element) eReaction.getElementsByTagName("listOfReactants").item(0)).getElementsByTagName("speciesReference");
-				for (int j = 0; j < listReactants.getLength(); j++)
-				{
+				for (int j = 0; j < listReactants.getLength(); j++) {
 					eReactant = (Element) listReactants.item(j);
 					idComp = eReactant.getAttribute("species");
 					comp = compounds.get(idComp);
-					if (comp == null)
-					{
+					if (comp == null) {
 						comp = new Compound(idComp);
 						compounds.put(idComp, comp);
 					}
 					reaction.addSubstrate(comp);
-					for (Reaction r : comp.getReactionsAsProduct())
-					{
+					for (Reaction r : comp.getReactionsAsProduct()) {
 						reaction.addNeighbor(r);
 						r.addNeighbor(reaction);
 					}
-					if (considerSubstSubst)
-					{
-						for (Reaction r : comp.getReactionsAsSubstrate())
-						{
+					if (considerSubstSubst) {
+						for (Reaction r : comp.getReactionsAsSubstrate()) {
 							reaction.addNeighbor(r);
 							r.addNeighbor(reaction);
 						}
 					}
 				}
 				listProducts = ((Element) eReaction.getElementsByTagName("listOfProducts").item(0)).getElementsByTagName("speciesReference");
-				for (int j = 0; j < listProducts.getLength(); j++)
-				{
+				for (int j = 0; j < listProducts.getLength(); j++) {
 					eProduct = (Element) listProducts.item(j);
 					idComp = eProduct.getAttribute("species");
 					comp = compounds.get(idComp);
-					if (comp == null)
-					{
+					if (comp == null) {
 						comp = new Compound(idComp);
 						compounds.put(idComp, comp);
 					}
 					reaction.addProduct(comp);
-					for (Reaction r : comp.getReactionsAsSubstrate())
-					{
+					for (Reaction r : comp.getReactionsAsSubstrate()) {
 						reaction.addNeighbor(r);
 						r.addNeighbor(reaction);
 					}
-					if (considerProdProd)
-					{
-						for (Reaction r : comp.getReactionsAsProduct())
-						{
+					if (considerProdProd) {
+						for (Reaction r : comp.getReactionsAsProduct()) {
 							reaction.addNeighbor(r);
 							r.addNeighbor(reaction);
 						}
@@ -334,5 +313,21 @@ public class Reaction
 			}
 		}
 		return reactions;
+	}
+
+	public static void sortByColorId(Reaction[] reactions) {
+		Arrays.sort(reactions, new ComparatorByColorId());
+	}
+
+	public static void sortByColorId(List<Reaction> reactions) {
+		Collections.sort(reactions, new ComparatorByColorId());
+	}
+
+}
+
+class ComparatorByColorId implements Comparator<Reaction>
+{
+	public int compare(Reaction o1, Reaction o2) {
+		return o1.getColor().getId() - o2.getColor().getId();
 	}
 }
