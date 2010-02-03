@@ -72,7 +72,7 @@ public class Motinf
 		}
 		Color[] colors = assignColors(reactions, thre);
 
-		Color.sortByNumReactions(colors);
+		Color.sortByNumNodes(colors);
 		for (short i = 0; i < colors.length; i++) {
 			colors[i].setId(i);
 		}
@@ -122,7 +122,7 @@ public class Motinf
 		System.out.println("Trie with " + totalLeafs + " leafs.");
 		if (printDetails) {
 			for (Color color : colors) {
-				System.out.println(color.getDescription() + "\t" + color.getNumReactions());
+				System.out.println(color.getDescription() + "\t" + color.getNumNodes());
 			}
 			//			System.out.println("Motifs: ");
 			//			trie.print(System.out, colors, k, n, motCount);

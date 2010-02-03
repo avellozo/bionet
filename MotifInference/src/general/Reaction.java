@@ -85,7 +85,7 @@ public class Reaction
 
 	public void setColor(Color color) {
 		this.color = color;
-		color.incNumReactions();
+		color.incNumNodes();
 	}
 
 	public boolean isValid() {

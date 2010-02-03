@@ -6,14 +6,18 @@ package general;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class Color
+public class Color implements Comparable<Color>
 {
-	short	id;
-	short	numReactions	= 0;
+	short	id			= 0;
+	short	numNodes	= 0;
 	String	description;
 
 	public Color(short id, String description) {
 		this.id = id;
+		this.description = description;
+	}
+
+	public Color(String description) {
 		this.description = description;
 	}
 
@@ -25,12 +29,12 @@ public class Color
 		this.id = id;
 	}
 
-	public short getNumReactions() {
-		return numReactions;
+	public short getNumNodes() {
+		return numNodes;
 	}
 
-	public void incNumReactions() {
-		this.numReactions++;
+	public void incNumNodes() {
+		this.numNodes++;
 	}
 
 	public String toString() {
@@ -45,15 +49,19 @@ public class Color
 		this.description = description;
 	}
 
-	public static void sortByNumReactions(Color[] colors) {
-		Arrays.sort(colors, new ComparatorByNumReactions());
+	public static void sortByNumNodes(Color[] colors) {
+		Arrays.sort(colors, new ComparatorByNumNodes());
+	}
+
+	public int compareTo(Color o) {
+		return getId() - o.getId();
 	}
 
 }
 
-class ComparatorByNumReactions implements Comparator<Color>
+class ComparatorByNumNodes implements Comparator<Color>
 {
 	public int compare(Color o1, Color o2) {
-		return o1.getNumReactions() - o2.getNumReactions();
+		return o2.getNumNodes() - o1.getNumNodes();
 	}
 }

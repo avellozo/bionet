@@ -3,7 +3,6 @@
  */
 package trie;
 
-
 public class MotifTrie
 {
 
@@ -211,7 +210,7 @@ public class MotifTrie
 		nextFree = 0;
 		totalLeafs = 0;
 		totalInternals = 0;
-		repeats = new int[Short.MAX_VALUE];
+		//		repeats = new int[Short.MAX_VALUE];
 		newInternal((short) 0);
 	}
 
