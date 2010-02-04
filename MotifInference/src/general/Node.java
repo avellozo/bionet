@@ -52,13 +52,15 @@ public class Node
 	public void setValid() {
 		if (!isValid()) {
 			valid = true;
+			ArrayList<Node> nodesToRemove = new ArrayList<Node>();
 			for (Node node : neighbors) {
-				if (node.isValid()) {
-					node.addNeighbor(this);
+				node.addNeighbor(this);
+				if (!node.isValid()) {
+					nodesToRemove.add(node);
 				}
-				else {
-					removeNeighbor(node);
-				}
+			}
+			for (Node node : nodesToRemove) {
+				removeNeighbor(node);
 			}
 		}
 	}

@@ -70,9 +70,15 @@ public class Mitab25ToEdges
 					if (tax1 != null) {
 						out.print(tax1);
 					}
+					else {
+						out.print("-");
+					}
 					out.print('\t');
 					if (tax2 != null) {
 						out.print(tax2);
+					}
+					else {
+						out.print("-");
 					}
 
 					color1 = idsColor.get(uniprot1);
@@ -83,9 +89,15 @@ public class Mitab25ToEdges
 						if (color1 != null) {
 							out.print(color1.getDescription());
 						}
+						else {
+							out.print("-");
+						}
 						out.print('\t');
 						if (color2 != null) {
 							out.print(color2.getDescription());
+						}
+						else {
+							out.print("-");
 						}
 					}
 					out.println();
