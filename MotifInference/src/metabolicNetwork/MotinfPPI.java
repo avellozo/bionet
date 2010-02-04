@@ -23,15 +23,20 @@ public class MotinfPPI
 		long time = System.currentTimeMillis();
 
 		if (args.length < 2) {
-			System.out.println("usage:  java -jar motinf.jar <file .edges> k organismId {y,n}");
+			System.out.println("usage:  java -jar motinf.jar <file .edges> k organismsId(list with ;) {R|I|U} ");
+			//R = remove node with color '-'
+			//I = proteinID for color '-'
+			//U = '-' for color '-'
 			return;
 		}
 		String fileName = args[0];
 		int k = (Integer.valueOf(args[1])).intValue();
-		String organismID = args[2];
-		boolean printDetails = args.length > 2 && args[3].equals("y");
+		String withoutColor = args[3];
+		String organismList = args[2];
+		String[] organisms = organismList.split(";");
+		//		boolean printDetails = args.length > 2 && args[3].equals("y");
 
-		List<Node> graph = Node.createGraph(fileName, organismID);
+		List<Node> graph = Node.createGraph(fileName, organisms, withoutColor);
 
 		//set color id accordly the node quantity
 		Node.sortByColorQtty(graph);
@@ -45,6 +50,7 @@ public class MotinfPPI
 				node.getColor().setId(++lastColorId);
 			}
 			edgesQtty += node.getDegree();
+			node.trimToSize();
 		}
 		edgesQtty = edgesQtty / 2;
 
@@ -55,7 +61,7 @@ public class MotinfPPI
 		//		System.out.println("Array size " + maxSizeTrie);
 		MotifTrie trie = new MotifTrie(maxSizeTrie);
 
-		//		System.out.println("Time to create structures " + (System.currentTimeMillis() - time));
+		System.out.println("Time to create the graph " + (System.currentTimeMillis() - time + "ms"));
 		time = System.currentTimeMillis();
 
 		subgraphsCount = 0;
@@ -82,23 +88,23 @@ public class MotinfPPI
 		//		System.out.println();
 		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + "ms");
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
+		System.out.println("Total motifs of size " + k + ": " + totalLeafs);
 		System.out.println("Nodes: " + graph.size());
 		System.out.println("Colors :" + lastColorId);
 		System.out.println("Edges :" + edgesQtty);
-		System.out.println("Trie with " + totalLeafs + " leafs.");
-		if (printDetails) {
-			//			for (Color color : colors) {
-			//				System.out.println(color.getDescription() + "\t" + color.getNumNodes());
-			//			}
-			//			System.out.println("Motifs: ");
-			//			trie.print(System.out, colors, k, n, motCount);
-			System.out.println("Occurrences:");
-			int repeats[] = trie.repeats;
-			for (int j = 0; j < repeats.length; j++) {
-				if (repeats[j] != 0)
-					System.out.println((j + 1) + " " + repeats[j]);
-			}
+		//		if (printDetails) {
+		//			for (Color color : colors) {
+		//				System.out.println(color.getDescription() + "\t" + color.getNumNodes());
+		//			}
+		//			System.out.println("Motifs: ");
+		//			trie.print(System.out, colors, k, n, motCount);
+		System.out.println("Occurrences:");
+		int repeats[] = trie.repeats;
+		for (int j = 0; j < repeats.length; j++) {
+			if (repeats[j] != 0)
+				System.out.println((j + 1) + " " + repeats[j]);
 		}
+		//		}
 
 		//			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
 		//			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);

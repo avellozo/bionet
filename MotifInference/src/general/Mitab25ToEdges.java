@@ -84,22 +84,22 @@ public class Mitab25ToEdges
 					color1 = idsColor.get(uniprot1);
 					color2 = idsColor.get(uniprot2);
 
-					if (color1 != null || color2 != null) {
-						out.print('\t');
-						if (color1 != null) {
-							out.print(color1.getDescription());
-						}
-						else {
-							out.print("-");
-						}
-						out.print('\t');
-						if (color2 != null) {
-							out.print(color2.getDescription());
-						}
-						else {
-							out.print("-");
-						}
+					//					if (color1 != null || color2 != null) {
+					out.print('\t');
+					if (color1 != null) {
+						out.print(color1.getDescription());
 					}
+					else {
+						out.print("-");
+					}
+					out.print('\t');
+					if (color2 != null) {
+						out.print(color2.getDescription());
+					}
+					else {
+						out.print("-");
+					}
+					//					}
 					out.println();
 					i++;
 					if (i % 1000 == 0) {

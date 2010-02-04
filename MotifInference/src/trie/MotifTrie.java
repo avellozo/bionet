@@ -8,10 +8,11 @@ public class MotifTrie
 
 	short[]			a;
 	//	int		sizeAlphabet;
-	int				nextFree		= 0;
-	public int		totalLeafs		= 0;
-	int				totalInternals	= 0;
-	public int[]	repeats			= new int[Short.MAX_VALUE];
+	int				nextFree				= 0;
+	public int		totalLeafs				= 0;
+	int				totalInternals			= 0;
+	public int[]	repeats					= new int[Short.MAX_VALUE];
+	public int		errorsNumberOcurrences	= 0;
 
 	//	int		bitsColor;
 
@@ -125,13 +126,20 @@ public class MotifTrie
 			throw new RuntimeException();
 		}
 		int counter = getCounter(pos);
-		counter++;
-		a[pos + 3] = (short) (counter >> 16);
-		a[pos + 4] = (short) (counter & 0xFFFF);
 		if (counter < Short.MAX_VALUE - 1) {
+			counter++;
+			a[pos + 3] = (short) (counter >> 16);
+			a[pos + 4] = (short) (counter & 0xFFFF);
 			repeats[counter - 1]--;
 			repeats[counter]++;
 		}
+		//		else {
+		//			System.out.println("Error: Number of ocurrences of a motif plus than " + Short.MAX_VALUE);
+		//			errorsNumberOcurrences++;
+		//			if (errorsNumberOcurrences > 1000) {
+		//				throw new RuntimeException("Error: Number of ocurrences of a motif plus than " + Short.MAX_VALUE);
+		//			}
+		//		}
 		return counter;
 	}
 
@@ -210,6 +218,7 @@ public class MotifTrie
 		nextFree = 0;
 		totalLeafs = 0;
 		totalInternals = 0;
+		errorsNumberOcurrences = 0;
 		//		repeats = new int[Short.MAX_VALUE];
 		newInternal((short) 0);
 	}

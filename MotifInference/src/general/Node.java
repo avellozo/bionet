@@ -4,20 +4,23 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
 public class Node
 {
 
-	String				ID;
-	boolean				valid		= true;
-	Color				color;
-	Collection<Node>	neighbors	= new HashSet<Node>(3);
+	private static final char	UNIQUE_COLOR	= 'U';
+	private static final char	REMOVE_NODE		= 'R';
+	private static final char	PROTEIN_ID		= 'P';
+	String						ID;
+	boolean						valid			= true;
+	Color						color;
+	ArrayList<Node>				neighbors		= new ArrayList<Node>(3);
 
 	//	public Node(String ID) {
 	//		this.ID = ID;
@@ -50,25 +53,25 @@ public class Node
 	}
 
 	public void setValid() {
-		if (!isValid()) {
-			valid = true;
-			ArrayList<Node> nodesToRemove = new ArrayList<Node>();
-			for (Node node : neighbors) {
-				node.addNeighbor(this);
-				if (!node.isValid()) {
-					nodesToRemove.add(node);
-				}
-			}
-			for (Node node : nodesToRemove) {
-				removeNeighbor(node);
-			}
-		}
+		//		if (!isValid()) {
+		valid = true;
+		//			ArrayList<Node> nodesToRemove = new ArrayList<Node>();
+		//			for (Node node : neighbors) {
+		//				node.addNeighbor(this);
+		//				if (!node.isValid()) {
+		//					nodesToRemove.add(node);
+		//				}
+		//			}
+		//			for (Node node : nodesToRemove) {
+		//				removeNeighbor(node);
+		//			}
+		//		}
 	}
 
 	public void setInvalid() {
-		for (Node node : neighbors) {
-			node.removeNeighbor(this);
-		}
+		//		for (Node node : neighbors) {
+		//			node.removeNeighbor(this);
+		//		}
 		this.valid = false;
 	}
 
@@ -90,8 +93,22 @@ public class Node
 		return getNeighbors().size();
 	}
 
-	public static List<Node> createGraph(String fileName, String organismId) throws IOException {
+	public void trimToSize() {
+		neighbors.trimToSize();
+	}
 
+	public static List<Node> createGraph(String fileName, String[] organismsArray, String withoutColorStr)
+			throws IOException {
+		char withoutColor;
+		if (!withoutColorStr.equals(PROTEIN_ID + "") && !withoutColorStr.equals(REMOVE_NODE + "")
+			&& !withoutColorStr.equals(UNIQUE_COLOR + "")) {
+			throw new RuntimeException("Parameter 'withoutColor' invalid:" + withoutColorStr);
+		}
+		else {
+			withoutColor = withoutColorStr.charAt(0);
+		}
+
+		List<String> organisms = Arrays.asList(organismsArray);
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		String line;
 		String[] columnValues;
@@ -106,27 +123,40 @@ public class Node
 				continue;
 			}
 			columnValues = line.split("\t");
-			if (columnValues.length != 4 && columnValues.length != 6) {
+			if (columnValues.length != 6) {
 				System.out.println("Error at line:" + line);
+				continue;
 			}
-			idA = columnValues[0];
-			idB = columnValues[1];
 			taxA = columnValues[2];
 			taxB = columnValues[3];
-			if (organismId.equals("*") || (taxA.equals(organismId) && taxB.equals(organismId))) {
-				if (columnValues.length == 6) {
-					colorIdA = columnValues[4];
-					colorIdB = columnValues[5];
-					if (colorIdA == null || colorIdA.length() == 0) {
-						colorIdA = idA;
-					}
-					if (colorIdB == null || colorIdB.length() == 0) {
-						colorIdB = idB;
+			if (organisms.isEmpty() || (organisms.contains(taxA) && organisms.contains(taxB))) {
+				idA = columnValues[0];
+				idB = columnValues[1];
+				colorIdA = columnValues[4];
+				colorIdB = columnValues[5];
+				if (colorIdA == null || colorIdA.length() == 0 || colorIdA.equals("-")) {
+					switch (withoutColor){
+						case PROTEIN_ID:
+							colorIdA = idA;
+							break;
+						case REMOVE_NODE:
+							continue;
+						case UNIQUE_COLOR:
+							colorIdA = "-";
+							break;
 					}
 				}
-				else {
-					colorIdA = idA;
-					colorIdB = idB;
+				if (colorIdB == null || colorIdB.length() == 0 || colorIdB.equals("-")) {
+					switch (withoutColor){
+						case PROTEIN_ID:
+							colorIdB = idB;
+							break;
+						case REMOVE_NODE:
+							continue;
+						case UNIQUE_COLOR:
+							colorIdB = "-";
+							break;
+					}
 				}
 				colorA = colors.get(colorIdA);
 				if (colorA == null) {
