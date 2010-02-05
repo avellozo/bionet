@@ -112,6 +112,10 @@ public class Motinf
 		totalLeafs += trie.totalLeafs;
 		//		System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
 		//		System.out.println();
+		System.out.print("Motinf");
+		for (String arg : args) {
+			System.out.print(" " + arg);
+		}
 		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + "ms");
 		System.out.println("Total motifs of size " + k + ": " + motCount);
 		System.out.println("Reactions: " + n);

@@ -3,7 +3,6 @@
 
 package metabolicNetwork;
 
-import general.Color;
 import general.Node;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ import java.util.List;
 
 import trie.MotifTrie;
 
-public class MotinfPPI
+public class MotinfPPICount
 {
 	static long	subgraphsCount;
 
@@ -23,7 +22,7 @@ public class MotinfPPI
 		long time = System.currentTimeMillis();
 
 		if (args.length < 2) {
-			System.out.println("usage:  java -jar motinf.jar metabolicNetwork.MotinfPPI <file .edges> k organismsId(list with ;) {R|P|U} ");
+			System.out.println("usage:  java -jar motinf.jar metabolicNetwork.MotinfPPICount <file .edges> k organismsId(list with ;) {R|P|U} ");
 			//R = remove node with color '-'
 			//P = proteinID for color '-'
 			//U = '-' for color '-'
@@ -40,9 +39,8 @@ public class MotinfPPI
 		else {
 			organisms = organismList.split(";");
 		}
-		//		boolean printDetails = args.length > 2 && args[3].equals("y");
 
-		System.out.print("MotinfPPI");
+		System.out.print("MotinfPPICount");
 		for (String arg : args) {
 			System.out.print(" " + arg);
 		}
@@ -50,7 +48,7 @@ public class MotinfPPI
 
 		List<Node> graph = Node.createGraph(fileName, organisms, withoutColor);
 
-		//set color id accordly the node quantity
+		//		//set color id accordly the node quantity
 		Node.sortByColorQtty(graph);
 		short lastColorId = 0;
 		int edgesQtty = 0;
@@ -66,41 +64,41 @@ public class MotinfPPI
 		}
 		edgesQtty = edgesQtty / 2;
 
-		int maxSizeTrie = (int) (Runtime.getRuntime().maxMemory() * 2 / 3);
-		if (maxSizeTrie < 0) {
-			maxSizeTrie = Integer.MAX_VALUE - 1;
-		}
+		//		int maxSizeTrie = (int) (Runtime.getRuntime().maxMemory() * 2 / 3);
+		//		if (maxSizeTrie < 0) {
+		//			maxSizeTrie = Integer.MAX_VALUE - 1;
+		//		}
 		//		System.out.println("Array size " + maxSizeTrie);
-		MotifTrie trie = new MotifTrie(maxSizeTrie);
+		//		MotifTrie trie = new MotifTrie(maxSizeTrie);
 
 		System.out.println("Time to create the graph " + (System.currentTimeMillis() - time + "ms"));
 		time = System.currentTimeMillis();
 
 		subgraphsCount = 0;
+		//		Node.sortByColorId(graph);
+		//		Color colorOld = null;
+		//		int totalLeafs = 0;
 		Node[] motifPrefix = new Node[k];
-		Node.sortByColorId(graph);
-		Color colorOld = null;
-		int totalLeafs = 0;
 		for (Node node : graph) {
 			if (node.isValid()) {
-				if (colorOld != node.getColor()) {
-					totalLeafs += trie.totalLeafs;
-					//					System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
-					trie.clear();
-					colorOld = node.getColor();
-				}
+				//				if (colorOld != node.getColor()) {
+				//					totalLeafs += trie.totalLeafs;
+				//					//					System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
+				//					trie.clear();
+				//					colorOld = node.getColor();
+				//				}
 				node.setInvalid();
 				motifPrefix[0] = node;
-				createMotif(motifPrefix, 1, trie);
+				createSubgraph(motifPrefix, 1);
 			}
 		}
 
-		totalLeafs += trie.totalLeafs;
+		//		totalLeafs += trie.totalLeafs;
 		//		System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
 		//		System.out.println();
-		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + "ms");
+		System.out.println("Time to calculate subGraphs " + (System.currentTimeMillis() - time) + "ms");
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
-		System.out.println("Total motifs of size " + k + ": " + totalLeafs);
+		//		System.out.println("Total motifs of size " + k + ": " + totalLeafs);
 		System.out.println("Nodes: " + graph.size());
 		System.out.println("Colors :" + lastColorId);
 		System.out.println("Edges :" + edgesQtty);
@@ -110,12 +108,12 @@ public class MotinfPPI
 		//			}
 		//			System.out.println("Motifs: ");
 		//			trie.print(System.out, colors, k, n, motCount);
-		System.out.println("Occurrences:");
-		int repeats[] = trie.repeats;
-		for (int j = 0; j < repeats.length; j++) {
-			if (repeats[j] != 0)
-				System.out.println((j + 1) + " " + repeats[j]);
-		}
+		//		System.out.println("Occurrences:");
+		//		int repeats[] = trie.repeats;
+		//		for (int j = 0; j < repeats.length; j++) {
+		//			if (repeats[j] != 0)
+		//				System.out.println((j + 1) + " " + repeats[j]);
+		//		}
 		//		}
 
 		//			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
@@ -155,4 +153,25 @@ public class MotinfPPI
 		}
 	}
 
+	private static void createSubgraph(Node[] motifPrefix, int k1) {
+		if (k1 == motifPrefix.length) {
+			subgraphsCount++;
+		}
+		else {
+			ArrayList<Node> returnValids = new ArrayList<Node>();
+			for (int i = 0; i < k1; i++) {
+				for (Node node : motifPrefix[i].getNeighbors()) {
+					if (node.isValid()) {
+						returnValids.add(node);
+						node.setInvalid();
+						motifPrefix[k1] = node;
+						createSubgraph(motifPrefix, k1 + 1);
+					}
+				}
+			}
+			for (Node node : returnValids) {
+				node.setValid();
+			}
+		}
+	}
 }
