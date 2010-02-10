@@ -120,7 +120,6 @@ public class MotinfPPICount
 		//			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);
 		//			int repeats[] = TrieLeafMotifShort.repeats;
 		System.out.println();
-
 	}
 
 	private static void createMotif(Node[] motifPrefix, int k1, MotifTrie trie) {

@@ -126,10 +126,10 @@ public class MotifTrie
 			throw new RuntimeException();
 		}
 		int counter = getCounter(pos);
-		if (counter < Short.MAX_VALUE - 1) {
-			counter++;
-			a[pos + 3] = (short) (counter >> 16);
-			a[pos + 4] = (short) (counter & 0xFFFF);
+		counter++;
+		a[pos + 3] = (short) (counter >> 16);
+		a[pos + 4] = (short) (counter & 0xFFFF);
+		if (counter <= Short.MAX_VALUE - 1) {
 			repeats[counter - 1]--;
 			repeats[counter]++;
 		}
