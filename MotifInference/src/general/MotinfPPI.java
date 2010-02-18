@@ -1,12 +1,10 @@
 package general;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 
 public class MotinfPPI
 {
@@ -92,8 +90,8 @@ public class MotinfPPI
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
 		System.out.println("Total motifs of size " + k + ": " + totalLeafs);
 		System.out.println("Nodes: " + graph.size());
-		System.out.println("Colors : " + lastColorId);
-		System.out.println("Edges : " + edgesQtty);
+		System.out.println("Colors: " + lastColorId);
+		System.out.println("Edges: " + edgesQtty);
 		System.out.println("Occurrences:");
 		int repeats[] = trie.repeats;
 		for (int j = 0; j < repeats.length; j++) {
