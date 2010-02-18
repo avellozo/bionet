@@ -62,6 +62,6 @@ public class Color implements Comparable<Color>
 class ComparatorByNumNodes implements Comparator<Color>
 {
 	public int compare(Color o1, Color o2) {
-		return o2.getNumNodes() - o1.getNumNodes();
+		return o1.getNumNodes() - o2.getNumNodes();
 	}
 }

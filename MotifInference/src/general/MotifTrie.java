@@ -1,7 +1,7 @@
 /*
  * Created on 03/03/2008
  */
-package trie;
+package general;
 
 public class MotifTrie
 {

@@ -1,10 +1,5 @@
-// works with hash table with mapping of colors to reduce key size
-// Design and implementation Cinzia Pizzi, 2007
+package general;
 
-package metabolicNetwork;
-
-import general.Color;
-import general.Node;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import trie.MotifTrie;
 
 public class MotinfPPI
 {
@@ -26,7 +20,7 @@ public class MotinfPPI
 			System.out.println("usage:  java -jar motinf.jar metabolicNetwork.MotinfPPI <file .edges> k organismsId(list with ;) {R|P|U} ");
 			//R = remove node with color '-'
 			//P = proteinID for color '-'
-			//U = '-' for color '-'
+			//U = unique color '-' for color '-'
 			return;
 		}
 		String fileName = args[0];
@@ -40,7 +34,6 @@ public class MotinfPPI
 		else {
 			organisms = organismList.split(";");
 		}
-		//		boolean printDetails = args.length > 2 && args[3].equals("y");
 
 		System.out.print("MotinfPPI");
 		for (String arg : args) {
@@ -70,10 +63,9 @@ public class MotinfPPI
 		if (maxSizeTrie < 0) {
 			maxSizeTrie = Integer.MAX_VALUE - 1;
 		}
-		//		System.out.println("Array size " + maxSizeTrie);
 		MotifTrie trie = new MotifTrie(maxSizeTrie);
 
-		System.out.println("Time to create the graph " + (System.currentTimeMillis() - time + "ms"));
+		System.out.println("Time to create the graph " + (System.currentTimeMillis() - time + " ms"));
 		time = System.currentTimeMillis();
 
 		subgraphsCount = 0;
@@ -96,33 +88,19 @@ public class MotinfPPI
 		}
 
 		totalLeafs += trie.totalLeafs;
-		//		System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
-		//		System.out.println();
-		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + "ms");
+		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + " ms");
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
 		System.out.println("Total motifs of size " + k + ": " + totalLeafs);
 		System.out.println("Nodes: " + graph.size());
-		System.out.println("Colors :" + lastColorId);
-		System.out.println("Edges :" + edgesQtty);
-		//		if (printDetails) {
-		//			for (Color color : colors) {
-		//				System.out.println(color.getDescription() + "\t" + color.getNumNodes());
-		//			}
-		//			System.out.println("Motifs: ");
-		//			trie.print(System.out, colors, k, n, motCount);
+		System.out.println("Colors : " + lastColorId);
+		System.out.println("Edges : " + edgesQtty);
 		System.out.println("Occurrences:");
 		int repeats[] = trie.repeats;
 		for (int j = 0; j < repeats.length; j++) {
 			if (repeats[j] != 0)
 				System.out.println((j + 1) + " " + repeats[j]);
 		}
-		//		}
-
-		//			System.out.println("motifs leaves " + TrieLeafMotifShort.counterLeafs);
-		//			System.out.println("motifs internal nodes " + TrieInternalNodeMotifShort.counterInternalNodes);
-		//			int repeats[] = TrieLeafMotifShort.repeats;
 		System.out.println();
-
 	}
 
 	private static void createMotif(Node[] motifPrefix, int k1, MotifTrie trie) {

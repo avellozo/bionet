@@ -3,6 +3,8 @@
 
 package metabolicNetwork;
 
+import general.MotifTrie;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -12,7 +14,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import trie.MotifTrie;
 
 public class motif_inference_v7
 {

@@ -1,10 +1,5 @@
-// works with hash table with mapping of colors to reduce key size
-// Design and implementation Cinzia Pizzi, 2007
+package general;
 
-package metabolicNetwork;
-
-import general.Color;
-import general.Reaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +12,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import trie.MotifTrie;
 
 public class Motinf
 {
@@ -116,7 +110,7 @@ public class Motinf
 		for (String arg : args) {
 			System.out.print(" " + arg);
 		}
-		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + "ms");
+		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + " ms");
 		System.out.println("Total motifs of size " + k + ": " + motCount);
 		System.out.println("Reactions: " + n);
 		if (considerSubsSubs) {

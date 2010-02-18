@@ -200,7 +200,7 @@ public class Node
 class NodeComparatorByColorQtty implements Comparator<Node>
 {
 	public int compare(Node o1, Node o2) {
-		return o2.getColor().getNumNodes() - o1.getColor().getNumNodes();
+		return o1.getColor().getNumNodes() - o2.getColor().getNumNodes();
 	}
 }
 
