@@ -1,6 +1,5 @@
 package general;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class MotinfPPICount
 		List<Node> graph = Node.createGraph(fileName, organisms, withoutColor);
 
 		//		//set color id accordly the node quantity
-		Node.sortByColorQtty(graph);
+		Node.sortByColor(graph);
 		short lastColorId = 0;
 		int edgesQtty = 0;
 		for (Node node : graph) {

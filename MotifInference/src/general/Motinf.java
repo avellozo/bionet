@@ -1,17 +1,16 @@
 package general;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
-
 
 public class Motinf
 {
@@ -66,7 +65,7 @@ public class Motinf
 		}
 		Color[] colors = assignColors(reactions, thre);
 
-		Color.sortByNumNodes(colors);
+		Arrays.sort(colors, new ComparatorNodeQtty());
 		for (short i = 0; i < colors.length; i++) {
 			colors[i].setId(i);
 		}
@@ -212,5 +211,12 @@ public class Motinf
 			}
 		}
 		return colors.toArray(new Color[colors.size()]);
+	}
+}
+
+class ComparatorNodeQtty implements Comparator<Color>
+{
+	public int compare(Color o1, Color o2) {
+		return o1.getNumNodes() - o2.getNumNodes();
 	}
 }

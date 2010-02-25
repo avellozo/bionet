@@ -3,8 +3,6 @@
  */
 package general;
 
-import java.util.Arrays;
-import java.util.Comparator;
 
 public class Color implements Comparable<Color>
 {
@@ -49,19 +47,8 @@ public class Color implements Comparable<Color>
 		this.description = description;
 	}
 
-	public static void sortByNumNodes(Color[] colors) {
-		Arrays.sort(colors, new ComparatorByNumNodes());
-	}
-
 	public int compareTo(Color o) {
 		return getId() - o.getId();
 	}
 
-}
-
-class ComparatorByNumNodes implements Comparator<Color>
-{
-	public int compare(Color o1, Color o2) {
-		return o1.getNumNodes() - o2.getNumNodes();
-	}
 }

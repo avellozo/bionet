@@ -187,26 +187,29 @@ public class Node
 		return ret;
 	}
 
-	public static void sortByColorQtty(List<Node> nodes) {
-		Collections.sort(nodes, new NodeComparatorByColorQtty());
+	private static ColorComparatorNodeQtty	colorComparatorByNodeQtty	= new ColorComparatorNodeQtty();
+
+	public static void sortByColorNodeQtty(List<Node> nodes) {
+		Collections.sort(nodes, colorComparatorByNodeQtty);
 	}
 
-	public static void sortByColorId(List<Node> nodes) {
-		Collections.sort(nodes, new NodeComparatorByColorId());
-	}
+	private static ColorComparator	colorComparator	= new ColorComparator();
 
+	public static void sortByColor(List<Node> nodes) {
+		Collections.sort(nodes, colorComparator);
+	}
 }
 
-class NodeComparatorByColorQtty implements Comparator<Node>
+class ColorComparatorNodeQtty implements Comparator<Node>
 {
 	public int compare(Node o1, Node o2) {
 		return o1.getColor().getNumNodes() - o2.getColor().getNumNodes();
 	}
 }
 
-class NodeComparatorByColorId implements Comparator<Node>
+class ColorComparator implements Comparator<Node>
 {
 	public int compare(Node o1, Node o2) {
-		return o1.getColor().getId() - o2.getColor().getId();
+		return o1.getColor().compareTo(o2.getColor());
 	}
 }
