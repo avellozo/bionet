@@ -158,13 +158,13 @@ public class MotinfPPI
 				motif[i] = motifPrefix[i].getColor().getId();
 				notPutInTrie = notPutInTrie && (motifPrefix[i].getColor().getNumNodes() == 1);
 			}
-			Arrays.sort(motif);
 			subgraphsCount++;
 			if (notPutInTrie) {
 				trie.repeats[0]++;
 				notInTrie++;
 			}
 			else {
+				Arrays.sort(motif);
 				trie.addMotif(motif);
 			}
 		}
