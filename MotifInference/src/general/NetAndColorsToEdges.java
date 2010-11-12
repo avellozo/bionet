@@ -16,14 +16,13 @@ public class NetAndColorsToEdges
 
 	public static void main(String[] args) {
 		if (args.length < 3) {
-			System.out.println("usage:  java -jar motinf.jar general.NetAndColorsToEdges <network(ID-ID) file name> <tax id> <edges file name to create> <ID-Color file name>");
+			System.out.println("usage:  java -cp motinf.jar general.NetAndColorsToEdges <network(ID-ID) file name> <tax id> <edges file name to create> <ID-Color file name>");
 			return;
 		}
 		PrintStream out = null;
 		try {
 			int i = 0;
 			BufferedReader netFile = new BufferedReader(new FileReader(args[0]));
-			int taxId = Integer.parseInt(args[1]);
 			out = new PrintStream(new FileOutputStream(args[2], false));
 			out.println("#ID_A\tID_B\ttaxid_A\ttaxid_B\tColor_A\tColor_B");
 			String line;

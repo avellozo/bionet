@@ -16,7 +16,7 @@ public class Mitab25ToEdges
 
 	public static void main(String[] args) {
 		if (args.length < 2) {
-			System.out.println("usage:  java -jar motinf.jar general.Intact2Edges <Mitab file name> <edges file name to create> <ID-Color file name>");
+			System.out.println("usage:  java -cp motinf.jar general.Intact2Edges <Mitab file name> <edges file name to create> <ID-Color file name>");
 			return;
 		}
 		PrintStream out = null;
