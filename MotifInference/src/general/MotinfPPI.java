@@ -4,19 +4,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class MotinfPPI
 {
 	static long	subgraphsCount;
-	static int	notInTrie	= 0;
+	static int	notInTrie;
 
 	public static void main(String args[]) throws IOException {
 
 		long time = System.currentTimeMillis();
 
 		if (args.length < 2) {
-			System.out.println("usage:  java -jar motinf.jar metabolicNetwork.MotinfPPI <file .edges> k organismsId(list with ;) {R|P|U} ");
+			System.out.println("usage:  java -jar motinf.jar general.MotinfPPI <file .edges> k organismsId(list with ;) {R|P|U} ");
 			//R = remove node with color '-'
 			//P = proteinID for color '-'
 			//U = unique color '-' for color '-'
@@ -40,23 +39,26 @@ public class MotinfPPI
 		}
 		System.out.println();
 
-		List<Node> graph = Node.createGraph(fileName, organisms, withoutColor);
+		Graph graph = new Graph(fileName, organisms, withoutColor);
 
-		//set color id accordly the node quantity
-		Node.sortByColorNodeQtty(graph);
-		short lastColorId = 0;
-		int edgesQtty = 0;
-		for (Node node : graph) {
-			if (node.getColor().getId() == 0) {
-				if (lastColorId == Short.MAX_VALUE) {
-					throw new RuntimeException("Error: more than 2^15-1 colors.");
-				}
-				node.getColor().setId(++lastColorId);
-			}
-			edgesQtty += node.getDegree();
-			node.trimToSize();
-		}
-		edgesQtty = edgesQtty / 2;
+		graph.setColorIdByColorOccurrences();
+		//set color id accordly the node quantity of the color
+		graph.sortByColorId();
+
+		//		graph.sortByColorNodeQtty();
+		//		short lastColorId = 0;
+		//		int edgesQtty = 0;
+		//		for (Node node : graph) {
+		//			if (node.getColor().getId() == 0) {
+		//				if (lastColorId == Short.MAX_VALUE) {
+		//					throw new RuntimeException("Error: more than 2^15-1 colors.");
+		//				}
+		//				node.getColor().setId(++lastColorId);
+		//			}
+		//			edgesQtty += node.getDegree();
+		//			//			node.trimToSizeNeighbors();
+		//		}
+		//		edgesQtty = edgesQtty / 2;
 
 		int maxSizeTrie = (int) (Runtime.getRuntime().maxMemory() * 2 / 3);
 		if (maxSizeTrie < 0) {
@@ -68,8 +70,8 @@ public class MotinfPPI
 		time = System.currentTimeMillis();
 
 		subgraphsCount = 0;
-		Node[] motifPrefix = new Node[k];
-		Node.sortByColor(graph);
+		notInTrie = 0;
+		Node[] subgraph = new Node[k];
 		Color colorOld = null;
 		int totalLeafs = 0;
 		for (Node node : graph) {
@@ -81,8 +83,8 @@ public class MotinfPPI
 					colorOld = node.getColor();
 				}
 				node.setInvalid();
-				motifPrefix[0] = node;
-				createMotif(motifPrefix, 1, trie);
+				subgraph[0] = node;
+				createMotif(subgraph, 1, trie);
 			}
 		}
 
@@ -92,9 +94,9 @@ public class MotinfPPI
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
 		System.out.println("Total motifs of size " + k + ": " + totalMotifs);
 		System.out.println("Total motifs didn't put in the trie " + ": " + notInTrie);
-		System.out.println("Nodes: " + graph.size());
-		System.out.println("Colors: " + lastColorId);
-		System.out.println("Edges: " + edgesQtty);
+		System.out.println("Nodes: " + graph.getNumberOfNodes());
+		System.out.println("Edges: " + graph.getNumberOfEdges());
+		System.out.println("Colors: " + graph.getNumberOfColors());
 		System.out.println("Occurrences:");
 		int repeats[] = trie.repeats;
 		for (int j = 0; j < repeats.length; j++) {
@@ -150,13 +152,13 @@ public class MotinfPPI
 	//		}
 	//	}
 
-	private static void createMotif(Node[] motifPrefix, int k1, MotifTrie trie) {
-		if (k1 == motifPrefix.length) {
+	private static void createMotif(Node[] subgraph, int k1, MotifTrie trie) {
+		if (k1 == subgraph.length) {
 			boolean notPutInTrie = true;
 			short[] motif = new short[k1];
 			for (int i = 0; i < k1; i++) {
-				motif[i] = motifPrefix[i].getColor().getId();
-				notPutInTrie = notPutInTrie && (motifPrefix[i].getColor().getNumNodes() == 1);
+				motif[i] = subgraph[i].getColor().getId();
+				notPutInTrie = notPutInTrie && (subgraph[i].getColor().getNumNodes() == 1);
 			}
 			subgraphsCount++;
 			if (notPutInTrie) {
@@ -172,13 +174,13 @@ public class MotinfPPI
 			ArrayList<Node> returnValids = new ArrayList<Node>();
 			Collection<Node> neighborsNodeI;
 			for (int i = 0; i < k1; i++) {
-				neighborsNodeI = motifPrefix[i].getNeighbors();
+				neighborsNodeI = subgraph[i].getNeighbors();
 				for (Node node : neighborsNodeI) {
 					if (node.isValid()) {
 						returnValids.add(node);
 						node.setInvalid();
-						motifPrefix[k1] = node;
-						createMotif(motifPrefix, k1 + 1, trie);
+						subgraph[k1] = node;
+						createMotif(subgraph, k1 + 1, trie);
 					}
 				}
 			}

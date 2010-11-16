@@ -2,9 +2,8 @@ package general;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
-public class MotinfPPICount
+public class SubgraphsCount
 {
 	static long	subgraphsCount;
 
@@ -13,7 +12,7 @@ public class MotinfPPICount
 		long time = System.currentTimeMillis();
 
 		if (args.length < 2) {
-			System.out.println("usage:  java -jar motinf.jar metabolicNetwork.MotinfPPICount <file .edges> k organismsId(list with ;) {R|P|U} ");
+			System.out.println("usage:  java -jar motinf.jar general.SubgraphsCount <file .edges> k organismsId(list with ;) {R|P|U} ");
 			//R = remove node with color '-'
 			//P = proteinID for color '-'
 			//U = '-' for color '-'
@@ -31,64 +30,47 @@ public class MotinfPPICount
 			organisms = organismList.split(";");
 		}
 
-		System.out.print("MotinfPPICount");
+		System.out.print("SubgraphsCount");
 		for (String arg : args) {
 			System.out.print(" " + arg);
 		}
 		System.out.println();
 
-		List<Node> graph = Node.createGraph(fileName, organisms, withoutColor);
-
-		//		//set color id accordly the node quantity
-		Node.sortByColor(graph);
-		short lastColorId = 0;
-		int edgesQtty = 0;
-		for (Node node : graph) {
-			if (node.getColor().getId() == 0) {
-				if (lastColorId == Short.MAX_VALUE) {
-					throw new RuntimeException("Error: more than 2^15-1 colors.");
-				}
-				node.getColor().setId(++lastColorId);
-			}
-			edgesQtty += node.getDegree();
-			node.trimToSize();
-		}
-		edgesQtty = edgesQtty / 2;
+		Graph graph = new Graph(fileName, organisms, withoutColor);
 
 		System.out.println("Time to create the graph " + (System.currentTimeMillis() - time + " ms"));
 		time = System.currentTimeMillis();
 
 		subgraphsCount = 0;
-		Node[] motifPrefix = new Node[k];
+		Node[] subgraph = new Node[k];
 		for (Node node : graph) {
 			if (node.isValid()) {
 				node.setInvalid();
-				motifPrefix[0] = node;
-				createSubgraph(motifPrefix, 1);
+				subgraph[0] = node;
+				createSubgraph(subgraph, 1);
 			}
 		}
 
 		System.out.println("Time to calculate subGraphs " + (System.currentTimeMillis() - time) + " ms");
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
-		System.out.println("Nodes: " + graph.size());
-		System.out.println("Colors: " + lastColorId);
-		System.out.println("Edges: " + edgesQtty);
+		System.out.println("Nodes: " + graph.getNumberOfNodes());
+		System.out.println("Edges: " + graph.getNumberOfEdges());
 		System.out.println();
 	}
 
-	private static void createSubgraph(Node[] motifPrefix, int k1) {
-		if (k1 == motifPrefix.length) {
+	private static void createSubgraph(Node[] subgraph, int k1) {
+		if (k1 == subgraph.length) {
 			subgraphsCount++;
 		}
 		else {
 			ArrayList<Node> returnValids = new ArrayList<Node>();
 			for (int i = 0; i < k1; i++) {
-				for (Node node : motifPrefix[i].getNeighbors()) {
+				for (Node node : subgraph[i].getNeighbors()) {
 					if (node.isValid()) {
 						returnValids.add(node);
 						node.setInvalid();
-						motifPrefix[k1] = node;
-						createSubgraph(motifPrefix, k1 + 1);
+						subgraph[k1] = node;
+						createSubgraph(subgraph, k1 + 1);
 					}
 				}
 			}

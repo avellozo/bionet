@@ -3,12 +3,13 @@
  */
 package general;
 
+import java.util.TreeSet;
 
 public class Color implements Comparable<Color>
 {
-	short	id			= 0;
-	short	numNodes	= 0;
-	String	description;
+	short			id		= 0;
+	TreeSet<Node>	nodes	= new TreeSet<Node>();
+	String			description;
 
 	public Color(short id, String description) {
 		this.id = id;
@@ -27,12 +28,16 @@ public class Color implements Comparable<Color>
 		this.id = id;
 	}
 
-	public short getNumNodes() {
-		return numNodes;
+	public int getNumNodes() {
+		return nodes.size();
 	}
 
-	public void incNumNodes() {
-		this.numNodes++;
+	public void addNode(Node node) {
+		nodes.add(node);
+	}
+
+	public void removeNode(Node node) {
+		nodes.remove(node);
 	}
 
 	public String toString() {

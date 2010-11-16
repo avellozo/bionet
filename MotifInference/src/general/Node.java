@@ -1,26 +1,15 @@
 package general;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.TreeSet;
 
 public class Node
 {
 
-	private static final char	UNIQUE_COLOR	= 'U';
-	private static final char	REMOVE_NODE		= 'R';
-	private static final char	PROTEIN_ID		= 'P';
-	String						ID;
-	boolean						valid			= true;
-	Color						color;
-	ArrayList<Node>				neighbors		= new ArrayList<Node>(3);
+	String			ID;
+	boolean			valid		= true;
+	Color			color		= null;
+	TreeSet<Node>	neighbors	= new TreeSet<Node>();
 
 	//	public Node(String ID) {
 	//		this.ID = ID;
@@ -44,8 +33,13 @@ public class Node
 	}
 
 	public void setColor(Color color) {
+		if (getColor() != null) {
+			getColor().removeNode(this);
+		}
 		this.color = color;
-		color.incNumNodes();
+		if (getColor() != null) {
+			getColor().addNode(this);
+		}
 	}
 
 	public boolean isValid() {
@@ -75,9 +69,12 @@ public class Node
 		this.valid = false;
 	}
 
-	public void addNeighbor(Node node) {
+	public boolean addNeighbor(Node node) {
 		if (node != this) {
-			neighbors.add(node);
+			return neighbors.add(node);
+		}
+		else {
+			return false;
 		}
 	}
 
@@ -93,123 +90,4 @@ public class Node
 		return getNeighbors().size();
 	}
 
-	public void trimToSize() {
-		neighbors.trimToSize();
-	}
-
-	public static List<Node> createGraph(String fileName, String[] organismsArray, String withoutColorStr)
-			throws IOException {
-		char withoutColor;
-		if (!withoutColorStr.equals(PROTEIN_ID + "") && !withoutColorStr.equals(REMOVE_NODE + "")
-			&& !withoutColorStr.equals(UNIQUE_COLOR + "")) {
-			throw new RuntimeException("Parameter 'withoutColor' invalid:" + withoutColorStr);
-		}
-		else {
-			withoutColor = withoutColorStr.charAt(0);
-		}
-
-		List<String> organisms = Arrays.asList(organismsArray);
-		BufferedReader br = new BufferedReader(new FileReader(fileName));
-		String line;
-		String[] columnValues;
-		String idA, idB, taxA, taxB, colorIdA, colorIdB;
-		Hashtable<String, Color> colors = new Hashtable<String, Color>();
-		Hashtable<String, Node> nodes = new Hashtable<String, Node>();
-		List<Node> ret = new ArrayList<Node>();
-		Color colorA, colorB;
-		Node nodeA, nodeB;
-		while ((line = br.readLine()) != null) {
-			if (line.startsWith("#")) {
-				continue;
-			}
-			columnValues = line.split("\t");
-			if (columnValues.length != 6) {
-				System.out.println("Error at line:" + line);
-				continue;
-			}
-			taxA = columnValues[2];
-			taxB = columnValues[3];
-			if (organisms.isEmpty() || (organisms.contains(taxA) && organisms.contains(taxB))) {
-				idA = columnValues[0];
-				idB = columnValues[1];
-				colorIdA = columnValues[4];
-				colorIdB = columnValues[5];
-				if (colorIdA == null || colorIdA.length() == 0 || colorIdA.equals("-")) {
-					switch (withoutColor){
-						case PROTEIN_ID:
-							colorIdA = idA;
-							break;
-						case REMOVE_NODE:
-							continue;
-						case UNIQUE_COLOR:
-							colorIdA = "-";
-							break;
-					}
-				}
-				if (colorIdB == null || colorIdB.length() == 0 || colorIdB.equals("-")) {
-					switch (withoutColor){
-						case PROTEIN_ID:
-							colorIdB = idB;
-							break;
-						case REMOVE_NODE:
-							continue;
-						case UNIQUE_COLOR:
-							colorIdB = "-";
-							break;
-					}
-				}
-				colorA = colors.get(colorIdA);
-				if (colorA == null) {
-					colorA = new Color(colorIdA);
-					colors.put(colorIdA, colorA);
-				}
-				colorB = colors.get(colorIdB);
-				if (colorB == null) {
-					colorB = new Color(colorIdB);
-					colors.put(colorIdB, colorB);
-				}
-				nodeA = nodes.get(idA);
-				if (nodeA == null) {
-					nodeA = new Node(idA, colorA);
-					nodes.put(idA, nodeA);
-					ret.add(nodeA);
-				}
-				nodeB = nodes.get(idB);
-				if (nodeB == null) {
-					nodeB = new Node(idB, colorB);
-					nodes.put(idB, nodeB);
-					ret.add(nodeB);
-				}
-				nodeA.addNeighbor(nodeB);
-				nodeB.addNeighbor(nodeA);
-			}
-		}
-		return ret;
-	}
-
-	private static ColorComparatorNodeQtty	colorComparatorByNodeQtty	= new ColorComparatorNodeQtty();
-
-	public static void sortByColorNodeQtty(List<Node> nodes) {
-		Collections.sort(nodes, colorComparatorByNodeQtty);
-	}
-
-	private static ColorComparator	colorComparator	= new ColorComparator();
-
-	public static void sortByColor(List<Node> nodes) {
-		Collections.sort(nodes, colorComparator);
-	}
-}
-
-class ColorComparatorNodeQtty implements Comparator<Node>
-{
-	public int compare(Node o1, Node o2) {
-		return o1.getColor().getNumNodes() - o2.getColor().getNumNodes();
-	}
-}
-
-class ColorComparator implements Comparator<Node>
-{
-	public int compare(Node o1, Node o2) {
-		return o1.getColor().compareTo(o2.getColor());
-	}
 }
