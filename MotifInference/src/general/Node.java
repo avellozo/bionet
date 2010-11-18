@@ -3,20 +3,22 @@ package general;
 import java.util.Collection;
 import java.util.TreeSet;
 
-public class Node
+public class Node implements Comparable<Node>
 {
 
 	String			ID;
 	boolean			valid		= true;
 	Color			color		= null;
 	TreeSet<Node>	neighbors	= new TreeSet<Node>();
+	Graph			graph;
 
 	//	public Node(String ID) {
 	//		this.ID = ID;
 	//	}
 	//
-	public Node(String ID, Color color) {
+	public Node(String ID, Color color, Graph graph) {
 		this.ID = ID;
+		this.graph = graph;
 		setColor(color);
 	}
 
@@ -88,6 +90,14 @@ public class Node
 
 	public int getDegree() {
 		return getNeighbors().size();
+	}
+
+	public Graph getGraph() {
+		return graph;
+	}
+
+	public int compareTo(Node o) {
+		return this.getID().compareTo(o.getID());
 	}
 
 }

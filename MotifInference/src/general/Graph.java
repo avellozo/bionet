@@ -112,13 +112,13 @@ public class Graph extends ArrayList<Node>
 				}
 				nodeA = nodes.get(idA);
 				if (nodeA == null) {
-					nodeA = new Node(idA, colorA);
+					nodeA = new Node(idA, colorA, this);
 					nodes.put(idA, nodeA);
 					this.add(nodeA);
 				}
 				nodeB = nodes.get(idB);
 				if (nodeB == null) {
-					nodeB = new Node(idB, colorB);
+					nodeB = new Node(idB, colorB, this);
 					nodes.put(idB, nodeB);
 					this.add(nodeB);
 				}
@@ -136,6 +136,10 @@ public class Graph extends ArrayList<Node>
 
 	public int getNumberOfNodes() {
 		return this.size();
+	}
+
+	public double p() {
+		return getNumberOfEdges() * 2 / (getNumberOfNodes() * (getNumberOfNodes() - 1));
 	}
 
 	public int getNumberOfEdges() {

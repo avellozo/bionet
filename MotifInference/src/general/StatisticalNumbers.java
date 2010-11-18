@@ -3,17 +3,17 @@
  */
 package general;
 
-import java.util.List;
-
 public interface StatisticalNumbers
 {
-	public float getMeanNumber();
+	public double getMeanNumber(Color[] motif);
 
-	public int getK();
+	public double getVariance(Color[] motif);
 
-	public void setK(int k);
+	//	public int getK();
+	//
+	//	public void setK(int k);
 
-	public void setGraph(List<Node> graph);
+	public void setGraph(Graph graph);
 
-	public List<Node> getGraph();
+	public Graph getGraph();
 }

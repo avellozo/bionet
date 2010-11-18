@@ -67,6 +67,9 @@ public class MotinfPPI
 		MotifTrie trie = new MotifTrie(maxSizeTrie);
 
 		System.out.println("Time to create the graph " + (System.currentTimeMillis() - time + " ms"));
+		System.out.println("Nodes: " + graph.getNumberOfNodes());
+		System.out.println("Edges: " + graph.getNumberOfEdges());
+		System.out.println("Colors: " + graph.getNumberOfColors());
 		time = System.currentTimeMillis();
 
 		subgraphsCount = 0;
@@ -94,9 +97,6 @@ public class MotinfPPI
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
 		System.out.println("Total motifs of size " + k + ": " + totalMotifs);
 		System.out.println("Total motifs didn't put in the trie " + ": " + notInTrie);
-		System.out.println("Nodes: " + graph.getNumberOfNodes());
-		System.out.println("Edges: " + graph.getNumberOfEdges());
-		System.out.println("Colors: " + graph.getNumberOfColors());
 		System.out.println("Occurrences:");
 		int repeats[] = trie.repeats;
 		for (int j = 0; j < repeats.length; j++) {
