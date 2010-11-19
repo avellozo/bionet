@@ -7,24 +7,28 @@ import java.util.Collection;
 
 public class MotinfPPI
 {
-	static long	subgraphsCount;
-	static int	notInTrie;
+	static long					subgraphsCount;
+	static int					notInTrie;
+	static StatisticalNumbers	statisticalModel;
 
 	public static void main(String args[]) throws IOException {
 
 		long time = System.currentTimeMillis();
 
 		if (args.length < 2) {
-			System.out.println("usage:  java -jar motinf.jar general.MotinfPPI <file .edges> k organismsId(list with ;) {R|P|U} ");
+			System.out.println("usage:  java -jar motinf.jar general.MotinfPPI <file .edges> k organismsId(list with ;) {R|P|U} b(best z-score)");
 			//R = remove node with color '-'
 			//P = proteinID for color '-'
 			//U = unique color '-' for color '-'
+			//B- get the b motifs with the best z-scores
 			return;
 		}
 		String fileName = args[0];
 		int k = (Integer.valueOf(args[1])).intValue();
 		String withoutColor = args[3];
 		String organismList = args[2];
+		int b = (Integer.valueOf(args[4])).intValue();
+
 		String[] organisms;
 		if (organismList.equals("*")) {
 			organisms = new String[0];
@@ -43,7 +47,9 @@ public class MotinfPPI
 
 		graph.setColorIdByColorOccurrences();
 		//set color id accordly the node quantity of the color
-		graph.sortByColorId();
+		graph.sortNodesByColorId();
+		statisticalModel = new ErdosRenyiModel(graph);
+		MotifCollection bestMotifs = new BestMotifCollection(b);
 
 		//		graph.sortByColorNodeQtty();
 		//		short lastColorId = 0;
@@ -82,6 +88,7 @@ public class MotinfPPI
 				if (colorOld != node.getColor()) {
 					totalLeafs += trie.totalLeafs;
 					//					System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
+					trie.updateBestMotifs(bestMotifs, statisticalModel);
 					trie.clear();
 					colorOld = node.getColor();
 				}

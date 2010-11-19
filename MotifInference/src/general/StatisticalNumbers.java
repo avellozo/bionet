@@ -7,6 +7,8 @@ public interface StatisticalNumbers
 {
 	public double getMeanNumber(Color[] motif);
 
+	public double getMeanNumberOfMotifSorted(Color[] motifSorted);
+
 	public double getVariance(Color[] motif);
 
 	//	public int getK();

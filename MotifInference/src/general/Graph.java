@@ -24,7 +24,9 @@ public class Graph extends ArrayList<Node>
 
 	protected int				edgesQtty		= 0;
 
-	protected ArrayList<Color>	colors			= new ArrayList<Color>();
+	protected ArrayList<Color>	colors			= new ArrayList<Color>();	//sorted by ColorId
+
+	//colors.get(i).getId() = i+1;
 
 	protected Graph() {
 		super();
@@ -150,6 +152,10 @@ public class Graph extends ArrayList<Node>
 		return colors.size();
 	}
 
+	public Color getColor(short colorId) {
+		return colors.get(colorId - 1);
+	}
+
 	private static ColorComparatorByNodeQtty	colorComparatorByNodeQtty	= new ColorComparatorByNodeQtty();
 
 	public void setColorIdByColorOccurrences() {
@@ -162,7 +168,7 @@ public class Graph extends ArrayList<Node>
 
 	private static ColorComparatorId	colorComparatorId	= new ColorComparatorId();
 
-	public void sortByColorId() {
+	public void sortNodesByColorId() {
 		Collections.sort(this, colorComparatorId);
 	}
 }
