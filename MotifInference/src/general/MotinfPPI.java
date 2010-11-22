@@ -85,7 +85,7 @@ public class MotinfPPI
 		int totalLeafs = 0;
 		for (Node node : graph) {
 			if (node.isValid()) {
-				if (colorOld != node.getColor()) {
+				if (!node.getColor().equals(colorOld)) {
 					totalLeafs += trie.totalLeafs;
 					//					System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
 					trie.getBestMotifs(bestMotifs, statisticalModel, numberOfBestMotifs, k);
@@ -100,6 +100,7 @@ public class MotinfPPI
 
 		totalLeafs += trie.totalLeafs;
 		int totalMotifs = totalLeafs + notInTrie;
+		trie.getBestMotifs(bestMotifs, statisticalModel, numberOfBestMotifs, k);
 		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + " ms");
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
 		System.out.println("Total motifs of size " + k + ": " + totalMotifs);
@@ -113,12 +114,10 @@ public class MotinfPPI
 			}
 			System.out.println();
 		}
-		else {
-			System.out.println("Motifs selected:zScore|Occurrences|Motif");
-			for (Motif motif : bestMotifs.getMotifs()) {
-				System.out.println(motif.getzScore() + "|" + motif.getNumberOfOccurrences() + "|"
-					+ motif.colorsToString());
-			}
+		System.out.println("Motifs selected:");
+		System.out.println("zScore|Occurrences|Motif");
+		for (Motif motif : bestMotifs.getMotifs()) {
+			System.out.println(motif.getzScore() + "|" + motif.getNumberOfOccurrences() + "|" + motif.colorsToString());
 		}
 	}
 
@@ -177,6 +176,7 @@ public class MotinfPPI
 				onlyOneOccurrence = onlyOneOccurrence && (colors[i].getNumNodes() == 1);
 			}
 			subgraphsCount++;
+			Arrays.sort(colors);
 			if (onlyOneOccurrence) {
 				trie.repeats[0]++;
 				notInTrie++;
@@ -185,7 +185,6 @@ public class MotinfPPI
 				bestMotifs.add(motif);
 			}
 			else {
-				Arrays.sort(colors);
 				trie.addMotif(colors);
 			}
 		}

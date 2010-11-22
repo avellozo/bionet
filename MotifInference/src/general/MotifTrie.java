@@ -52,10 +52,10 @@ public class MotifTrie
 		short colorNext = 0;
 		int k = motif.length;
 		for (int i = 0; i < k; i++) {
-			short colorI = motif[i].id;
+			short colorI = motif[i].getId();
 			nextChild = getChild(pos);
 			currentChild = pos;
-			while ((nextChild != 0) && ((colorNext = getColor(nextChild)) < colorI)) {
+			while ((nextChild != 0) && ((colorNext = getColorId(nextChild)) < colorI)) {
 				currentChild = nextChild;
 				nextChild = getBrother(nextChild);
 			}
@@ -86,7 +86,7 @@ public class MotifTrie
 		return pos;
 	}
 
-	protected short getColor(int pos) //position of the record in the array
+	protected short getColorId(int pos) //position of the record in the array
 	{
 		return (short) (a[pos] & 0x7FFF);
 	}
@@ -227,12 +227,12 @@ public class MotifTrie
 
 	public void getBestMotifs(MotifCollection bestMotifs, StatisticalNumbers statisticalModel, int posTrie,
 			Color[] motifColors, int posMotif) {
-		Color color = statisticalModel.getGraph().getColor(getColor(posTrie));
+		Color color = statisticalModel.getGraph().getColor(getColorId(posTrie));
 		motifColors[posMotif] = color;
 		if (posMotif == motifColors.length - 1) {
 			int numberOfOccurrences = getNumberOfOccurrences(posTrie);
 			double zScore = statisticalModel.getZScore(motifColors, numberOfOccurrences);
-			Motif motif = new Motif(motifColors, numberOfOccurrences, zScore);
+			Motif motif = new Motif(motifColors.clone(), numberOfOccurrences, zScore);
 			bestMotifs.add(motif);
 		}
 		else {
@@ -246,7 +246,7 @@ public class MotifTrie
 
 	public int getNumberOfOccurrences(int posTrie) {
 		if (isLeaf(posTrie)) {
-			return getCounter(posTrie);
+			return getCounter(posTrie) + 1;
 		}
 		else {
 			int ret = 0;
