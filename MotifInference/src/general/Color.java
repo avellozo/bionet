@@ -17,10 +17,6 @@ public class Color implements Comparable<Color>
 		this.description = description;
 	}
 
-	public Color(String description) {
-		this.description = description;
-	}
-
 	public short getId() {
 		return id;
 	}
@@ -53,7 +49,7 @@ public class Color implements Comparable<Color>
 	}
 
 	public String toString() {
-		return ("" + getId());
+		return ("" + getDescription());
 	}
 
 	public String getDescription() {
@@ -70,7 +66,7 @@ public class Color implements Comparable<Color>
 
 	@Override
 	public boolean equals(Object obj) {
-		return (obj instanceof Color && ((Color) obj).getId() == getId());
+		return (obj instanceof Color && ((Color) obj).compareTo(this) == 0);
 	}
 
 }

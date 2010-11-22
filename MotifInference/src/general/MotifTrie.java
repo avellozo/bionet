@@ -46,24 +46,26 @@ public class MotifTrie
 	//		this.sizeAlphabet = sizeAlphabet;
 	//	}
 	//
-	public int addMotif(short[] motif) {
+	public int addMotif(Color[] motif) {
 		int pos = 0;
 		int nextChild, currentChild;
 		short colorNext = 0;
-		for (int i = 0; i < motif.length; i++) {
+		int k = motif.length;
+		for (int i = 0; i < k; i++) {
+			short colorI = motif[i].id;
 			nextChild = getChild(pos);
 			currentChild = pos;
-			while ((nextChild != 0) && ((colorNext = getColor(nextChild)) < motif[i])) {
+			while ((nextChild != 0) && ((colorNext = getColor(nextChild)) < colorI)) {
 				currentChild = nextChild;
 				nextChild = getBrother(nextChild);
 			}
-			if (nextChild == 0 || colorNext > motif[i]) {
+			if (nextChild == 0 || colorNext > colorI) {
 				int newChild;
-				if (i == motif.length - 1) {
-					newChild = newLeaf(motif[i]);
+				if (i == k - 1) {
+					newChild = newLeaf(colorI);
 				}
 				else {
-					newChild = newInternal(motif[i]);
+					newChild = newInternal(colorI);
 				}
 				if (currentChild == pos) {
 					setChild(pos, newChild);
@@ -76,7 +78,7 @@ public class MotifTrie
 			}
 			else {
 				pos = nextChild;
-				if (i == motif.length - 1) {
+				if (i == k - 1) {
 					incCounterLeaf(pos);
 				}
 			}
@@ -221,6 +223,52 @@ public class MotifTrie
 		errorsNumberOcurrences = 0;
 		//		repeats = new int[Short.MAX_VALUE];
 		newInternal((short) 0);
+	}
+
+	public void getBestMotifs(MotifCollection bestMotifs, StatisticalNumbers statisticalModel, int posTrie,
+			Color[] motifColors, int posMotif) {
+		Color color = statisticalModel.getGraph().getColor(getColor(posTrie));
+		motifColors[posMotif] = color;
+		if (posMotif == motifColors.length - 1) {
+			int numberOfOccurrences = getNumberOfOccurrences(posTrie);
+			double zScore = statisticalModel.getZScore(motifColors, numberOfOccurrences);
+			Motif motif = new Motif(motifColors, numberOfOccurrences, zScore);
+			bestMotifs.add(motif);
+		}
+		else {
+			int nextChild = getChild(posTrie);
+			while (nextChild != 0) {
+				getBestMotifs(bestMotifs, statisticalModel, nextChild, motifColors, posMotif + 1);
+				nextChild = getBrother(nextChild);
+			}
+		}
+	}
+
+	public int getNumberOfOccurrences(int posTrie) {
+		if (isLeaf(posTrie)) {
+			return getCounter(posTrie);
+		}
+		else {
+			int ret = 0;
+			int nextChild = getChild(posTrie);
+			while (nextChild != 0) {
+				ret = ret + getNumberOfOccurrences(nextChild);
+				nextChild = getBrother(nextChild);
+			}
+			return ret;
+		}
+	}
+
+	public MotifCollection getBestMotifs(MotifCollection bestMotifs, StatisticalNumbers statisticalModel,
+			int numberOfBestMotifs, int motifSize) {
+		//		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs);
+		Color[] motifColors = new Color[motifSize];
+		int nextChild = getChild(0);
+		while (nextChild != 0) {
+			getBestMotifs(bestMotifs, statisticalModel, nextChild, motifColors, 0);
+			nextChild = getBrother(nextChild);
+		}
+		return bestMotifs;
 	}
 
 }

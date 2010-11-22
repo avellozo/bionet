@@ -41,6 +41,15 @@ public class Motif
 		return colors;
 	}
 
+	public String colorsToString() {
+		StringBuffer ret = new StringBuffer();
+		for (Color color : colors) {
+			ret.append(color.getDescription());
+			ret.append("; ");
+		}
+		return ret.substring(0, ret.length() - 2);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Motif)) {
@@ -61,7 +70,19 @@ class ComparatorByZScore implements Comparator<Motif>
 			return 1;
 		}
 		else {
-			return 0;
+			if (!o1.equals(o2)) {
+				int ret1 = o2.getNumberOfOccurrences() - o1.getNumberOfOccurrences();
+				if (ret1 != 0) {
+					return ret1;
+				}
+				else {
+					int hash1 = o1.hashCode(), hash2 = o2.hashCode();
+					return (hash1 > hash2 ? 1 : (hash1 == hash2 ? 0 : -1));
+				}
+			}
+			else {
+				return 0;
+			}
 		}
 	}
 }

@@ -102,13 +102,13 @@ public class Graph extends ArrayList<Node>
 				}
 				colorA = colorsHash.get(colorIdA);
 				if (colorA == null) {
-					colorA = new Color(colorIdA);
+					colorA = new Color(new Integer(colors.size() + 1).shortValue(), colorIdA);
 					colorsHash.put(colorIdA, colorA);
 					colors.add(colorA);
 				}
 				colorB = colorsHash.get(colorIdB);
 				if (colorB == null) {
-					colorB = new Color(colorIdB);
+					colorB = new Color(new Integer(colors.size() + 1).shortValue(), colorIdB);
 					colorsHash.put(colorIdB, colorB);
 					colors.add(colorB);
 				}
@@ -162,7 +162,8 @@ public class Graph extends ArrayList<Node>
 		Collections.sort(colors, colorComparatorByNodeQtty);
 		short i = 1;
 		for (Color color : colors) {
-			color.setId(i++);
+			color.setId(i);
+			i++;
 		}
 	}
 

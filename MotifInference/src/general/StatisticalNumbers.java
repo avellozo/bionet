@@ -11,6 +11,8 @@ public interface StatisticalNumbers
 
 	public double getVariance(Color[] motif);
 
+	public double getZScore(Color[] motif, int occurrences);
+
 	//	public int getK();
 	//
 	//	public void setK(int k);

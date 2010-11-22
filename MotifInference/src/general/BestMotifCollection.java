@@ -3,18 +3,34 @@
  */
 package general;
 
+import java.util.Collection;
+import java.util.TreeSet;
+
 public class BestMotifCollection implements MotifCollection
 {
 
-	int	maxSize;
+	TreeSet<Motif>	motifCollection	= new TreeSet<Motif>(new ComparatorByZScore());
+	int				maxSize;
 
 	public BestMotifCollection(int maxSize) {
 		this.maxSize = maxSize;
 	}
 
 	public void add(Motif motif) {
-		// TODO Auto-generated method stub
+		if (motifCollection.size() < maxSize) {
+			motifCollection.add(motif);
+		}
+		else {
+			Motif last = motifCollection.last();
+			if (motif.getzScore() > last.getzScore()) {
+				motifCollection.pollLast();
+				motifCollection.add(motif);
+			}
+		}
+	}
 
+	public Collection<Motif> getMotifs() {
+		return motifCollection;
 	}
 
 }

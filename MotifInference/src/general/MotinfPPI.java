@@ -27,7 +27,7 @@ public class MotinfPPI
 		int k = (Integer.valueOf(args[1])).intValue();
 		String withoutColor = args[3];
 		String organismList = args[2];
-		int b = (Integer.valueOf(args[4])).intValue();
+		int numberOfBestMotifs = (Integer.valueOf(args[4])).intValue();
 
 		String[] organisms;
 		if (organismList.equals("*")) {
@@ -49,7 +49,7 @@ public class MotinfPPI
 		//set color id accordly the node quantity of the color
 		graph.sortNodesByColorId();
 		statisticalModel = new ErdosRenyiModel(graph);
-		MotifCollection bestMotifs = new BestMotifCollection(b);
+		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs);
 
 		//		graph.sortByColorNodeQtty();
 		//		short lastColorId = 0;
@@ -88,13 +88,13 @@ public class MotinfPPI
 				if (colorOld != node.getColor()) {
 					totalLeafs += trie.totalLeafs;
 					//					System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
-					trie.updateBestMotifs(bestMotifs, statisticalModel);
+					trie.getBestMotifs(bestMotifs, statisticalModel, numberOfBestMotifs, k);
 					trie.clear();
 					colorOld = node.getColor();
 				}
 				node.setInvalid();
 				subgraph[0] = node;
-				createMotif(subgraph, 1, trie);
+				createMotif(subgraph, 1, trie, bestMotifs);
 			}
 		}
 
@@ -104,13 +104,22 @@ public class MotinfPPI
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
 		System.out.println("Total motifs of size " + k + ": " + totalMotifs);
 		System.out.println("Total motifs didn't put in the trie " + ": " + notInTrie);
-		System.out.println("Occurrences:");
-		int repeats[] = trie.repeats;
-		for (int j = 0; j < repeats.length; j++) {
-			if (repeats[j] != 0)
-				System.out.println((j + 1) + " " + repeats[j]);
+		if (k == 1) {
+			System.out.println("Occurrences:");
+			int repeats[] = trie.repeats;
+			for (int j = 0; j < repeats.length; j++) {
+				if (repeats[j] != 0)
+					System.out.println((j + 1) + " " + repeats[j]);
+			}
+			System.out.println();
 		}
-		System.out.println();
+		else {
+			System.out.println("Motifs selected:zScore|Occurrences|Motif");
+			for (Motif motif : bestMotifs.getMotifs()) {
+				System.out.println(motif.getzScore() + "|" + motif.getNumberOfOccurrences() + "|"
+					+ motif.colorsToString());
+			}
+		}
 	}
 
 	//	private static void createMotif(Node[] motifPrefix, int k1, MotifTrie trie) {
@@ -159,22 +168,25 @@ public class MotinfPPI
 	//		}
 	//	}
 
-	private static void createMotif(Node[] subgraph, int k1, MotifTrie trie) {
+	private static void createMotif(Node[] subgraph, int k1, MotifTrie trie, MotifCollection bestMotifs) {
 		if (k1 == subgraph.length) {
-			boolean notPutInTrie = true;
-			short[] motif = new short[k1];
+			boolean onlyOneOccurrence = true;
+			Color[] colors = new Color[k1];
 			for (int i = 0; i < k1; i++) {
-				motif[i] = subgraph[i].getColor().getId();
-				notPutInTrie = notPutInTrie && (subgraph[i].getColor().getNumNodes() == 1);
+				colors[i] = subgraph[i].getColor();
+				onlyOneOccurrence = onlyOneOccurrence && (colors[i].getNumNodes() == 1);
 			}
 			subgraphsCount++;
-			if (notPutInTrie) {
+			if (onlyOneOccurrence) {
 				trie.repeats[0]++;
 				notInTrie++;
+				double zScore = statisticalModel.getZScore(colors, 1);
+				Motif motif = new Motif(colors, 1, zScore);
+				bestMotifs.add(motif);
 			}
 			else {
-				Arrays.sort(motif);
-				trie.addMotif(motif);
+				Arrays.sort(colors);
+				trie.addMotif(colors);
 			}
 		}
 		else {
@@ -187,7 +199,7 @@ public class MotinfPPI
 						returnValids.add(node);
 						node.setInvalid();
 						subgraph[k1] = node;
-						createMotif(subgraph, k1 + 1, trie);
+						createMotif(subgraph, k1 + 1, trie, bestMotifs);
 					}
 				}
 			}

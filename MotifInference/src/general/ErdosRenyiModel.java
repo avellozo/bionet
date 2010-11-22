@@ -120,4 +120,13 @@ public class ErdosRenyiModel implements StatisticalNumbers
 			return ret / factorial(k);
 		}
 	}
+
+	public double getZScore(Color[] motif, int occurrences) {
+		double meanNumber = getMeanNumberOfMotifSorted(motif);
+		double zScore = occurrences - meanNumber;
+		if (zScore < 0) {
+			zScore = zScore * -1;
+		}
+		return zScore;
+	}
 }
