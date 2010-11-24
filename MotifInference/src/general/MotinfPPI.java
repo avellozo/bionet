@@ -9,7 +9,7 @@ public class MotinfPPI
 {
 	static long					subgraphsCount;
 	static int					notInTrie;
-	static StatisticalNumbers	statisticalModel;
+	static StatisticalModel	statisticalModel;
 
 	public static void main(String args[]) throws IOException {
 

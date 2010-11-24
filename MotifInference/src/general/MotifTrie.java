@@ -225,7 +225,7 @@ public class MotifTrie
 		newInternal((short) 0);
 	}
 
-	public void getBestMotifs(MotifCollection bestMotifs, StatisticalNumbers statisticalModel, int posTrie,
+	public void getBestMotifs(MotifCollection bestMotifs, StatisticalModel statisticalModel, int posTrie,
 			Color[] motifColors, int posMotif) {
 		Color color = statisticalModel.getGraph().getColor(getColorId(posTrie));
 		motifColors[posMotif] = color;
@@ -259,7 +259,7 @@ public class MotifTrie
 		}
 	}
 
-	public MotifCollection getBestMotifs(MotifCollection bestMotifs, StatisticalNumbers statisticalModel,
+	public MotifCollection getBestMotifs(MotifCollection bestMotifs, StatisticalModel statisticalModel,
 			int numberOfBestMotifs, int motifSize) {
 		//		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs);
 		Color[] motifColors = new Color[motifSize];

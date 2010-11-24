@@ -9,13 +9,21 @@ public class Motif
 {
 	Color[]	colors;
 	int		numberOfOccurrences;
+	double	meanNumberOfOccurrences;
 	double	zScore;
 
-	public Motif(Color[] colors, int numberOfOccurrences, double zScore) {
+	public Motif(Color[] colors, int numberOfOccurrences, double meanNumberOfOccurrences, double zScore) {
 		this.colors = colors;
-		this.zScore = zScore;
 		this.numberOfOccurrences = numberOfOccurrences;
+		this.meanNumberOfOccurrences = meanNumberOfOccurrences;
+		this.zScore = zScore;
 	}
+
+	//	public Motif(Color[] colors, int numberOfOccurrences, double zScore) {
+	//		this.colors = colors;
+	//		this.zScore = zScore;
+	//		this.numberOfOccurrences = numberOfOccurrences;
+	//	}
 
 	public Motif(Color[] colors) {
 		this.colors = colors;

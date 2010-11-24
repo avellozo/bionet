@@ -3,7 +3,7 @@
  */
 package general;
 
-public interface StatisticalNumbers
+public interface StatisticalModel
 {
 	public double getMeanNumber(Color[] motif);
 

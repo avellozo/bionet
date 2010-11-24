@@ -6,7 +6,7 @@ package general;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ErdosRenyiModel implements StatisticalNumbers
+public class ErdosRenyiModel implements StatisticalModel
 {
 
 	private Graph					graph;
