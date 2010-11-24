@@ -141,7 +141,7 @@ public class Graph extends ArrayList<Node>
 	}
 
 	public double p() {
-		return getNumberOfEdges() * 2 / (getNumberOfNodes() * (getNumberOfNodes() - 1));
+		return getNumberOfEdges() * 2.0 / (getNumberOfNodes() * (getNumberOfNodes() - 1));
 	}
 
 	public int getNumberOfEdges() {
