@@ -7,8 +7,8 @@ import java.util.Collection;
 
 public class MotinfPPI
 {
-	static long					subgraphsCount;
-	static int					notInTrie;
+	static long				subgraphsCount;
+	static int				notInTrie;
 	static StatisticalModel	statisticalModel;
 
 	public static void main(String args[]) throws IOException {
@@ -49,7 +49,7 @@ public class MotinfPPI
 		//set color id accordly the node quantity of the color
 		graph.sortNodesByColorId();
 		statisticalModel = new ErdosRenyiModel(graph);
-		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs);
+		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs, new ComparatorByMeanNumber());
 
 		//		graph.sortByColorNodeQtty();
 		//		short lastColorId = 0;
@@ -115,9 +115,11 @@ public class MotinfPPI
 			System.out.println();
 		}
 		System.out.println("Motifs selected:");
-		System.out.println("zScore|Occurrences|Motif");
+		System.out.println("zScore|MeanNumber|Occurrences|Motif");
 		for (Motif motif : bestMotifs.getMotifs()) {
-			System.out.println(motif.getzScore() + "|" + motif.getNumberOfOccurrences() + "|" + motif.colorsToString());
+			StatisticalNumbers statisticalNumbers = motif.getStatisticalNumbers();
+			System.out.println(statisticalNumbers.getZScore() + "|" + statisticalNumbers.getMeanNumber() + "|"
+				+ statisticalNumbers.getNumberOfOccurrences() + "|" + motif.colorsToString());
 		}
 	}
 
@@ -180,8 +182,7 @@ public class MotinfPPI
 			if (onlyOneOccurrence) {
 				trie.repeats[0]++;
 				notInTrie++;
-				double zScore = statisticalModel.getZScore(colors, 1);
-				Motif motif = new Motif(colors, 1, zScore);
+				Motif motif = new MotifSorted(colors, statisticalModel, 1);
 				bestMotifs.add(motif);
 			}
 			else {

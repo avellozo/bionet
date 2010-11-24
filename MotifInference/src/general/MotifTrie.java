@@ -231,8 +231,7 @@ public class MotifTrie
 		motifColors[posMotif] = color;
 		if (posMotif == motifColors.length - 1) {
 			int numberOfOccurrences = getNumberOfOccurrences(posTrie);
-			double zScore = statisticalModel.getZScore(motifColors, numberOfOccurrences);
-			Motif motif = new Motif(motifColors.clone(), numberOfOccurrences, zScore);
+			MotifSorted motif = new MotifSorted(motifColors.clone(), statisticalModel, numberOfOccurrences);
 			bestMotifs.add(motif);
 		}
 		else {

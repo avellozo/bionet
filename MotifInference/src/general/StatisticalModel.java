@@ -11,12 +11,6 @@ public interface StatisticalModel
 
 	public double getVariance(Color[] motif);
 
-	public double getZScore(Color[] motif, int occurrences);
-
-	//	public int getK();
-	//
-	//	public void setK(int k);
-
 	public void setGraph(Graph graph);
 
 	public Graph getGraph();
