@@ -39,7 +39,7 @@ public class StatisticalNumbers
 		if (zScore == null) {
 			zScore = (getNumberOfOccurrences() - getMeanNumber()) / getVariance();
 		}
-		return zScore;
+		return zScore > 0 ? zScore : -zScore;
 	}
 
 	public Motif getMotif() {
