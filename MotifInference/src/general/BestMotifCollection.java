@@ -27,7 +27,7 @@ public class BestMotifCollection implements MotifCollection
 		}
 		else {
 			Motif last = motifCollection.last();
-			if (comparator.compare(motif, last) > 0) {
+			if (comparator.compare(motif, last) < 0) {
 				motifCollection.pollLast();
 				motifCollection.add(motif);
 			}

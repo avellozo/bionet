@@ -258,8 +258,7 @@ public class MotifTrie
 		}
 	}
 
-	public MotifCollection getBestMotifs(MotifCollection bestMotifs, StatisticalModel statisticalModel,
-			int numberOfBestMotifs, int motifSize) {
+	public MotifCollection getBestMotifs(MotifCollection bestMotifs, StatisticalModel statisticalModel, int motifSize) {
 		//		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs);
 		Color[] motifColors = new Color[motifSize];
 		int nextChild = getChild(0);

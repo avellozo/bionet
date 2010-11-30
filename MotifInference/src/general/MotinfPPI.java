@@ -88,7 +88,7 @@ public class MotinfPPI
 				if (!node.getColor().equals(colorOld)) {
 					totalLeafs += trie.totalLeafs;
 					//					System.out.println("Trie color: " + colorOld + " with " + trie.totalLeafs + " leafs.");
-					trie.getBestMotifs(bestMotifs, statisticalModel, numberOfBestMotifs, k);
+					trie.getBestMotifs(bestMotifs, statisticalModel, k);
 					trie.clear();
 					colorOld = node.getColor();
 				}
@@ -100,7 +100,7 @@ public class MotinfPPI
 
 		totalLeafs += trie.totalLeafs;
 		int totalMotifs = totalLeafs + notInTrie;
-		trie.getBestMotifs(bestMotifs, statisticalModel, numberOfBestMotifs, k);
+		trie.getBestMotifs(bestMotifs, statisticalModel, k);
 		System.out.println("Time to calculate motifs " + (System.currentTimeMillis() - time) + " ms");
 		System.out.println("Total subgraphs of size " + k + ": " + subgraphsCount);
 		System.out.println("Total motifs of size " + k + ": " + totalMotifs);
