@@ -49,7 +49,7 @@ public class MotinfPPI
 		//set color id accordly the node quantity of the color
 		graph.sortNodesByColorId();
 		statisticalModel = new ErdosRenyiModel(graph);
-		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs, new ComparatorByMeanNumber());
+		MotifCollection bestMotifs = new BestMotifCollection(numberOfBestMotifs, new ComparatorByZScore());
 
 		//		graph.sortByColorNodeQtty();
 		//		short lastColorId = 0;

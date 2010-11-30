@@ -11,6 +11,8 @@ public interface StatisticalModel
 
 	public double getVariance(Color[] motif);
 
+	public double getVarianceOfMotifSorted(Color[] motifSorted);
+
 	public void setGraph(Graph graph);
 
 	public Graph getGraph();

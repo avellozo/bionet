@@ -55,6 +55,18 @@ public class Motif
 		return ret.substring(0, ret.length() - 2);
 	}
 
+	//	public double getMeanNumber() {
+	//		return getStatisticalNumbers().getMeanNumber();
+	//	}
+	//
+	//	public double getVariance() {
+	//		return getStatisticalNumbers().getVariance();
+	//	}
+	//
+	//	public double getZScore() {
+	//		return getStatisticalNumbers().getZScore();
+	//	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Motif)) {

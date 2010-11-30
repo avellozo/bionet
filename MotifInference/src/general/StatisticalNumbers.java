@@ -10,6 +10,7 @@ public class StatisticalNumbers
 	private int					numberOfOccurrences;
 	private Double				meanNumber	= null;
 	private Double				variance	= null;
+	private Double				zScore		= null;
 
 	public StatisticalNumbers(Motif motif, StatisticalModel statisticalModel, int numberOfOccurrences) {
 		if (!(motif instanceof MotifSorted)) {
@@ -35,8 +36,10 @@ public class StatisticalNumbers
 	}
 
 	public double getZScore() {
-		double ret = getMeanNumber() - getNumberOfOccurrences();
-		return ret < 0 ? -ret : ret;
+		if (zScore == null) {
+			zScore = (getNumberOfOccurrences() - getMeanNumber()) / getVariance();
+		}
+		return zScore;
 	}
 
 	public Motif getMotif() {
