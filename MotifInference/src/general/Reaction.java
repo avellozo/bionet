@@ -5,10 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -28,13 +25,10 @@ public class Reaction
 	String					ID;
 	EC						ec;
 
+	Collection<Reaction>	neighbors	= new HashSet<Reaction>(3);
+
 	HashSet<Compound>		substrates	= new HashSet<Compound>(2);
 	HashSet<Compound>		products	= new HashSet<Compound>(2);
-
-	boolean					valid		= true;
-	Color					color;
-
-	Collection<Reaction>	neighbors	= new HashSet<Reaction>(3);
 
 	public Reaction(String ID) {
 		this.ID = ID;
@@ -79,40 +73,6 @@ public class Reaction
 		return products;
 	}
 
-	public Color getColor() {
-		return color;
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
-		color.incNumNodes();
-	}
-
-	public boolean isValid() {
-		return valid;
-	}
-
-	public void setValid(boolean valid) {
-		//		if (valid && !this.valid) {
-		//			for (Reaction r : neighbors) {
-		//				r.addNeighbor(this);
-		//			}
-		//		}
-		//		else if (!valid && this.valid) {
-		//			for (Reaction r : neighbors) {
-		//				r.removeNeighbor(this);
-		//			}
-		//		}
-		this.valid = valid;
-	}
-
-	public void setInvalid() {
-		for (Reaction r : neighbors) {
-			r.removeNeighbor(this);
-		}
-		this.valid = false;
-	}
-
 	public void addNeighbor(Reaction r) {
 		if (r != this) {
 			neighbors.add(r);
@@ -124,25 +84,6 @@ public class Reaction
 	}
 
 	public Collection<Reaction> getNeighbors() {
-		//		if (neighbors != null)
-		//		{
-		//			return neighbors;
-		//		}
-		//		neighbors = new HashSet<Reaction>();
-		//		for (Compound c : getSubstrates())
-		//		{
-		//			for (Reaction r : c.getReactionsAsProduct())
-		//			{
-		//				neighbors.add(r);
-		//			}
-		//		}
-		//		for (Compound c : getProducts())
-		//		{
-		//			for (Reaction r : c.getReactionsAsSubstrate())
-		//			{
-		//				neighbors.add(r);
-		//			}
-		//		}
 		return neighbors;
 	}
 
@@ -315,19 +256,4 @@ public class Reaction
 		return reactions;
 	}
 
-	public static void sortByColorId(Reaction[] reactions) {
-		Arrays.sort(reactions, new ComparatorByColorId());
-	}
-
-	public static void sortByColorId(List<Reaction> reactions) {
-		Collections.sort(reactions, new ComparatorByColorId());
-	}
-
-}
-
-class ComparatorByColorId implements Comparator<Reaction>
-{
-	public int compare(Reaction o1, Reaction o2) {
-		return o1.getColor().getId() - o2.getColor().getId();
-	}
 }

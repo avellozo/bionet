@@ -1,4 +1,8 @@
-package general;
+package metabolicNetwork;
+
+import general.Color;
+import general.MotifTrie;
+import general.Reaction;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -3,8 +3,6 @@
  */
 package convert;
 
-import general.Color;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,11 +27,10 @@ public class NetAndColorsToEdges
 			out.println("#ID_A\tID_B\ttaxid_A\ttaxid_B\tColor_A\tColor_B");
 			String line;
 			String[] columnValues;
-			Hashtable<String, Color> idsColor = new Hashtable<String, Color>();
+			Hashtable<String, String> idsColor = new Hashtable<String, String>();
 			if (args.length > 3) {
-				idsColor = new Hashtable<String, Color>(2600000, 0.99f);
+				idsColor = new Hashtable<String, String>();
 				BufferedReader idColorFile = new BufferedReader(new FileReader(args[3]));
-				Hashtable<String, Color> colors = new Hashtable<String, Color>(2000000);
 				while ((line = idColorFile.readLine()) != null) {
 					if (line.startsWith("#")) {
 						continue;
@@ -42,18 +39,13 @@ public class NetAndColorsToEdges
 					if (columnValues.length == 2) {
 						String idStr = columnValues[0];
 						String colorStr = columnValues[1];
-						Color color = colors.get(colorStr);
-						if (color == null) {
-							color = new Color(colorStr);
-							colors.put(colorStr, color);
-						}
-						idsColor.put(idStr, color);
+						idsColor.put(idStr, colorStr);
 					}
 				}
 			}
 
 			String id1, id2, tax1, tax2;
-			Color color1, color2;
+			String color1, color2;
 			while ((line = netFile.readLine()) != null) {
 				if (line.startsWith("#")) {
 					continue;
@@ -89,14 +81,14 @@ public class NetAndColorsToEdges
 					//					if (color1 != null || color2 != null) {
 					out.print('\t');
 					if (color1 != null) {
-						out.print(color1.getDescription());
+						out.print(color1);
 					}
 					else {
 						out.print("-");
 					}
 					out.print('\t');
 					if (color2 != null) {
-						out.print(color2.getDescription());
+						out.print(color2);
 					}
 					else {
 						out.print("-");
