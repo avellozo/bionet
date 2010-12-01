@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class MotinfPPI
+public class Motinf
 {
 	static long				subgraphsCount;
 	static int				notInTrie;
