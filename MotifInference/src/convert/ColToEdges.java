@@ -3,6 +3,7 @@
  */
 package convert;
 
+import general.EC;
 import general.Reaction;
 
 import java.io.FileNotFoundException;
@@ -69,8 +70,17 @@ public class ColToEdges
 	protected void printLine(PrintStream out, Reaction reaction, Reaction neighbor, String taxonId, int thre) {
 		String id1 = reaction.getID();
 		String id2 = neighbor.getID();
-		String color1 = reaction.getEc().getClasses(thre);
-		String color2 = neighbor.getEc().getClasses(thre);
+		EC ec1 = reaction.getEc();
+		EC ec2 = neighbor.getEc();
+		String color1 = null;
+		String color2 = null;
+		if (ec1 != null) {
+			color1 = ec1.getClasses(thre);
+		}
+		if (ec2 != null) {
+			color2 = ec2.getClasses(thre);
+		}
+
 		printLine(out, id1, id2, taxonId, taxonId, color1, color2);
 	}
 
